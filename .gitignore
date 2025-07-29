@@ -1,0 +1,204 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+poetry.toml
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Environments
+.env
+.env.local
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# ruff
+.ruff_cache/
+
+# LSP config files
+pyrightconfig.json
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# LLM/AI tools
+.claude/
+.cursor/
+.continue/
+.codeium/
+.copilot/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# EDA and Data Science specific
+*.log
+.cache/
+temp/
+tmp/
+*.tmp
+
+# Data processing artifacts
+*_processed.csv
+*_cleaned.csv
+*_transformed.*
+preprocessing_cache/
+feature_cache/
+
+# Visualization outputs
+plots/
+figures/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+!docs/images/  # Keep documentation images
+!examples/plots/  # Keep example plots
+
+# Jupyter Notebook outputs (keep notebooks, ignore outputs)
+*.ipynb
+!**/examples/**/*.ipynb  # Keep example notebooks
+!**/tutorials/**/*.ipynb  # Keep tutorial notebooks
+
+# Data profiling reports
+*_profile.html
+*_report.html
+profiling_*/
+
+# Machine Learning artifacts
+models/
+*.model
+*.joblib
+*.pkl
+*.pickle
+checkpoints/
+experiments/
+mlruns/
+
+# Large data files (uncomment specific patterns if needed)
+# Raw data files - be selective about what to track
+# *.csv  # Uncomment if you want to exclude all CSV files
+# *.parquet
+# *.h5
+# *.hdf5
+# *.feather
+# *.xlsx
+# *.xls
+# *.json  # Large JSON files
+# *.jsonl
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Data science tool caches
+.pandas_cache/
+.sklearn_cache/
+.keras/
+.torch/
+.tensorflow/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Local configuration
+config.local.*
+settings.local.*
