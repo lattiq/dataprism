@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LattIQ | DataPrism</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20width='75'%20height='76'%20viewBox='0%200%2075%2076'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3E%0A%3Cg%20filter='url(%23filter0_d_58009_15863)'%3E%0A%3Cpath%20d='M18.3252%2030.1134C21.7015%2033.4905%2021.7051%2038.9624%2018.3332%2042.3351C14.9613%2045.7079%209.49091%2045.7043%206.11465%2042.3272C2.73838%2038.95%202.73481%2033.4782%206.10668%2030.1054C9.47854%2026.7327%2014.949%2026.7363%2018.3252%2030.1134Z'%20fill='url(%23paint0_linear_58009_15863)'/%3E%0A%3Cpath%20d='M22.0196%2022.9629C13.7227%2031.262%2011.7459%2024.462%206.1053%2030.1041L18.332%2042.3339C25.0165%2035.6476%2016.2589%2034.0296%2024.5559%2025.7305C32.8528%2017.4314%2035.1622%2025.0386%2041.9705%2018.6894L29.7438%206.45953C23.1592%2013.0458%2030.3165%2014.6639%2022.0196%2022.9629Z'%20fill='url(%23paint1_linear_58009_15863)'/%3E%0A%3Cpath%20d='M41.4927%206.93726C44.869%2010.3144%2044.8725%2015.7862%2041.5007%2019.159C38.3695%2021.9773%2032.6584%2022.5281%2029.2821%2019.151C25.9058%2015.7739%2025.9023%2010.302%2029.2741%206.92929C32.646%203.55656%2038.1164%203.56013%2041.4927%206.93726Z'%20fill='url(%23paint2_linear_58009_15863)'/%3E%0A%3C/g%3E%0A%3Cg%20filter='url(%23filter1_d_58009_15863)'%3E%0A%3Cpath%20d='M45.0674%2030.1134C48.4437%2033.4905%2048.4473%2038.9624%2045.0754%2042.3351C41.7035%2045.7079%2036.2331%2045.7043%2032.8568%2042.3272C29.4806%2038.95%2029.477%2033.4782%2032.8489%2030.1054C36.2207%2026.7327%2041.6912%2026.7363%2045.0674%2030.1134Z'%20fill='url(%23paint3_linear_58009_15863)'/%3E%0A%3Cpath%20d='M48.7618%2022.9629C40.4648%2031.262%2038.4881%2024.462%2032.8475%2030.1041L45.0742%2042.3339C51.7587%2035.6476%2043.0011%2034.0296%2051.2981%2025.7305C59.595%2017.4314%2061.9044%2025.0386%2068.7126%2018.6894L56.486%206.45953C49.9014%2013.0458%2057.0587%2014.6639%2048.7618%2022.9629Z'%20fill='url(%23paint4_linear_58009_15863)'/%3E%0A%3Cpath%20d='M68.2349%206.93726C71.6111%2010.3144%2071.6147%2015.7862%2068.2429%2019.159C65.1117%2021.9773%2059.4006%2022.5281%2056.0243%2019.151C52.648%2015.7739%2052.6445%2010.302%2056.0163%206.92929C59.3882%203.55656%2064.8586%203.56013%2068.2349%206.93726Z'%20fill='url(%23paint5_linear_58009_15863)'/%3E%0A%3C/g%3E%0A%3Cg%20filter='url(%23filter2_d_58009_15863)'%3E%0A%3Cpath%20d='M44.8409%2056.84C48.2171%2060.2171%2048.2207%2065.689%2044.8488%2069.0617C41.477%2072.4344%2036.0065%2072.4308%2032.6303%2069.0537C29.254%2065.6766%2029.2504%2060.2047%2032.6223%2056.832C35.9942%2053.4593%2041.4646%2053.4628%2044.8409%2056.84Z'%20fill='url(%23paint6_linear_58009_15863)'/%3E%0A%3Cpath%20d='M48.5352%2049.6895C40.2383%2057.9886%2038.2615%2051.1886%2032.6209%2056.8306L44.8476%2069.0605C51.5321%2062.3742%2042.7746%2060.7562%2051.0715%2052.4571C59.3685%2044.158%2061.6778%2051.7652%2068.4861%2045.4159L56.2594%2033.1861C49.6748%2039.7724%2056.8322%2041.3904%2048.5352%2049.6895Z'%20fill='url(%23paint7_linear_58009_15863)'/%3E%0A%3Cpath%20d='M68.0083%2033.6638C71.3846%2037.041%2071.3882%2042.5128%2068.0163%2045.8855C64.8852%2048.7039%2059.174%2049.2547%2055.7977%2045.8776C52.4215%2042.5004%2052.4179%2037.0286%2055.7898%2033.6559C59.1616%2030.2831%2064.6321%2030.2867%2068.0083%2033.6638Z'%20fill='url(%23paint8_linear_58009_15863)'/%3E%0A%3C/g%3E%0A%3Cellipse%20cx='12.3339'%20cy='62.9534'%20rx='8.64644'%20ry='8.64866'%20fill='%2320B78C'/%3E%0A%3Cellipse%20cx='62.1386'%20cy='63.1799'%20rx='8.64644'%20ry='8.64866'%20fill='%2320B78C'/%3E%0A%3Cellipse%20cx='12.3339'%20cy='13.1565'%20rx='8.64644'%20ry='8.64866'%20fill='%2320B78C'/%3E%0A%3Cdefs%3E%0A%3Cfilter%20id='filter0_d_58009_15863'%20x='2.20957'%20y='4.39844'%20width='43.1824'%20height='43.198'%20filterUnits='userSpaceOnUse'%20color-interpolation-filters='sRGB'%3E%0A%3CfeFlood%20flood-opacity='0'%20result='BackgroundImageFix'/%3E%0A%3CfeColorMatrix%20in='SourceAlpha'%20type='matrix'%20values='0%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%20127%200'%20result='hardAlpha'/%3E%0A%3CfeOffset%20dy='1.36855'/%3E%0A%3CfeGaussianBlur%20stdDeviation='0.684275'/%3E%0A%3CfeComposite%20in2='hardAlpha'%20operator='out'/%3E%0A%3CfeColorMatrix%20type='matrix'%20values='0%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200.25%200'/%3E%0A%3CfeBlend%20mode='normal'%20in2='BackgroundImageFix'%20result='effect1_dropShadow_58009_15863'/%3E%0A%3CfeBlend%20mode='normal'%20in='SourceGraphic'%20in2='effect1_dropShadow_58009_15863'%20result='shape'/%3E%0A%3C/filter%3E%0A%3Cfilter%20id='filter1_d_58009_15863'%20x='28.9518'%20y='4.39844'%20width='43.1824'%20height='43.198'%20filterUnits='userSpaceOnUse'%20color-interpolation-filters='sRGB'%3E%0A%3CfeFlood%20flood-opacity='0'%20result='BackgroundImageFix'/%3E%0A%3CfeColorMatrix%20in='SourceAlpha'%20type='matrix'%20values='0%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%20127%200'%20result='hardAlpha'/%3E%0A%3CfeOffset%20dy='1.36855'/%3E%0A%3CfeGaussianBlur%20stdDeviation='0.684275'/%3E%0A%3CfeComposite%20in2='hardAlpha'%20operator='out'/%3E%0A%3CfeColorMatrix%20type='matrix'%20values='0%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200.25%200'/%3E%0A%3CfeBlend%20mode='normal'%20in2='BackgroundImageFix'%20result='effect1_dropShadow_58009_15863'/%3E%0A%3CfeBlend%20mode='normal'%20in='SourceGraphic'%20in2='effect1_dropShadow_58009_15863'%20result='shape'/%3E%0A%3C/filter%3E%0A%3Cfilter%20id='filter2_d_58009_15863'%20x='28.7252'%20y='31.125'%20width='43.1824'%20height='43.198'%20filterUnits='userSpaceOnUse'%20color-interpolation-filters='sRGB'%3E%0A%3CfeFlood%20flood-opacity='0'%20result='BackgroundImageFix'/%3E%0A%3CfeColorMatrix%20in='SourceAlpha'%20type='matrix'%20values='0%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%20127%200'%20result='hardAlpha'/%3E%0A%3CfeOffset%20dy='1.36855'/%3E%0A%3CfeGaussianBlur%20stdDeviation='0.684275'/%3E%0A%3CfeComposite%20in2='hardAlpha'%20operator='out'/%3E%0A%3CfeColorMatrix%20type='matrix'%20values='0%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200.25%200'/%3E%0A%3CfeBlend%20mode='normal'%20in2='BackgroundImageFix'%20result='effect1_dropShadow_58009_15863'/%3E%0A%3CfeBlend%20mode='normal'%20in='SourceGraphic'%20in2='effect1_dropShadow_58009_15863'%20result='shape'/%3E%0A%3C/filter%3E%0A%3ClinearGradient%20id='paint0_linear_58009_15863'%20x1='4.39146'%20y1='44.3616'%20x2='48.862'%20y2='-0.0974996'%20gradientUnits='userSpaceOnUse'%3E%0A%3Cstop%20stop-color='%2320B78C'/%3E%0A%3Cstop%20offset='0.46'%20stop-color='%230D5853'/%3E%0A%3Cstop%20offset='1'%20stop-color='%2320B78C'/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id='paint1_linear_58009_15863'%20x1='4.39146'%20y1='44.3616'%20x2='48.862'%20y2='-0.0974996'%20gradientUnits='userSpaceOnUse'%3E%0A%3Cstop%20stop-color='%2320B78C'/%3E%0A%3Cstop%20offset='0.46'%20stop-color='%230D5853'/%3E%0A%3Cstop%20offset='1'%20stop-color='%2320B78C'/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id='paint2_linear_58009_15863'%20x1='4.39146'%20y1='44.3616'%20x2='48.862'%20y2='-0.0974996'%20gradientUnits='userSpaceOnUse'%3E%0A%3Cstop%20stop-color='%2320B78C'/%3E%0A%3Cstop%20offset='0.46'%20stop-color='%230D5853'/%3E%0A%3Cstop%20offset='1'%20stop-color='%2320B78C'/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id='paint3_linear_58009_15863'%20x1='31.1337'%20y1='44.3616'%20x2='75.6042'%20y2='-0.0974996'%20gradientUnits='userSpaceOnUse'%3E%0A%3Cstop%20stop-color='%2320B78C'/%3E%0A%3Cstop%20offset='0.46'%20stop-color='%230D5853'/%3E%0A%3Cstop%20offset='1'%20stop-color='%2320B78C'/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id='paint4_linear_58009_15863'%20x1='31.1337'%20y1='44.3616'%20x2='75.6042'%20y2='-0.0974996'%20gradientUnits='userSpaceOnUse'%3E%0A%3Cstop%20stop-color='%2320B78C'/%3E%0A%3Cstop%20offset='0.46'%20stop-color='%230D5853'/%3E%0A%3Cstop%20offset='1'%20stop-color='%2320B78C'/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id='paint5_linear_58009_15863'%20x1='31.1337'%20y1='44.3616'%20x2='75.6042'%20y2='-0.0974996'%20gradientUnits='userSpaceOnUse'%3E%0A%3Cstop%20stop-color='%2320B78C'/%3E%0A%3Cstop%20offset='0.46'%20stop-color='%230D5853'/%3E%0A%3Cstop%20offset='1'%20stop-color='%2320B78C'/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id='paint6_linear_58009_15863'%20x1='30.9071'%20y1='71.0882'%20x2='75.3776'%20y2='26.6291'%20gradientUnits='userSpaceOnUse'%3E%0A%3Cstop%20stop-color='%2320B78C'/%3E%0A%3Cstop%20offset='0.46'%20stop-color='%230D5853'/%3E%0A%3Cstop%20offset='1'%20stop-color='%2320B78C'/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id='paint7_linear_58009_15863'%20x1='30.9071'%20y1='71.0882'%20x2='75.3776'%20y2='26.6291'%20gradientUnits='userSpaceOnUse'%3E%0A%3Cstop%20stop-color='%2320B78C'/%3E%0A%3Cstop%20offset='0.46'%20stop-color='%230D5853'/%3E%0A%3Cstop%20offset='1'%20stop-color='%2320B78C'/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id='paint8_linear_58009_15863'%20x1='30.9071'%20y1='71.0882'%20x2='75.3776'%20y2='26.6291'%20gradientUnits='userSpaceOnUse'%3E%0A%3Cstop%20stop-color='%2320B78C'/%3E%0A%3Cstop%20offset='0.46'%20stop-color='%230D5853'/%3E%0A%3Cstop%20offset='1'%20stop-color='%2320B78C'/%3E%0A%3C/linearGradient%3E%0A%3C/defs%3E%0A%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Inter:wght@400;500;600;700&family=Kulim+Park:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<!-- Theme: apply saved preference before paint to prevent flash -->
+<script>
+(function(){
+  var t = localStorage.getItem('dataprism-theme');
+  if (t === 'light') document.documentElement.classList.remove('dark');
+  else if (t === 'dark') document.documentElement.classList.add('dark');
+  else if (window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.classList.remove('dark');
+})();
+</script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        primary: ['Lato', 'sans-serif'],
+        secondary: ['Inter', 'sans-serif'],
+        brand: ['Kulim Park', 'sans-serif'],
+      },
+      colors: {
+        lattiq: {
+          50: '#f0fdf7', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac',
+          400: '#4ade80', 500: '#169C76', 600: '#047857', 700: '#065f46',
+          800: '#064e3b', 900: '#022c22',
+        },
+        accent: { DEFAULT: '#169C76', light: '#20B78C', dim: '#047857' },
+        good: '#169C76',
+        warn: '#f59e0b',
+        bad: '#ef4444',
+        info: '#60a5fa',
+        /* Semantic tokens driven by CSS variables */
+        pg:  'var(--c-page)',
+        srf: 'var(--c-surface)',
+        srfl:'var(--c-surface-light)',
+        bdr: 'var(--c-border)',
+        trk: 'var(--c-track)',
+        hd:  'var(--c-heading)',
+        bd:  'var(--c-body)',
+        mt:  'var(--c-muted)',
+        sb:  'var(--c-subtle)',
+        ft:  'var(--c-faint)',
+        inp: 'var(--c-input-border)',
+      }
+    }
+  }
+}
+</script>
+<style>
+  /* ── Light mode (default root) ── */
+  :root {
+    --c-page: #ffffff;
+    --c-surface: #ffffff;
+    --c-surface-light: #f8fafc;
+    --c-border: #e2e8f0;
+    --c-track: #e2e8f0;
+    --c-heading: #0f172a;
+    --c-body: #1e293b;
+    --c-muted: #475569;
+    --c-subtle: #64748b;
+    --c-faint: #94a3b8;
+    --c-input-border: #cbd5e1;
+    --c-badge-bg: #f1f5f9;
+    --c-badge-text: #475569;
+    --c-brand-text: #0f172a;
+    --c-chart-bg: rgba(32,183,140,0.35);
+    --c-chart-border: rgba(22,156,118,0.7);
+    --c-chart-grid: rgba(203,213,225,0.5);
+    --c-chart-tick: #64748b;
+    --c-tooltip-bg: #ffffff;
+    --c-tooltip-title: #0f172a;
+    --c-tooltip-body: #475569;
+    --c-tooltip-border: #e2e8f0;
+    --c-scrollbar: #cbd5e1;
+    --c-scrollbar-hover: #94a3b8;
+    color-scheme: light;
+  }
+  /* ── Dark mode ── */
+  .dark {
+    --c-page: hsl(222.2,84%,4.9%);
+    --c-surface: hsl(222.2,84%,4.9%);
+    --c-surface-light: #0c1222;
+    --c-border: hsl(217.2,32.6%,17.5%);
+    --c-track: #1e293b;
+    --c-heading: hsl(210,40%,98%);
+    --c-body: #e2e8f0;
+    --c-muted: #9ca3af;
+    --c-subtle: #6b7280;
+    --c-faint: #4b5563;
+    --c-input-border: #374151;
+    --c-badge-bg: #1e293b;
+    --c-badge-text: #9ca3af;
+    --c-brand-text: hsl(210,40%,98%);
+    --c-chart-bg: rgba(32,183,140,0.5);
+    --c-chart-border: rgba(22,156,118,0.8);
+    --c-chart-grid: rgba(55,65,81,0.4);
+    --c-chart-tick: #9ca3af;
+    --c-tooltip-bg: #162032;
+    --c-tooltip-title: #e5e7eb;
+    --c-tooltip-body: #9ca3af;
+    --c-tooltip-border: #374151;
+    --c-scrollbar: #374151;
+    --c-scrollbar-hover: #4b5563;
+    color-scheme: dark;
+  }
+  html { background: var(--c-page); transition: background-color 0.2s; }
+  body { font-family: 'Lato', 'Inter', system-ui, -apple-system, sans-serif; color: var(--c-body); }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--c-scrollbar); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--c-scrollbar-hover); }
+  .tab-active { border-color: #169C76; color: var(--c-heading); }
+  .tab-inactive { border-color: transparent; color: var(--c-subtle); }
+  .tab-inactive:hover { color: var(--c-muted); border-color: var(--c-border); }
+  .catalog-row:hover { background: var(--c-surface-light); }
+  .catalog-row.selected { background: rgba(22,156,118,0.08); }
+  .feature-list-item:hover { background: var(--c-surface-light); }
+  .feature-list-item.active { background: rgba(22,156,118,0.12); border-left: 3px solid #169C76; }
+  .sort-icon::after { content: '\2195'; opacity: 0.3; margin-left: 4px; }
+  .sort-asc::after { content: '\2191'; opacity: 1; margin-left: 4px; }
+  .sort-desc::after { content: '\2193'; opacity: 1; margin-left: 4px; }
+  .fade-in { animation: fadeIn 0.2s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .quality-bar { transition: width 0.5s ease-out; }
+  /* Badge theme pairs */
+  .badge-type-continuous { background: rgb(204 251 241 / 0.7); color: #0d9488; }
+  .dark .badge-type-continuous { background: rgb(19 78 74 / 0.4); color: #5eead4; }
+  .badge-type-categorical { background: rgb(219 234 254 / 0.7); color: #2563eb; }
+  .dark .badge-type-categorical { background: rgb(30 58 138 / 0.4); color: #60a5fa; }
+  .badge-neutral { background: var(--c-surface-light); color: var(--c-muted); }
+  .badge-amber { background: rgb(254 243 199 / 0.7); color: #b45309; }
+  .dark .badge-amber { background: rgb(120 53 15 / 0.4); color: #fbbf24; }
+  .badge-teal { background: rgb(204 251 241 / 0.7); color: #0f766e; }
+  .dark .badge-teal { background: rgb(19 78 74 / 0.4); color: #5eead4; }
+  .badge-red { background: rgb(254 226 226 / 0.7); color: #dc2626; }
+  .dark .badge-red { background: rgb(127 29 29 / 0.4); color: #f87171; }
+  .badge-green { background: rgb(220 252 231 / 0.7); color: #169C76; }
+  .dark .badge-green { background: rgb(20 83 45 / 0.4); color: #20B78C; }
+  .badge-warn { background: rgb(254 243 199 / 0.7); color: #b45309; }
+  .dark .badge-warn { background: rgb(120 53 15 / 0.4); color: #fbbf24; }
+  /* Theme toggle button */
+  #theme-toggle { transition: opacity 0.2s; }
+  #theme-toggle:hover { opacity: 0.8; }
+  #theme-toggle .sun { display: none; }
+  #theme-toggle .moon { display: block; }
+  .dark #theme-toggle .sun { display: block; }
+  .dark #theme-toggle .moon { display: none; }
+</style>
+</head>
+<body class="bg-pg h-screen flex flex-col overflow-hidden">
+
+<!-- Header -->
+<header class="border-b border-bdr bg-pg flex-shrink-0">
+  <div class="w-[85vw] mx-auto py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <!-- LattIQ Logo -->
+        <div class="flex items-center space-x-2">
+          <svg class="h-8 w-8" viewBox="0 0 75 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g filter="url(#f0)"><path d="M18.3252 30.1134C21.7015 33.4905 21.7051 38.9624 18.3332 42.3351C14.9613 45.7079 9.49091 45.7043 6.11465 42.3272C2.73838 38.95 2.73481 33.4782 6.10668 30.1054C9.47854 26.7327 14.949 26.7363 18.3252 30.1134Z" fill="url(#p0)"/><path d="M22.0196 22.9629C13.7227 31.262 11.7459 24.462 6.1053 30.1041L18.332 42.3339C25.0165 35.6476 16.2589 34.0296 24.5559 25.7305C32.8528 17.4314 35.1622 25.0386 41.9705 18.6894L29.7438 6.45953C23.1592 13.0458 30.3165 14.6639 22.0196 22.9629Z" fill="url(#p1)"/><path d="M41.4927 6.93726C44.869 10.3144 44.8725 15.7862 41.5007 19.159C38.3695 21.9773 32.6584 22.5281 29.2821 19.151C25.9058 15.7739 25.9023 10.302 29.2741 6.92929C32.646 3.55656 38.1164 3.56013 41.4927 6.93726Z" fill="url(#p2)"/></g>
+            <g filter="url(#f1)"><path d="M45.0674 30.1134C48.4437 33.4905 48.4473 38.9624 45.0754 42.3351C41.7035 45.7079 36.2331 45.7043 32.8568 42.3272C29.4806 38.95 29.477 33.4782 32.8489 30.1054C36.2207 26.7327 41.6912 26.7363 45.0674 30.1134Z" fill="url(#p3)"/><path d="M48.7618 22.9629C40.4648 31.262 38.4881 24.462 32.8475 30.1041L45.0742 42.3339C51.7587 35.6476 43.0011 34.0296 51.2981 25.7305C59.595 17.4314 61.9044 25.0386 68.7126 18.6894L56.486 6.45953C49.9014 13.0458 57.0587 14.6639 48.7618 22.9629Z" fill="url(#p4)"/><path d="M68.2349 6.93726C71.6111 10.3144 71.6147 15.7862 68.2429 19.159C65.1117 21.9773 59.4006 22.5281 56.0243 19.151C52.648 15.7739 52.6445 10.302 56.0163 6.92929C59.3882 3.55656 64.8586 3.56013 68.2349 6.93726Z" fill="url(#p5)"/></g>
+            <g filter="url(#f2)"><path d="M44.8409 56.84C48.2171 60.2171 48.2207 65.689 44.8488 69.0617C41.477 72.4344 36.0065 72.4308 32.6303 69.0537C29.254 65.6766 29.2504 60.2047 32.6223 56.832C35.9942 53.4593 41.4646 53.4628 44.8409 56.84Z" fill="url(#p6)"/><path d="M48.5352 49.6895C40.2383 57.9886 38.2615 51.1886 32.6209 56.8306L44.8476 69.0605C51.5321 62.3742 42.7746 60.7562 51.0715 52.4571C59.3685 44.158 61.6778 51.7652 68.4861 45.4159L56.2594 33.1861C49.6748 39.7724 56.8322 41.3904 48.5352 49.6895Z" fill="url(#p7)"/><path d="M68.0083 33.6638C71.3846 37.041 71.3882 42.5128 68.0163 45.8855C64.8852 48.7039 59.174 49.2547 55.7977 45.8776C52.4215 42.5004 52.4179 37.0286 55.7898 33.6559C59.1616 30.2831 64.6321 30.2867 68.0083 33.6638Z" fill="url(#p8)"/></g>
+            <ellipse cx="12.3339" cy="62.9534" rx="8.64644" ry="8.64866" fill="#20B78C"/><ellipse cx="62.1386" cy="63.1799" rx="8.64644" ry="8.64866" fill="#20B78C"/><ellipse cx="12.3339" cy="13.1565" rx="8.64644" ry="8.64866" fill="#20B78C"/>
+            <defs>
+              <filter id="f0" x="2.2" y="4.4" width="43.2" height="43.2" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="bg"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="a"/><feOffset dy="1.37"/><feGaussianBlur stdDeviation="0.68"/><feComposite in2="a" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend in2="bg" result="s"/><feBlend in="SourceGraphic" in2="s" result="shape"/></filter>
+              <filter id="f1" x="29" y="4.4" width="43.2" height="43.2" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="bg"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="a"/><feOffset dy="1.37"/><feGaussianBlur stdDeviation="0.68"/><feComposite in2="a" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend in2="bg" result="s"/><feBlend in="SourceGraphic" in2="s" result="shape"/></filter>
+              <filter id="f2" x="28.7" y="31.1" width="43.2" height="43.2" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="bg"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="a"/><feOffset dy="1.37"/><feGaussianBlur stdDeviation="0.68"/><feComposite in2="a" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend in2="bg" result="s"/><feBlend in="SourceGraphic" in2="s" result="shape"/></filter>
+              <linearGradient id="p0" x1="4.4" y1="44.4" x2="48.9" y2="-.1" gradientUnits="userSpaceOnUse"><stop stop-color="#20B78C"/><stop offset=".46" stop-color="#0D5853"/><stop offset="1" stop-color="#20B78C"/></linearGradient>
+              <linearGradient id="p1" x1="4.4" y1="44.4" x2="48.9" y2="-.1" gradientUnits="userSpaceOnUse"><stop stop-color="#20B78C"/><stop offset=".46" stop-color="#0D5853"/><stop offset="1" stop-color="#20B78C"/></linearGradient>
+              <linearGradient id="p2" x1="4.4" y1="44.4" x2="48.9" y2="-.1" gradientUnits="userSpaceOnUse"><stop stop-color="#20B78C"/><stop offset=".46" stop-color="#0D5853"/><stop offset="1" stop-color="#20B78C"/></linearGradient>
+              <linearGradient id="p3" x1="31.1" y1="44.4" x2="75.6" y2="-.1" gradientUnits="userSpaceOnUse"><stop stop-color="#20B78C"/><stop offset=".46" stop-color="#0D5853"/><stop offset="1" stop-color="#20B78C"/></linearGradient>
+              <linearGradient id="p4" x1="31.1" y1="44.4" x2="75.6" y2="-.1" gradientUnits="userSpaceOnUse"><stop stop-color="#20B78C"/><stop offset=".46" stop-color="#0D5853"/><stop offset="1" stop-color="#20B78C"/></linearGradient>
+              <linearGradient id="p5" x1="31.1" y1="44.4" x2="75.6" y2="-.1" gradientUnits="userSpaceOnUse"><stop stop-color="#20B78C"/><stop offset=".46" stop-color="#0D5853"/><stop offset="1" stop-color="#20B78C"/></linearGradient>
+              <linearGradient id="p6" x1="30.9" y1="71.1" x2="75.4" y2="26.6" gradientUnits="userSpaceOnUse"><stop stop-color="#20B78C"/><stop offset=".46" stop-color="#0D5853"/><stop offset="1" stop-color="#20B78C"/></linearGradient>
+              <linearGradient id="p7" x1="30.9" y1="71.1" x2="75.4" y2="26.6" gradientUnits="userSpaceOnUse"><stop stop-color="#20B78C"/><stop offset=".46" stop-color="#0D5853"/><stop offset="1" stop-color="#20B78C"/></linearGradient>
+              <linearGradient id="p8" x1="30.9" y1="71.1" x2="75.4" y2="26.6" gradientUnits="userSpaceOnUse"><stop stop-color="#20B78C"/><stop offset=".46" stop-color="#0D5853"/><stop offset="1" stop-color="#20B78C"/></linearGradient>
+            </defs>
+          </svg>
+          <span class="font-brand font-semibold tracking-wider text-2xl"><span style="color:var(--c-brand-text)">LATT</span><span style="color:#169C76">IQ</span></span>
+        </div>
+        <span class="text-ft text-lg mx-3">/</span>
+        <span class="font-brand font-medium tracking-wide text-xl text-mt">DATAPRISM</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center text-xs text-sb">
+          <span>Exploratory Data Analysis</span>
+          <span id="header-feature-count" class="ml-2"></span>
+        </div>
+        <div id="header-subtitle-sep" class="w-px h-4 bg-bdr hidden"></div>
+        <div id="header-subtitle" class="text-xs text-sb"></div>
+        <div id="header-meta" class="flex items-center text-xs text-sb"></div>
+        <!-- Theme toggle -->
+        <button id="theme-toggle" class="p-2 rounded-lg border border-bdr text-mt hover:text-hd" title="Toggle light/dark theme">
+          <svg class="sun h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="moon h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="app" class="w-[85vw] mx-auto py-6 flex-1 flex flex-col overflow-hidden">
+  <!-- Tabs -->
+  <div class="border-b border-bdr mb-4 flex-shrink-0">
+    <nav class="flex gap-6" id="tab-nav">
+      <button data-tab="summary" class="tab-active pb-3 border-b-2 text-sm font-medium transition-colors">Summary</button>
+      <button data-tab="catalog" class="tab-inactive pb-3 border-b-2 text-sm font-medium transition-colors">Catalog</button>
+      <button data-tab="deepdive" class="tab-inactive pb-3 border-b-2 text-sm font-medium transition-colors">Deep Dive</button>
+      <button data-tab="associations" class="tab-inactive pb-3 border-b-2 text-sm font-medium transition-colors">Associations</button>
+    </nav>
+  </div>
+
+  <!-- Tab panels -->
+  <div id="panel-summary" class="fade-in flex-1 overflow-y-auto"></div>
+  <div id="panel-catalog" class="hidden fade-in flex-1 overflow-y-auto"></div>
+  <div id="panel-deepdive" class="hidden fade-in flex-1 overflow-hidden flex flex-col"></div>
+  <div id="panel-associations" class="hidden fade-in flex-1 overflow-y-auto"></div>
+</div>
+
+<!-- Footer -->
+<footer class="border-t border-bdr bg-pg py-3 flex-shrink-0">
+  <div class="w-[85vw] mx-auto flex items-center justify-center text-xs text-ft">
+    <span>&copy; 2026 LattIQ. All rights reserved.</span>
+    <span class="mx-2 opacity-50">&bull;</span>
+    <span class="flex items-center space-x-1.5">
+      <svg class="h-3 w-3 text-lattiq-500/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>ISO 27001 Certified</span>
+    </span>
+  </div>
+</footer>
+
+<script>
+// ── Data ──
+var DATA = __EDA_DATA_PLACEHOLDER__;
+
+// ── State ──
+var S = {
+  tab: 'summary',
+  catalogSearch: '',
+  catalogFilterType: '',
+  catalogFilterProvider: '',
+  catalogSort: { key: 'feature_name', dir: 'asc' },
+  catalogPage: 1,
+  catalogPageSize: 10,
+  selectedFeature: null,
+  deepDiveSearch: '',
+  deepDiveFilterType: '',
+  deepDiveFilterProvider: '',
+  deepDiveSort: { key: 'feature_name', dir: 'asc' },
+  deepDivePage: 1,
+  deepDivePageSize: 10,
+  psiMode: 'cohort',
+  charts: {},
+};
+
+// ── Helpers ──
+var _escDiv = document.createElement('div');
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  _escDiv.textContent = String(str);
+  return _escDiv.innerHTML;
+}
+
+function fmt(v, dec) {
+  if (dec === undefined) dec = 2;
+  if (v === null || v === undefined) return '\u2014';
+  if (typeof v === 'number') {
+    if (Number.isInteger(v) && Math.abs(v) < 1e6) return v.toLocaleString();
+    return v.toFixed(dec);
+  }
+  return esc(String(v));
+}
+
+function pct(v) {
+  if (v === null || v === undefined) return '\u2014';
+  return v.toFixed(2) + '%';
+}
+
+function getType(f) { return (f.type || f.variable_type || '').toLowerCase(); }
+function isContinuous(f) { return getType(f) === 'continuous'; }
+function getProvider(f) { return f.source?.provider || f.metadata?.provider || '\u2014'; }
+function getMissing(f) { return f.statistics?.missing_percentage ?? null; }
+function getCorrelation(f) {
+  var tr = f.target_relationship;
+  if (!tr) return null;
+  if (tr.correlation_pearson != null) return Math.abs(tr.correlation_pearson);
+  if (tr.correlation_ratio != null) return Math.abs(tr.correlation_ratio);
+  return null;
+}
+function getCorrMethod(f) {
+  var tr = f.target_relationship;
+  if (!tr) return '';
+  if (tr.correlation_pearson != null) return 'pearson';
+  if (tr.correlation_ratio != null) return 'eta';
+  return '';
+}
+function getIV(f) { return f.target_relationship?.information_value ?? null; }
+function getStability(f) {
+  if (!f.stability) return null;
+  var mode = S.psiMode;
+  if (mode === 'cohort') { var cb = f.stability.cohort_based; return cb ? cb.psi : null; }
+  if (mode === 'time') { var tb = f.stability.time_based; return tb ? tb.psi : null; }
+  return null;
+}
+var _hasBothPsi = null;
+function hasBothPsi() {
+  if (_hasBothPsi !== null) return _hasBothPsi;
+  var hasCohort = false, hasTime = false;
+  for (var i = 0; i < features.length; i++) {
+    var s = features[i].stability;
+    if (s && s.cohort_based && s.cohort_based.psi != null) hasCohort = true;
+    if (s && s.time_based && s.time_based.psi != null) hasTime = true;
+    if (hasCohort && hasTime) break;
+  }
+  _hasBothPsi = hasCohort && hasTime;
+  if (hasCohort && !hasTime) S.psiMode = 'cohort';
+  else if (!hasCohort && hasTime) S.psiMode = 'time';
+  return _hasBothPsi;
+}
+function psiToggleHtml(idPrefix) {
+  if (!hasBothPsi()) return '';
+  var cls = 'px-2.5 py-1.5 text-xs cursor-pointer transition-colors';
+  var onCls = 'bg-accent text-white';
+  var offCls = 'text-sb hover:text-bd';
+  return '<div class="flex items-center gap-2 flex-shrink-0">'
+    + '<span class="text-xs text-sb">PSI</span>'
+    + '<span class="inline-flex border border-inp rounded-lg overflow-hidden bg-srf">'
+    + '<span class="' + cls + ' ' + (S.psiMode === 'cohort' ? onCls : offCls) + '" data-psi-mode="cohort">Cohort</span>'
+    + '<span class="' + cls + ' ' + (S.psiMode === 'time' ? onCls : offCls) + '" data-psi-mode="time">Time</span>'
+    + '</span></div>';
+}
+
+function qualityColor(s) { if (s == null) return 'text-sb'; if (s >= 8) return 'text-good'; if (s >= 5) return 'text-warn'; return 'text-bad'; }
+function qualityBarColor(s) { if (s == null) return 'bg-sb'; if (s >= 8) return 'bg-good'; if (s >= 5) return 'bg-warn'; return 'bg-bad'; }
+function stabilityColor(p) { if (p == null) return 'text-sb'; if (p < 0.1) return 'text-good'; if (p < 0.25) return 'text-warn'; return 'text-bad'; }
+
+function typeBadge(type) {
+  var t = type.toLowerCase();
+  if (t === 'continuous') return 'badge-type-continuous';
+  if (t === 'categorical') return 'badge-type-categorical';
+  return 'badge-neutral';
+}
+
+var summary = DATA.summary || {};
+var meta = DATA.metadata || {};
+var features = DATA.features || [];
+var datasetInfo = summary.dataset_info || DATA.dataset_info || {};
+var providerRates = summary.provider_match_rates || DATA.provider_match_rates || {};
+var topFeatures = summary.top_features_by_statistical_score || DATA.top_features_by_statistical_score || [];
+var featureCounts = summary.feature_counts || {};
+var highestMetrics = summary.highest_metrics || DATA.highest_metrics || {};
+var dataQuality = summary.data_quality || DATA.data_quality || {};
+
+function setPanel(id, h) { document.getElementById(id).innerHTML = h; }
+
+// ── Theme toggle ──
+function toggleTheme() {
+  var html = document.documentElement;
+  var isDark = html.classList.toggle('dark');
+  localStorage.setItem('dataprism-theme', isDark ? 'dark' : 'light');
+  // Re-render current tab to update chart colors
+  if (S.tab === 'deepdive') renderDeepDive();
+  else if (S.tab === 'associations') renderAssociations();
+}
+
+// ── Render: Header ──
+function renderHeader() {
+  var name = meta.dataset_name || '';
+  var ts = meta.timestamp ? new Date(meta.timestamp).toLocaleString() : '';
+  var ver = meta.version || '';
+  var execTime = meta.execution_time_seconds;
+  var featureCount = summary.total_features || features.filter(function(f){return !f.is_target;}).length;
+  var fcEl = document.getElementById('header-feature-count');
+  fcEl.textContent = '\u00b7  ' + featureCount + ' features';
+  var sub = document.getElementById('header-subtitle');
+  var subSep = document.getElementById('header-subtitle-sep');
+  if (name) { sub.textContent = name; subSep.classList.remove('hidden'); }
+  else { sub.textContent = ''; subSep.classList.add('hidden'); }
+  var metaEl = document.getElementById('header-meta');
+  metaEl.textContent = '';
+  var parts = [];
+  if (ver) parts.push('v' + ver);
+  if (execTime != null) parts.push(fmt(execTime) + 's');
+  if (ts) parts.push(ts);
+  if (parts.length) { var span = document.createElement('span'); span.textContent = parts.join('  \u00b7  '); metaEl.appendChild(span); }
+}
+
+// ── Render: Summary ──
+function renderSummary() {
+  var totalFeatures = summary.total_features || features.filter(function(f){return !f.is_target;}).length;
+  var avgMissing = summary.avg_missing_percentage;
+  var avgOutliers = summary.avg_outliers_percentage;
+  var ftypes = summary.feature_types || meta.feature_types || {};
+  var quality = dataQuality;
+  var qScore = quality.overall_score;
+  var h = '';
+
+  var datasetMissing = datasetInfo.missing_percentage;
+  var displayMissing = datasetMissing != null ? datasetMissing : avgMissing;
+  var di = datasetInfo;
+  h += '<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">';
+  h += metricCard('Dataset', di.rows ? esc(di.rows.toLocaleString()) + ' rows' : '\u2014', (di.columns ? esc(di.columns) + ' cols' : '') + (di.duplicate_rows ? ' \u00b7 ' + esc(di.duplicate_rows.toLocaleString()) + ' dupes' : '') + (di.memory_mb ? ' \u00b7 ' + fmt(di.memory_mb) + ' MB' : ''));
+  h += metricCard('Total Features', totalFeatures, subtypeBreakdown(ftypes));
+  h += metricCard('Avg Missing', displayMissing != null ? pct(displayMissing) : '\u2014', quality.features_with_high_missing_count != null ? esc(quality.features_with_high_missing_count) + ' high-missing' : '');
+  h += metricCard('Avg Outliers', avgOutliers != null ? pct(avgOutliers) : '\u2014', quality.features_with_outliers_count != null ? esc(quality.features_with_outliers_count) + ' with outliers' : '');
+  h += '</div>';
+
+  // Top row: Insights (left 50%) | Top Features (right 50%)
+  var hmEntries = Object.entries(highestMetrics).filter(function(e) { return e[1] && e[1].feature_name; });
+  var fcEntries = Object.entries(featureCounts);
+  var hasInsights = hmEntries.length > 0 || fcEntries.length > 0;
+  var hasTopFeatures = topFeatures.length > 0;
+
+  if (hasInsights || hasTopFeatures) {
+    h += '<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">';
+
+    // Left: Insights (Highest Metrics + Feature Counts as flat line items)
+    if (hasInsights) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-4">Insights</h3>';
+      h += '<table class="w-full text-sm"><tbody>';
+      if (hmEntries.length > 0) {
+        for (var i = 0; i < hmEntries.length; i++) {
+          var key = hmEntries[i][0], val = hmEntries[i][1];
+          var label = 'Highest ' + key.replace('highest_', '').replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }).replace(/\bIv\b/g, 'IV');
+          h += '<tr class="border-b border-bdr"><td class="py-2.5 text-sb">' + esc(label) + '</td>'
+            + '<td class="py-2.5 text-bd">' + esc(val.feature_name) + '</td>'
+            + '<td class="py-2.5 text-right text-good">' + fmt(val.value, 4) + '</td></tr>';
+        }
+      }
+      var fcLabels = {
+        high_correlation: 'High Correlation',
+        redundant_features: 'Redundant',
+        high_iv: 'High Predictive Power',
+        high_stability: 'Stable Over Time',
+        high_missing: 'High Missing (>30%)',
+        constant_features: 'Constant',
+        low_variance: 'Low Variance',
+        not_recommended: 'Not Recommended',
+        highly_skewed: 'Highly Skewed',
+        high_kurtosis: 'Outlier-Prone',
+        high_cardinality: 'High Cardinality',
+        suspected_leakage: 'Suspected Leakage',
+        significant_correlations: 'Significant Correlations',
+        increasing_drift: 'Increasing Drift',
+        volatile_stability: 'Volatile Stability',
+        minor_shift: 'Minor Shift',
+        major_shift: 'Major Shift'
+      };
+      var warnKeys = {high_missing:1, constant_features:1, low_variance:1, not_recommended:1, suspected_leakage:1, increasing_drift:1, volatile_stability:1, major_shift:1};
+      if (fcEntries.length > 0) {
+        for (var i = 0; i < fcEntries.length; i++) {
+          var key = fcEntries[i][0], val = fcEntries[i][1];
+          if (key === 'predictive_power') continue; // rendered separately below
+          var count = typeof val === 'object' ? val.count : val;
+          if (count == null || count === 0) continue;
+          var label = fcLabels[key] || key.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }).replace(/\bIv\b/g, 'IV');
+          h += '<tr class="border-b border-bdr last:border-b-0"><td class="py-2.5 text-sb" colspan="2">' + esc(label) + '</td>'
+            + '<td class="py-2.5 text-right font-semibold ' + (warnKeys[key] ? 'text-warn' : 'text-hd') + '">' + esc(count) + '</td></tr>';
+        }
+        // Predictive power breakdown (special multi-value row)
+        var pp = featureCounts.predictive_power;
+        if (pp) {
+          var ppClasses = [
+            {key:'strong', label:'Strong', cls:'text-good'},
+            {key:'very_strong', label:'Very Strong', cls:'text-warn'},
+            {key:'medium', label:'Medium', cls:'text-hd'},
+            {key:'weak', label:'Weak', cls:'text-sb'},
+            {key:'unpredictive', label:'Unpredictive', cls:'text-sb'}
+          ];
+          var ppParts = [];
+          for (var j = 0; j < ppClasses.length; j++) {
+            var c = ppClasses[j], v = pp[c.key];
+            if (v > 0) ppParts.push('<span class="' + c.cls + '">' + esc(v) + ' ' + esc(c.label) + '</span>');
+          }
+          if (ppParts.length > 0) {
+            h += '<tr class="border-b border-bdr last:border-b-0"><td class="py-2.5 text-sb">Predictive Power</td>'
+              + '<td class="py-2.5 text-right text-xs" colspan="2">' + ppParts.join(' · ') + '</td></tr>';
+          }
+        }
+      }
+      h += '</tbody></table>';
+      h += '</div>';
+    }
+
+    // Right: Top Features table
+    if (hasTopFeatures) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-4">Top ' + topFeatures.length + ' Features by Information Value</h3>';
+      h += '<div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-sb text-xs uppercase">'
+        + '<th class="text-left py-2 pr-3">#</th><th class="text-left py-2 pr-3">Feature</th><th class="text-right py-2 pr-3">IV</th><th class="text-right py-2 pr-3">Assoc.</th><th class="text-right py-2">PSI</th>'
+        + '</tr></thead><tbody>';
+      for (var i = 0; i < topFeatures.length; i++) {
+        var f = topFeatures[i];
+        var ivVal = f.iv;
+        var ivColor = ivVal >= 0.5 ? 'text-warn' : ivVal >= 0.3 ? 'text-good' : ivVal >= 0.1 ? 'text-hd' : 'text-sb';
+        h += '<tr class="border-t border-bdr hover:bg-srfl cursor-pointer" data-goto-feature="' + esc(f.feature_name) + '">'
+          + '<td class="py-2 pr-3 text-sb">' + esc(f.rank) + '</td><td class="py-2 pr-3 text-bd">' + esc(f.feature_name) + '</td>'
+          + '<td class="py-2 pr-3 text-right ' + ivColor + '">' + fmt(ivVal, 4) + '</td>'
+          + '<td class="py-2 pr-3 text-right text-bd">' + fmt(f.association, 4) + '</td>'
+          + '<td class="py-2 text-right ' + stabilityColor(f.psi) + '">' + (f.psi != null ? fmt(f.psi, 4) : '\u2014') + '</td></tr>';
+      }
+      h += '</tbody></table></div></div>';
+    }
+
+    h += '</div>';
+  }
+
+  // Bottom row: Provider Match Rates (25%) | Data Quality (25%)
+  var providers = Object.entries(providerRates);
+  var hasProviders = providers.length > 0;
+  var hasQuality = qScore != null;
+
+  if (hasProviders || hasQuality) {
+    h += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">';
+
+    // Provider match rates
+    if (hasProviders) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-4">Provider Match Rates</h3>';
+      h += '<div class="space-y-3' + (providers.length > 4 ? ' overflow-y-auto' : '') + '"' + (providers.length > 4 ? ' style="max-height:240px"' : '') + '>';
+      for (var i = 0; i < providers.length; i++) {
+        var name = providers[i][0], pr = providers[i][1];
+        var rate = (pr.match_rate || pr.hit_rate || 0) * 100;
+        h += '<div><div class="flex justify-between text-sm mb-1"><span class="text-bd">' + esc(name) + '</span>'
+          + '<span class="' + (rate >= 90 ? 'text-good' : rate >= 70 ? 'text-warn' : 'text-bad') + '">' + pct(rate) + '</span></div>'
+          + '<div class="h-1.5 bg-trk rounded-full overflow-hidden"><div class="h-full rounded-full quality-bar ' + (rate >= 90 ? 'bg-good' : rate >= 70 ? 'bg-warn' : 'bg-bad') + '" style="width:' + rate + '%"></div></div>'
+          + '<div class="text-xs text-sb mt-1">' + esc(pr.total_features || 0) + ' features \u00b7 ' + esc((pr.matched_records || 0).toLocaleString()) + ' matched of ' + esc((pr.total_records || 0).toLocaleString()) + '</div></div>';
+      }
+      h += '</div></div>';
+    }
+
+    // Data quality
+    if (hasQuality) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-4">Data Quality</h3>';
+      h += '<div class="flex items-center gap-4 mb-4"><div class="text-4xl font-bold ' + qualityColor(qScore) + '">' + fmt(qScore, 1) + '</div>'
+        + '<div class="flex-1"><div class="h-3 bg-trk rounded-full overflow-hidden"><div class="h-full rounded-full quality-bar ' + qualityBarColor(qScore) + '" style="width:' + (qScore * 10) + '%"></div></div>'
+        + '<div class="text-xs text-sb mt-1">out of 10</div></div></div>';
+      if (quality.recommended_actions && quality.recommended_actions.length) {
+        h += '<div class="space-y-2 mt-3">';
+        for (var i = 0; i < quality.recommended_actions.length; i++) {
+          h += '<div class="flex items-start gap-2 text-xs text-mt"><span class="text-warn mt-0.5">\u2022</span><span>' + esc(quality.recommended_actions[i]) + '</span></div>';
+        }
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+
+    h += '</div>';
+  }
+  setPanel('panel-summary', h);
+}
+
+function metricCard(label, value, sub, qScore) {
+  var extra = qScore != null ? qualityColor(qScore) : '';
+  return '<div class="bg-srf rounded-xl p-5 border border-bdr">'
+    + '<div class="text-xs text-sb uppercase tracking-wider mb-1">' + esc(label) + '</div>'
+    + '<div class="text-2xl font-bold text-hd ' + extra + '">' + esc(value) + '</div>'
+    + (sub ? '<div class="text-xs text-sb mt-1">' + sub + '</div>' : '') + '</div>';
+}
+
+function subtypeBreakdown(ft) {
+  var p = [];
+  if (ft.continuous) p.push(ft.continuous + ' continuous');
+  if (ft.categorical) p.push(ft.categorical + ' categorical');
+  if (ft.datetime) p.push(ft.datetime + ' datetime');
+  if (ft.text) p.push(ft.text + ' text');
+  return esc(p.join(', '));
+}
+
+function infoCell(l, v) {
+  return '<div><span class="text-sb">' + esc(l) + ':</span> <span class="text-bd">' + esc(v) + '</span></div>';
+}
+
+// ── Render: Catalog ──
+function renderCatalog() {
+  // Collect unique types and providers for filter dropdowns
+  var typeSet = {}, providerSet = {};
+  for (var i = 0; i < features.length; i++) {
+    var t = (features[i].type || features[i].variable_type || '').toLowerCase();
+    if (t) typeSet[t] = true;
+    var p = getProvider(features[i]);
+    if (p && p !== '\u2014') providerSet[p] = true;
+  }
+  var types = Object.keys(typeSet).sort();
+  var providers = Object.keys(providerSet).sort();
+
+  var search = S.catalogSearch.toLowerCase();
+  var ft = S.catalogFilterType, fp = S.catalogFilterProvider;
+  var filtered = features.filter(function(f) {
+    if (f.is_target) return false;
+    if (ft && getType(f) !== ft) return false;
+    if (fp && getProvider(f) !== fp) return false;
+    return f.feature_name.toLowerCase().includes(search)
+      || (f.description || '').toLowerCase().includes(search)
+      || (f.display_name || '').toLowerCase().includes(search)
+      || getProvider(f).toLowerCase().includes(search)
+      || getType(f).toLowerCase().includes(search);
+  });
+  var sk = S.catalogSort.key, sd = S.catalogSort.dir;
+  filtered.sort(function(a, b) {
+    var va = getSortValue(a, sk), vb = getSortValue(b, sk);
+    if (va == null) va = sd === 'asc' ? Infinity : -Infinity;
+    if (vb == null) vb = sd === 'asc' ? Infinity : -Infinity;
+    if (typeof va === 'string') { var c = va.localeCompare(vb); return sd === 'asc' ? c : -c; }
+    return sd === 'asc' ? va - vb : vb - va;
+  });
+
+  var selCls = 'bg-srf border border-inp rounded-lg px-3 py-2.5 text-sm text-bd focus:border-accent focus:outline-none appearance-none cursor-pointer';
+
+  var h = '<div class="mb-4 flex items-center gap-3">'
+    + '<input type="text" id="catalog-search" placeholder="Search features by name, type, or provider..."'
+    + ' value="' + esc(S.catalogSearch) + '" class="flex-1 bg-srf border border-inp rounded-lg px-4 py-2.5 text-sm text-bd placeholder-sb focus:border-accent focus:outline-none">';
+
+  // Type filter
+  h += '<select id="catalog-filter-type" class="' + selCls + '">'
+    + '<option value="">All Types</option>';
+  for (var i = 0; i < types.length; i++) {
+    h += '<option value="' + esc(types[i]) + '"' + (ft === types[i] ? ' selected' : '') + '>' + esc(types[i].charAt(0).toUpperCase() + types[i].slice(1)) + '</option>';
+  }
+  h += '</select>';
+
+  // Provider filter (only show if providers exist)
+  if (providers.length > 0) {
+    h += '<select id="catalog-filter-provider" class="' + selCls + '">'
+      + '<option value="">All Providers</option>';
+    for (var i = 0; i < providers.length; i++) {
+      h += '<option value="' + esc(providers[i]) + '"' + (fp === providers[i] ? ' selected' : '') + '>' + esc(providers[i]) + '</option>';
+    }
+    h += '</select>';
+  }
+
+  // PSI toggle (if both cohort and time exist)
+  h += psiToggleHtml('catalog');
+
+  h += '</div>';
+
+  h += '<div class="bg-srf rounded-xl border border-bdr overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm">';
+  h += '<thead><tr class="text-sb text-xs uppercase bg-srfl">';
+  var hasProvider = features.some(function(f) { var p = getProvider(f); return p && p !== '\u2014'; });
+  var cols = [{k:'feature_name',l:'Name',a:'left'},{k:'type',l:'Type',a:'left'}];
+  if (hasProvider) cols.push({k:'provider',l:'Provider',a:'left'});
+  cols.push({k:'missing',l:'Missing %',a:'right'},{k:'correlation',l:'Tgt Corr',a:'right'},{k:'iv',l:'IV',a:'right'},{k:'stability',l:'PSI',a:'right'});
+  for (var i = 0; i < cols.length; i++) {
+    var c = cols[i], sc = S.catalogSort.key === c.k ? (S.catalogSort.dir === 'asc' ? 'sort-asc' : 'sort-desc') : 'sort-icon';
+    h += '<th class="text-' + c.a + ' py-3 px-4 cursor-pointer select-none ' + sc + '" data-sort="' + c.k + '">' + c.l + '</th>';
+  }
+  h += '</tr></thead><tbody>';
+
+  // Pagination
+  var totalFiltered = filtered.length;
+  var ps = S.catalogPageSize;
+  var totalPages = Math.max(1, Math.ceil(totalFiltered / ps));
+  if (S.catalogPage > totalPages) S.catalogPage = totalPages;
+  var startIdx = (S.catalogPage - 1) * ps;
+  var pageItems = filtered.slice(startIdx, startIdx + ps);
+
+  for (var i = 0; i < pageItems.length; i++) {
+    var f = pageItems[i], miss = getMissing(f), corr = getCorrelation(f), cm = getCorrMethod(f), iv = getIV(f), psi = getStability(f);
+    var type = f.type || f.variable_type || '\u2014', prov = getProvider(f);
+    var sel = S.selectedFeature === f.feature_name ? 'selected' : '';
+    h += '<tr class="catalog-row border-t border-bdr cursor-pointer ' + sel + '" data-feature="' + esc(f.feature_name) + '">'
+      + '<td class="py-2.5 px-4 text-bd" title="' + esc(f.description || '') + '">' + esc(f.feature_name) + '</td>'
+      + '<td class="py-2.5 px-4"><span class="px-2 py-0.5 rounded-full text-xs ' + typeBadge(type) + '">' + esc(type) + '</span></td>'
+      + (hasProvider ? '<td class="py-2.5 px-4 text-mt">' + esc(prov) + '</td>' : '')
+      + '<td class="py-2.5 px-4 text-right ' + (miss != null && miss > 30 ? 'text-bad' : miss != null && miss > 10 ? 'text-warn' : 'text-mt') + '">' + (miss != null ? pct(miss) : '\u2014') + '</td>'
+      + '<td class="py-2.5 px-4 text-right">' + (corr != null ? '<div class="text-mt">' + fmt(corr, 4) + '</div><div class="text-xs text-sb">' + cm + '</div>' : '\u2014') + '</td>'
+      + '<td class="py-2.5 px-4 text-right text-mt">' + (iv != null ? fmt(iv, 4) : '\u2014') + '</td>'
+      + '<td class="py-2.5 px-4 text-right ' + stabilityColor(psi) + '">' + (psi != null ? fmt(psi, 4) : '\u2014') + '</td></tr>';
+  }
+  h += '</tbody></table></div>';
+
+  // Footer with pagination controls
+  h += '<div class="px-4 py-3 text-xs border-t border-bdr bg-srfl flex items-center justify-between">';
+  h += '<div class="flex items-center gap-2 text-sb">'
+    + '<span>Rows per page</span>'
+    + '<select id="catalog-page-size" class="bg-srf border border-inp rounded px-2 py-1 text-xs text-bd focus:border-accent focus:outline-none">';
+  [10, 20, 30].forEach(function(n) { h += '<option value="' + n + '"' + (ps === n ? ' selected' : '') + '>' + n + '</option>'; });
+  h += '</select>'
+    + '<span class="ml-2">' + (totalFiltered > 0 ? (startIdx + 1) + '\u2013' + Math.min(startIdx + ps, totalFiltered) + ' of ' + totalFiltered : '0 of 0') + '</span>'
+    + '</div>';
+  h += '<div class="flex items-center gap-1">';
+  h += '<button data-catalog-page="1" class="px-2 py-1 rounded border border-bdr text-sb hover:text-bd disabled:opacity-30" ' + (S.catalogPage <= 1 ? 'disabled' : '') + '>&laquo;</button>';
+  h += '<button data-catalog-page="' + (S.catalogPage - 1) + '" class="px-2 py-1 rounded border border-bdr text-sb hover:text-bd disabled:opacity-30" ' + (S.catalogPage <= 1 ? 'disabled' : '') + '>&lsaquo;</button>';
+  h += '<span class="px-2 text-sb">Page ' + S.catalogPage + ' of ' + totalPages + '</span>';
+  h += '<button data-catalog-page="' + (S.catalogPage + 1) + '" class="px-2 py-1 rounded border border-bdr text-sb hover:text-bd disabled:opacity-30" ' + (S.catalogPage >= totalPages ? 'disabled' : '') + '>&rsaquo;</button>';
+  h += '<button data-catalog-page="' + totalPages + '" class="px-2 py-1 rounded border border-bdr text-sb hover:text-bd disabled:opacity-30" ' + (S.catalogPage >= totalPages ? 'disabled' : '') + '>&raquo;</button>';
+  h += '</div></div></div>';
+  // Preserve focus & cursor position in search input across re-renders
+  var activeId = document.activeElement && document.activeElement.id;
+  var cursorPos = (activeId === 'catalog-search') ? document.activeElement.selectionStart : null;
+  setPanel('panel-catalog', h);
+  if (cursorPos !== null) {
+    var el = document.getElementById('catalog-search');
+    if (el) { el.focus(); el.setSelectionRange(cursorPos, cursorPos); }
+  }
+}
+
+function getSortValue(f, k) {
+  switch(k) {
+    case 'feature_name': return f.feature_name.toLowerCase();
+    case 'type': return (f.type || f.variable_type || '').toLowerCase();
+    case 'provider': return getProvider(f).toLowerCase();
+    case 'missing': return getMissing(f);
+    case 'correlation': return getCorrelation(f);
+    case 'iv': return getIV(f);
+    case 'stability': return getStability(f);
+    default: return null;
+  }
+}
+
+// ── Render: Deep Dive ──
+function renderDeepDive() {
+  // Collect unique types and providers for filter dropdowns
+  var typeSet = {}, providerSet = {};
+  for (var i = 0; i < features.length; i++) {
+    var t = (features[i].type || features[i].variable_type || '').toLowerCase();
+    if (t) typeSet[t] = true;
+    var p = getProvider(features[i]);
+    if (p && p !== '\u2014') providerSet[p] = true;
+  }
+  var types = Object.keys(typeSet).sort();
+  var providers = Object.keys(providerSet).sort();
+  var hasProvider = providers.length > 0;
+
+  // Filter (exclude target — it has its own selector above)
+  var search = S.deepDiveSearch.toLowerCase();
+  var ft = S.deepDiveFilterType, fp = S.deepDiveFilterProvider;
+  var filtered = features.filter(function(f) {
+    if (f.is_target) return false;
+    if (ft && getType(f) !== ft) return false;
+    if (fp && getProvider(f) !== fp) return false;
+    return f.feature_name.toLowerCase().includes(search)
+      || (f.description || '').toLowerCase().includes(search)
+      || (f.display_name || '').toLowerCase().includes(search)
+      || getProvider(f).toLowerCase().includes(search)
+      || getType(f).toLowerCase().includes(search);
+  });
+
+  // Sort
+  var sk = S.deepDiveSort.key, sd = S.deepDiveSort.dir;
+  filtered.sort(function(a, b) {
+    var va = getSortValue(a, sk), vb = getSortValue(b, sk);
+    if (va == null) va = sd === 'asc' ? Infinity : -Infinity;
+    if (vb == null) vb = sd === 'asc' ? Infinity : -Infinity;
+    if (typeof va === 'string') { var c = va.localeCompare(vb); return sd === 'asc' ? c : -c; }
+    return sd === 'asc' ? va - vb : vb - va;
+  });
+
+  // Default to target variable if nothing selected yet
+  var targetFeat = features.find(function(f) { return f.is_target; });
+  if (!S.selectedFeature && targetFeat) S.selectedFeature = targetFeat.feature_name;
+  var selected = S.selectedFeature ? features.find(function(f) { return f.feature_name === S.selectedFeature; }) : (filtered[0] || null);
+  if (selected && S.selectedFeature !== selected.feature_name) S.selectedFeature = selected.feature_name;
+
+  // Pagination
+  var totalFiltered = filtered.length;
+  var ps = S.deepDivePageSize;
+  var totalPages = Math.max(1, Math.ceil(totalFiltered / ps));
+  if (S.deepDivePage > totalPages) S.deepDivePage = totalPages;
+  var startIdx = (S.deepDivePage - 1) * ps;
+  var pageItems = filtered.slice(startIdx, startIdx + ps);
+
+  var h = '<div class="flex gap-6 h-full">';
+  // Left panel: catalog-style table at 40% width, fixed in view
+  h += '<div style="width:40%;flex-shrink:0;display:flex;flex-direction:column;height:100%;overflow:hidden;">';
+
+  // Target variable selector
+  var targetFeature = features.find(function(f) { return f.is_target; });
+  if (targetFeature) {
+    var isSel = S.selectedFeature === targetFeature.feature_name;
+    h += '<div class="flex-shrink-0 mb-3">';
+    h += '<div class="rounded-xl border ' + (isSel ? 'bg-srf border-accent' : 'bg-srfl border-bdr hover:border-accent') + ' p-3 cursor-pointer transition-colors" data-select-feature="' + esc(targetFeature.feature_name) + '">';
+    h += '<div class="flex items-center gap-2">';
+    h += '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold badge-amber uppercase tracking-wider">Target</span>';
+    h += '<span class="text-sm font-medium text-bd">' + esc(targetFeature.feature_name) + '</span>';
+    if (targetFeature.display_name && targetFeature.display_name !== targetFeature.feature_name) {
+      h += '<span class="text-xs text-mt">\u2014 ' + esc(targetFeature.display_name) + '</span>';
+    }
+    var tDist = targetFeature.distribution || {};
+    var tStats = targetFeature.statistics || {};
+    if (tDist.value_counts) {
+      var cats = Object.keys(tDist.value_counts);
+      h += '<span class="text-xs text-sb ml-auto">' + cats.length + ' classes</span>';
+    } else if (tStats.count != null) {
+      h += '<span class="text-xs text-sb ml-auto">' + tStats.count.toLocaleString() + ' values</span>';
+    }
+    h += '<svg class="w-4 h-4 text-sb flex-shrink-0' + (isSel ? ' text-accent' : '') + '" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>';
+    h += '</div></div></div>';
+  }
+
+  // Search + filters row
+  var selCls = 'bg-srf border border-inp rounded px-2 py-1.5 text-xs text-bd focus:border-accent focus:outline-none appearance-none cursor-pointer';
+  h += '<div class="flex-shrink-0 mb-3 flex flex-col gap-2">';
+  h += '<input type="text" id="deepdive-search" placeholder="Search features..."'
+    + ' value="' + esc(S.deepDiveSearch) + '" class="w-full bg-srf border border-inp rounded-lg px-3 py-2 text-sm text-bd placeholder-sb focus:border-accent focus:outline-none">';
+  h += '<div class="flex gap-2">';
+  h += '<select id="deepdive-filter-type" class="flex-1 ' + selCls + '">'
+    + '<option value="">All Types</option>';
+  for (var i = 0; i < types.length; i++) {
+    h += '<option value="' + esc(types[i]) + '"' + (ft === types[i] ? ' selected' : '') + '>' + esc(types[i].charAt(0).toUpperCase() + types[i].slice(1)) + '</option>';
+  }
+  h += '</select>';
+  if (hasProvider) {
+    h += '<select id="deepdive-filter-provider" class="flex-1 ' + selCls + '">'
+      + '<option value="">All Providers</option>';
+    for (var i = 0; i < providers.length; i++) {
+      h += '<option value="' + esc(providers[i]) + '"' + (fp === providers[i] ? ' selected' : '') + '>' + esc(providers[i]) + '</option>';
+    }
+    h += '</select>';
+  }
+  // PSI toggle (if both cohort and time exist)
+  h += psiToggleHtml('deepdive');
+
+  h += '</div></div>';
+
+  h += '<div class="bg-srf rounded-xl border border-bdr overflow-hidden flex flex-col" style="min-height:0;flex:1;">';
+  // Sortable table header
+  var ddCols = [{k:'feature_name',l:'Feature',a:'left'},{k:'correlation',l:'Tgt Corr',a:'right'},{k:'iv',l:'IV',a:'right'},{k:'stability',l:'PSI',a:'right'}];
+  h += '<table class="w-full text-sm flex-shrink-0"><thead><tr class="text-sb uppercase bg-srfl">';
+  for (var i = 0; i < ddCols.length; i++) {
+    var c = ddCols[i], sc = S.deepDiveSort.key === c.k ? (S.deepDiveSort.dir === 'asc' ? 'sort-asc' : 'sort-desc') : 'sort-icon';
+    h += '<th class="text-' + c.a + ' py-2 px-3 cursor-pointer select-none ' + sc + '" data-dd-sort="' + c.k + '">' + c.l + '</th>';
+  }
+  h += '</tr></thead></table>';
+  // Scrollable body
+  h += '<div style="overflow-y:auto;flex:1;min-height:0;">';
+  h += '<table class="w-full text-sm"><tbody>';
+  for (var i = 0; i < pageItems.length; i++) {
+    var f = pageItems[i], act = selected && f.feature_name === selected.feature_name;
+    var type = f.type || f.variable_type || '', prov = getProvider(f);
+    var sub = type;
+    if (hasProvider && prov && prov !== '\u2014') sub += (sub ? ' \u00b7 ' : '') + prov;
+    var corr = getCorrelation(f), cm = getCorrMethod(f), iv = getIV(f), psi = getStability(f);
+    h += '<tr class="cursor-pointer border-t border-bdr hover:bg-srfl' + (act ? ' bg-accent/10' : '') + '" data-feature-select="' + esc(f.feature_name) + '">'
+      + '<td class="py-2 px-3">'
+      + '<div class="text-bd truncate" style="max-width:180px;">' + esc(f.feature_name) + '</div>'
+      + (sub ? '<div class="text-sb mt-0.5">' + esc(sub) + '</div>' : '')
+      + '</td>'
+      + '<td class="py-2 px-3 text-right">' + (corr != null ? '<div class="text-mt">' + fmt(corr, 4) + '</div><div class="text-sb" style="font-size:0.6rem;">' + cm + '</div>' : '\u2014') + '</td>'
+      + '<td class="py-2 px-3 text-right text-mt">' + (iv != null ? fmt(iv, 4) : '\u2014') + '</td>'
+      + '<td class="py-2 px-3 text-right ' + stabilityColor(psi) + '">' + (psi != null ? fmt(psi, 4) : '\u2014') + '</td>'
+      + '</tr>';
+  }
+  h += '</tbody></table></div>';
+  // Pagination footer (same layout as catalog)
+  h += '<div class="px-4 py-3 text-xs border-t border-bdr bg-srfl flex-shrink-0 flex items-center justify-between">';
+  h += '<div class="flex items-center gap-2 text-sb">'
+    + '<span>Rows per page</span>'
+    + '<select id="deepdive-page-size" class="bg-srf border border-inp rounded px-2 py-1 text-xs text-bd focus:border-accent focus:outline-none">';
+  [10, 20, 30].forEach(function(n) { h += '<option value="' + n + '"' + (ps === n ? ' selected' : '') + '>' + n + '</option>'; });
+  h += '</select>'
+    + '<span class="ml-2">' + (totalFiltered > 0 ? (startIdx + 1) + '\u2013' + Math.min(startIdx + ps, totalFiltered) + ' of ' + totalFiltered : '0 of 0') + '</span>'
+    + '</div>';
+  h += '<div class="flex items-center gap-1">';
+  h += '<button data-deepdive-page="1" class="px-2 py-1 rounded border border-bdr text-sb hover:text-bd disabled:opacity-30" ' + (S.deepDivePage <= 1 ? 'disabled' : '') + '>&laquo;</button>';
+  h += '<button data-deepdive-page="' + (S.deepDivePage - 1) + '" class="px-2 py-1 rounded border border-bdr text-sb hover:text-bd disabled:opacity-30" ' + (S.deepDivePage <= 1 ? 'disabled' : '') + '>&lsaquo;</button>';
+  h += '<span class="px-2 text-sb">Page ' + S.deepDivePage + ' of ' + totalPages + '</span>';
+  h += '<button data-deepdive-page="' + (S.deepDivePage + 1) + '" class="px-2 py-1 rounded border border-bdr text-sb hover:text-bd disabled:opacity-30" ' + (S.deepDivePage >= totalPages ? 'disabled' : '') + '>&rsaquo;</button>';
+  h += '<button data-deepdive-page="' + totalPages + '" class="px-2 py-1 rounded border border-bdr text-sb hover:text-bd disabled:opacity-30" ' + (S.deepDivePage >= totalPages ? 'disabled' : '') + '>&raquo;</button>';
+  h += '</div></div>';
+  h += '</div></div>';
+  h += '<div class="flex-1 min-w-0 overflow-y-auto">';
+  h += selected ? renderFeatureDetail(selected) : '<div class="flex items-center justify-center h-full text-sb">Select a feature to view details</div>';
+  h += '</div></div>';
+
+  // Preserve focus & cursor position in search input across re-renders
+  var activeId = document.activeElement && document.activeElement.id;
+  var cursorPos = (activeId === 'deepdive-search') ? document.activeElement.selectionStart : null;
+  setPanel('panel-deepdive', h);
+  if (cursorPos !== null) {
+    var el = document.getElementById('deepdive-search');
+    if (el) { el.focus(); el.setSelectionRange(cursorPos, cursorPos); }
+  }
+  if (selected) renderDistributionChart(selected);
+}
+
+function renderFeatureDetail(f) {
+  var type = f.type || f.variable_type || '\u2014', cont = isContinuous(f);
+  var stats = f.statistics || {}, out = f.outliers || {}, dist = f.distribution || {};
+  var card = f.cardinality || {}, qual = f.quality || {}, tgt = f.target_relationship || {};
+  var corrs = f.correlations?.top_correlated_features || [], stab = f.stability;
+  var h = '';
+
+  // Header
+  h += '<div class="mb-6"><h2 class="text-xl font-bold text-hd">' + esc(f.feature_name) + '</h2>'
+    + (f.display_name && f.display_name !== f.feature_name ? '<p class="text-sm text-mt mt-1">' + esc(f.display_name) + '</p>' : '')
+    + '<div class="flex gap-3 mt-2 flex-wrap">'
+    + '<span class="px-2.5 py-1 rounded-full text-xs font-medium ' + typeBadge(type) + '">' + esc(type) + '</span>'
+    + '<span class="px-2.5 py-1 rounded-full text-xs badge-neutral">' + esc(f.data_type || '\u2014') + '</span>'
+    + (f.source?.provider ? '<span class="px-2.5 py-1 rounded-full text-xs badge-neutral">' + esc(f.source.provider) + '</span>' : '')
+    + (f.is_target ? '<span class="px-2.5 py-1 rounded-full text-xs badge-amber">Target</span>' : '')
+    + (f.is_derived ? '<span class="px-2.5 py-1 rounded-full text-xs badge-teal">Derived</span>' : '')
+    + (qual.has_high_missing ? '<span class="px-2.5 py-1 rounded-full text-xs badge-red">High Missing</span>' : '')
+    + (qual.has_low_variance ? '<span class="px-2.5 py-1 rounded-full text-xs badge-warn">Low Variance</span>' : '')
+    + (qual.has_outliers ? '<span class="px-2.5 py-1 rounded-full text-xs badge-warn">Has Outliers</span>' : '')
+    + (qual.is_constant ? '<span class="px-2.5 py-1 rounded-full text-xs badge-red">Constant</span>' : '')
+    + (qual.recommended_for_modeling === false ? '<span class="px-2.5 py-1 rounded-full text-xs badge-red">Not Recommended</span>' : '')
+    + '</div></div>';
+
+  // Target variable: show only distribution + associations
+  if (f.is_target) {
+    if (dist.counts || dist.value_counts) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Distribution</h3>';
+      h += '<div style="height:260px"><canvas id="chart-dist"></canvas></div></div>';
+    }
+  } else {
+    // Non-target: full stats, box plot, distribution, target association
+    // Statistics
+    h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+    h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Statistics</h3>';
+    var statSections = [];
+    var statRows = [];
+    if (cont) {
+      var uv=stats.unique_values, ur=stats.unique_ratio;
+      var uvDisplay=uv!=null?(uv.toLocaleString()+(ur!=null?' ('+pct(ur*100)+')':'')) :null;
+      statRows = [['Count',stats.count],['Std Dev',stats.std],['IQR',stats.iqr],['Skewness',stats.skewness],['Kurtosis',stats.kurtosis],['Missing %',stats.missing_percentage!=null?pct(stats.missing_percentage):null],['Unique Values',uvDisplay]];
+    } else {
+      statRows = [['Count',stats.count],['Unique',stats.unique||card.unique_values],['Mode',stats.mode],['Mode Freq',stats.mode_frequency!=null?pct(stats.mode_frequency):null],['Entropy',card.entropy||dist.entropy],['Missing %',stats.missing_percentage!=null?pct(stats.missing_percentage):null]];
+    }
+    statSections.push(statColumn('General', statRows));
+    if (cont && out.count != null) {
+      statSections.push(statColumn('Outliers', [['Count',out.count],['Percent',out.percent!=null?pct(out.percent):null],['Lower Bound',out.lower_bound],['Upper Bound',out.upper_bound]]));
+    }
+    if (stab && (stab.cohort_based || stab.time_based)) {
+      var sRows = [];
+      if (stab.cohort_based) { var cb=stab.cohort_based; sRows.push(['Cohort PSI',cb.psi!=null?fmt(cb.psi,4):null],['Cohort Rating',cb.stability||'\u2014']); }
+      if (stab.time_based) { var tb=stab.time_based; sRows.push(['Time PSI',tb.psi!=null?fmt(tb.psi,4):null],['Time Rating',tb.stability||'\u2014']); }
+      statSections.push(statColumn('Stability', sRows));
+    }
+    h += '<div class="flex gap-6">';
+    for (var i = 0; i < statSections.length; i++) {
+      if (i > 0) h += '<div class="w-px bg-bdr flex-shrink-0"></div>';
+      h += statSections[i];
+    }
+    h += '</div></div>';
+
+    // Box plot
+    if (cont && stats.min != null && stats.max != null) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Box Plot</h3>';
+      h += renderBoxPlot(stats, out);
+      h += '</div>';
+    }
+
+    // Distribution chart
+    if (dist.counts || dist.value_counts) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Distribution</h3>';
+      h += '<div style="height:260px"><canvas id="chart-dist"></canvas></div></div>';
+    }
+
+    // Target Association
+    if (tgt.target_variable) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Target Association: ' + esc(tgt.target_variable) + '</h3>';
+      var tRows = [];
+      if (cont) {
+        tRows.push(['Pearson',tgt.correlation_pearson],['Spearman',tgt.correlation_spearman],['Corr. Ratio',tgt.correlation_ratio]);
+      } else {
+        tRows.push(["Theil's U",tgt.theils_u],['Corr. Ratio',tgt.correlation_ratio]);
+      }
+      tRows.push(['IV',tgt.information_value],['Power',tgt.predictive_power||'\u2014']);
+      h += statColumn(null, tRows);
+      h += '</div>';
+    }
+  }
+
+  // Associations — shared by both target and non-target features
+  if (corrs.length > 0) {
+    var featureTypeMap = {};
+    for (var fi = 0; fi < features.length; fi++) featureTypeMap[features[fi].feature_name] = getType(features[fi]);
+
+    function renderAssocBars(items) {
+      var out = '<div class="space-y-2">';
+      for (var i = 0; i < items.length; i++) {
+        var c = items[i], ab = Math.abs(c.correlation);
+        var barColor = c.correlation >= 0 ? 'bg-good' : 'bg-bad';
+        var valColor = c.correlation >= 0 ? 'text-good' : 'text-bad';
+        out += '<div class="flex items-center gap-3 cursor-pointer hover:bg-srfl rounded-lg px-2 py-1.5" data-goto-feature="' + esc(c.feature) + '">'
+          + '<span class="text-sm text-bd flex-1 truncate">' + esc(c.feature) + '</span>'
+          + '<div class="w-24 h-1.5 bg-trk rounded-full overflow-hidden flex-shrink-0"><div class="h-full rounded-full ' + barColor + '" style="width:' + (ab*100) + '%"></div></div>'
+          + '<span class="text-sm ' + valColor + ' w-16 text-right flex-shrink-0">' + fmt(c.correlation, 4) + '</span></div>';
+      }
+      out += '</div>';
+      return out;
+    }
+
+    var numCorrs = corrs.filter(function(c) { return c.method !== 'theil_u' && c.method !== 'theil_u_reverse' && featureTypeMap[c.feature] === 'continuous'; });
+    var catForward = corrs.filter(function(c) { return c.method === 'theil_u'; });
+    var catReverse = corrs.filter(function(c) { return c.method === 'theil_u_reverse'; });
+    var catOther = corrs.filter(function(c) { return c.method !== 'theil_u' && c.method !== 'theil_u_reverse' && featureTypeMap[c.feature] !== 'continuous'; });
+    var hasCat = catForward.length > 0 || catReverse.length > 0 || catOther.length > 0;
+    var hasNum = numCorrs.length > 0;
+    var hasBoth = hasNum && hasCat;
+
+    h += '<div class="grid ' + (hasBoth ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1') + ' gap-4 mb-4">';
+
+    if (hasNum) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-1">Numerical Associations</h3>';
+      h += '<div class="text-[11px] text-ft mb-3">Pearson &amp; Correlation Ratio, \u22121 to 1</div>';
+      h += renderAssocBars(numCorrs);
+      h += '</div>';
+    }
+
+    if (hasCat) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-1">Categorical Associations</h3>';
+      h += '<div class="text-[11px] text-ft mb-3">Uncertainty Coefficient &amp; Correlation Ratio, 0 to 1</div>';
+
+      if (catForward.length > 0) {
+        h += '<div class="text-xs font-medium text-ft uppercase tracking-wider mt-3 mb-2">Provides Information On \u2014 <span class="normal-case">Theil\u2019s U(' + esc(f.feature_name) + ' \u2192 Y)</span></div>';
+        h += renderAssocBars(catForward);
+      }
+
+      if (catReverse.length > 0) {
+        h += '<div class="text-xs font-medium text-ft uppercase tracking-wider mt-4 mb-2">Informed By \u2014 <span class="normal-case">Theil\u2019s U(X \u2192 ' + esc(f.feature_name) + ')</span></div>';
+        h += renderAssocBars(catReverse);
+      }
+
+      if (catOther.length > 0) {
+        if (catForward.length > 0 || catReverse.length > 0) {
+          h += '<div class="text-xs font-medium text-ft uppercase tracking-wider mt-4 mb-2">Correlation Ratio</div>';
+        }
+        h += renderAssocBars(catOther);
+      }
+
+      h += '</div>';
+    }
+
+    h += '</div>';
+  }
+
+  return h;
+}
+
+// Render a vertical KV column with optional title
+function statColumn(label, rows) {
+  var h = '<div class="flex-1 min-w-0">';
+  if (label) h += '<div class="text-sm font-semibold text-sb uppercase tracking-wider mb-2">' + esc(label) + '</div>';
+  h += '<table class="w-full">';
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var v = r[1] == null ? '\u2014' : (typeof r[1] === 'number' ? fmt(r[1]) : esc(String(r[1])));
+    var t = r[2] ? ' title="' + esc(String(r[2])) + '"' : '';
+    h += '<tr class="border-b border-bdr last:border-0"><td class="py-1.5 pr-4 text-sm text-sb whitespace-nowrap">' + esc(r[0]) + '</td>'
+      + '<td class="py-1.5 text-sm text-bd"' + t + '>' + v + '</td></tr>';
+  }
+  h += '</table></div>';
+  return h;
+}
+
+function renderBoxPlot(s, o) {
+  var mn=s.min,mx=s.max,q1=s.q1,med=s.median,q3=s.q3,mean=s.mean;
+  if (mn==null||mx==null||q1==null||med==null||q3==null) return '<div class="text-sb text-sm">Insufficient data for box plot</div>';
+  var rng=mx-mn;
+  if (rng===0) return '<div class="text-sb text-sm">Constant value: '+fmt(mn)+'</div>';
+  var pct=function(v){return((v-mn)/rng*100).toFixed(2);};
+
+  var h='';
+  var q1p=parseFloat(pct(q1)), q3p=parseFloat(pct(q3));
+  var q1Label='Q1', q3Label='Q3';
+  if(q3p-q1p<5) { q1Label='Q1 Q3'; q3Label=''; }
+  // Bar row with Min/Max outside
+  h+='<div class="flex items-center gap-2">';
+  h+='<div class="text-center flex-shrink-0"><div class="text-sm text-sb font-medium">Min</div><div class="text-sm text-mt">('+fmt(mn)+')</div></div>';
+  h+='<div class="relative flex-1" style="height:44px">';
+  // Q1/Q3 labels above bar, inside the same relative container
+  h+='<div class="absolute text-sm text-accent font-medium" style="left:'+q1p+'%;top:0;transform:translateX(-50%)">'+q1Label+'</div>';
+  if(q3Label) h+='<div class="absolute text-sm text-accent font-medium" style="left:'+q3p+'%;top:0;transform:translateX(-50%)">'+q3Label+'</div>';
+  // Bar
+  h+='<div class="absolute left-0 right-0" style="top:16px;height:28px">';
+  h+='<div class="absolute inset-0 bg-srfl rounded"></div>';
+  h+='<div class="absolute top-0 bottom-0 rounded" style="left:'+pct(q1)+'%;width:'+(pct(q3)-pct(q1))+'%;background:rgba(22,156,118,0.12)"></div>';
+  h+='<div class="absolute top-0 bottom-0" style="left:'+pct(q1)+'%;width:2px;background:#169C76"></div>';
+  h+='<div class="absolute top-0 bottom-0" style="left:'+pct(q3)+'%;width:2px;background:#169C76"></div>';
+  h+='<div class="absolute top-0 bottom-0" style="left:'+pct(med)+'%;width:2px;background:#065f46"></div>';
+  if(mean!=null) h+='<div class="absolute rounded-full bg-hd" style="left:'+pct(mean)+'%;top:50%;width:10px;height:10px;transform:translate(-50%,-50%)"></div>';
+  h+='</div>'; // bar
+  h+='</div>'; // relative container
+  h+='<div class="text-center flex-shrink-0"><div class="text-sm text-sb font-medium">Max</div><div class="text-sm text-mt">('+fmt(mx)+')</div></div>';
+  h+='</div>';
+  // Legend with values – sorted by value
+  var legendItems = [
+    {label:'Q1',val:q1,icon:'<span class="inline-block" style="width:2px;height:12px;background:#169C76"></span>'},
+    {label:'Median',val:med,icon:'<span class="inline-block" style="width:2px;height:12px;background:#065f46"></span>'},
+    {label:'Q3',val:q3,icon:'<span class="inline-block" style="width:2px;height:12px;background:#169C76"></span>'}
+  ];
+  if(mean!=null) legendItems.push({label:'Mean',val:mean,icon:'<span class="inline-block rounded-full bg-hd" style="width:8px;height:8px"></span>'});
+  legendItems.sort(function(a,b){return a.val-b.val;});
+  h+='<div class="flex items-center justify-center gap-6 text-sm text-sb mt-3">';
+  for(var li=0;li<legendItems.length;li++) h+='<span class="flex items-center gap-1.5">'+legendItems[li].icon+legendItems[li].label+' <span class="text-mt">('+fmt(legendItems[li].val)+')</span></span>';
+  h+='</div>';
+  return h;
+}
+
+function renderDistributionChart(f) {
+  if (S.charts.dist) { S.charts.dist.destroy(); S.charts.dist = null; }
+  var canvas = document.getElementById('chart-dist');
+  if (!canvas) return;
+  var dist = f.distribution || {}, cont = isContinuous(f), labels, rawCounts, lbl;
+  if (cont && dist.type === 'histogram') {
+    labels = (dist.bin_centers || dist.bin_edges?.slice(0,-1) || []).map(function(v){return fmt(v,1);});
+    rawCounts = dist.counts || []; lbl = 'Frequency';
+  } else if (dist.value_counts) {
+    var entries = Object.entries(dist.value_counts).sort(function(a,b){return b[1]-a[1];}).slice(0,20);
+    labels = entries.map(function(e){return e[0].length>20?e[0].slice(0,17)+'...':e[0];}); rawCounts = entries.map(function(e){return e[1];}); lbl = 'Frequency';
+  } else if (dist.counts) {
+    labels = dist.bin_centers?dist.bin_centers.map(function(v){return fmt(v,1);}):dist.counts.map(function(_,i){return 'Bin '+(i+1);}); rawCounts = dist.counts; lbl = 'Frequency';
+  } else return;
+
+  // Convert counts to frequency % for bars (like Sweetviz)
+  var total = rawCounts.reduce(function(s,v){return s+v;},0);
+  var pctData = rawCounts.map(function(v){return total>0?v/total:0;});
+
+  // Read CSS variables for current theme
+  var cs = getComputedStyle(document.documentElement);
+  var isDark = document.documentElement.classList.contains('dark');
+
+  // Check for target mean per bin data
+  var tgt = f.target_relationship || {};
+  var targetMeans = tgt.target_mean_per_bin || null;
+  // For binary targets (all values 0-1), share the same % axis (like Sweetviz)
+  var isBinaryTarget = targetMeans && targetMeans.length > 0 && targetMeans.every(function(v){return v===null||v===undefined||(v>=0&&v<=1);});
+
+  var datasets = [
+    { label: lbl, data: pctData, yAxisID: 'y',
+      backgroundColor: cs.getPropertyValue('--c-chart-bg').trim(),
+      borderColor: cs.getPropertyValue('--c-chart-border').trim(),
+      borderWidth: 1, borderRadius: 3, order: 2 }
+  ];
+  var scales = {
+    x: { grid: { color: cs.getPropertyValue('--c-chart-grid').trim() }, ticks: { color: cs.getPropertyValue('--c-chart-tick').trim(), font: { size: 10 }, maxRotation: 45 } },
+    y: { grid: { color: cs.getPropertyValue('--c-chart-grid').trim() }, ticks: { color: cs.getPropertyValue('--c-chart-tick').trim(), font: { size: 10 }, callback: function(v){return (v*100).toFixed(0)+'%';} }, beginAtZero: true, position: 'left' }
+  };
+
+  if (targetMeans && targetMeans.length > 0) {
+    var lineColor = '#047857';
+    var pointColor = '#169C76';
+    var targetAxisId = isBinaryTarget ? 'y' : 'y1';
+    datasets.push({
+      label: 'Target Mean', data: targetMeans, yAxisID: targetAxisId,
+      type: 'line', borderColor: lineColor, backgroundColor: 'transparent',
+      borderWidth: 2, pointRadius: 3, pointBackgroundColor: pointColor,
+      pointBorderColor: lineColor, pointBorderWidth: 1,
+      tension: 0.3, fill: false, order: 1
+    });
+    if (!isBinaryTarget) {
+      scales.y1 = { grid: { drawOnChartArea: false }, ticks: { color: lineColor, font: { size: 10 } }, beginAtZero: true, position: 'right' };
+    }
+  }
+
+  S.charts.dist = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: { labels: labels, datasets: datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: targetMeans && targetMeans.length > 0, labels: { color: cs.getPropertyValue('--c-chart-tick').trim(), font: { size: 10 }, usePointStyle: true, pointStyleWidth: 16 } }, tooltip: {
+        backgroundColor: cs.getPropertyValue('--c-tooltip-bg').trim(),
+        titleColor: cs.getPropertyValue('--c-tooltip-title').trim(),
+        bodyColor: cs.getPropertyValue('--c-tooltip-body').trim(),
+        borderColor: cs.getPropertyValue('--c-tooltip-border').trim(), borderWidth: 1,
+        callbacks: { label: function(ctx) {
+          if (ctx.datasetIndex === 1) { var tm = ctx.parsed.y, bc = rawCounts[ctx.dataIndex], tc = Math.round(tm * bc); return 'Target Mean: ' + (isBinaryTarget ? (tm*100).toFixed(1) + '%' : fmt(tm)) + '  (' + tc.toLocaleString() + ' events / ' + bc.toLocaleString() + ' obs)'; }
+          return 'Count: ' + rawCounts[ctx.dataIndex].toLocaleString() + ' (' + (ctx.parsed.y*100).toFixed(1) + '%)';
+        } }
+      } },
+      scales: scales
+    }
+  });
+}
+
+// ── Associations heatmap ──
+var assocMatrix = summary.association_matrix || null;
+
+function renderAssociations() {
+  var panel = document.getElementById('panel-associations');
+  if (!assocMatrix || !assocMatrix.features || assocMatrix.features.length === 0) {
+    setPanel('panel-associations', '<div class="flex items-center justify-center h-64 text-sb">No association matrix data available</div>');
+    return;
+  }
+
+  var feats = assocMatrix.features, n = feats.length;
+  var vals = assocMatrix.values, meths = assocMatrix.methods;
+
+  // Layout constants
+  var cellSize = Math.max(28, Math.min(56, Math.floor(700 / n)));
+  var labelMargin = 120;
+  var totalW = labelMargin + n * cellSize;
+  var totalH = labelMargin + n * cellSize;
+  var dpr = window.devicePixelRatio || 1;
+
+  var h = '<div class="mb-4">';
+  h += '<h2 class="text-lg font-bold text-hd mb-1">Association Matrix</h2>';
+  h += '<p class="text-sm text-sb mb-1">Mixed-method association heatmap for all features.</p>';
+  h += '<div class="flex flex-wrap gap-x-6 gap-y-1 text-xs text-mt mb-4">';
+  h += '<span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-full border border-current opacity-60"></span> Pearson (continuous, \u22121 to 1)</span>';
+  h += '<span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 border border-current opacity-60"></span> Theil\u2019s U (categorical, 0 to 1, asymmetric)</span>';
+  h += '<span class="flex items-center gap-1.5"><svg class="w-3 h-3 opacity-60" viewBox="0 0 12 12"><polygon points="6,1 11,11 1,11" fill="none" stroke="currentColor" stroke-width="1.5"/></svg> Eta (cat\u2194cont, 0 to 1)</span>';
+  h += '</div></div>';
+  h += '<div class="relative overflow-auto bg-srf rounded-xl border border-bdr p-4 flex justify-center">';
+  h += '<div class="relative inline-block">';
+  h += '<canvas id="assoc-canvas" width="' + (totalW * dpr) + '" height="' + (totalH * dpr) + '" style="width:' + totalW + 'px;height:' + totalH + 'px"></canvas>';
+  h += '<div id="assoc-tooltip" class="hidden absolute pointer-events-none px-3 py-2 rounded-lg text-xs shadow-lg border" style="background:var(--c-tooltip-bg);border-color:var(--c-tooltip-border);color:var(--c-tooltip-body);z-index:50"></div>';
+  h += '</div></div>';
+
+  h += '<div class="flex items-center justify-center gap-3 mt-4 text-xs text-sb">';
+  h += '<span>\u22121</span>';
+  h += '<div style="width:200px;height:12px;border-radius:6px;background:linear-gradient(to right,#dc2626,#fca5a5,#ffffff,#86efac,#169C76)"></div>';
+  h += '<span>+1</span>';
+  h += '</div>';
+
+  setPanel('panel-associations', h);
+
+  var canvas = document.getElementById('assoc-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  var cs = getComputedStyle(document.documentElement);
+  var isDark = document.documentElement.classList.contains('dark');
+  var gridColor = isDark ? 'rgba(55,65,81,0.3)' : 'rgba(226,232,240,0.8)';
+  var labelColor = cs.getPropertyValue('--c-chart-tick').trim();
+  var bgColor = isDark ? '#0a0f1a' : '#ffffff';
+
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, totalW, totalH);
+
+  var targetVar = meta.target_variable || null;
+  var targetIdx = targetVar ? feats.indexOf(targetVar) : -1;
+
+  // Highlight target row + column with accent border lines
+  if (targetIdx >= 0) {
+    ctx.strokeStyle = isDark ? 'rgba(22,156,118,0.45)' : 'rgba(22,156,118,0.35)';
+    ctx.lineWidth = 1.5;
+    // Row borders (top & bottom of target row)
+    var ry = labelMargin + targetIdx * cellSize;
+    ctx.beginPath(); ctx.moveTo(labelMargin, ry); ctx.lineTo(labelMargin + n * cellSize, ry); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(labelMargin, ry + cellSize); ctx.lineTo(labelMargin + n * cellSize, ry + cellSize); ctx.stroke();
+    // Column borders (left & right of target column)
+    var cx = labelMargin + targetIdx * cellSize;
+    ctx.beginPath(); ctx.moveTo(cx, labelMargin); ctx.lineTo(cx, labelMargin + n * cellSize); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + cellSize, labelMargin); ctx.lineTo(cx + cellSize, labelMargin + n * cellSize); ctx.stroke();
+  }
+
+  ctx.strokeStyle = gridColor;
+  ctx.lineWidth = 0.5;
+  for (var i = 0; i <= n; i++) {
+    var x = labelMargin + i * cellSize;
+    ctx.beginPath(); ctx.moveTo(x, labelMargin); ctx.lineTo(x, labelMargin + n * cellSize); ctx.stroke();
+    var y = labelMargin + i * cellSize;
+    ctx.beginPath(); ctx.moveTo(labelMargin, y); ctx.lineTo(labelMargin + n * cellSize, y); ctx.stroke();
+  }
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  // LattIQ green: #169C76 = rgb(22,156,118), light: #20B78C = rgb(32,183,140)
+  // Red for negative Pearson: #dc2626 = rgb(220,38,38)
+  function valToColor(v, method) {
+    var abs = Math.abs(v);
+    var r, g, b;
+    if (method === 'theil_u' || method === 'eta') {
+      // 0..1 range, LattIQ green scale
+      if (isDark) { r = lerp(18, 22, abs); g = lerp(24, 156, abs); b = lerp(38, 118, abs); }
+      else { r = lerp(255, 22, abs); g = lerp(255, 156, abs); b = lerp(255, 118, abs); }
+    } else {
+      // Pearson: -1..1, red-white-green
+      if (v >= 0) {
+        if (isDark) { r = lerp(18, 22, abs); g = lerp(24, 156, abs); b = lerp(38, 118, abs); }
+        else { r = lerp(255, 22, abs); g = lerp(255, 156, abs); b = lerp(255, 118, abs); }
+      } else {
+        if (isDark) { r = lerp(18, 220, abs); g = lerp(24, 38, abs); b = lerp(38, 38, abs); }
+        else { r = lerp(255, 220, abs); g = lerp(255, 38, abs); b = lerp(255, 38, abs); }
+      }
+    }
+    return 'rgb(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ')';
+  }
+
+  var maxR = cellSize * 0.42;
+  for (var ri = 0; ri < n; ri++) {
+    for (var ci = 0; ci < n; ci++) {
+      var v = vals[ri][ci];
+      var m = meths[ri][ci];
+      if (v === null || v === undefined || ri === ci) continue;
+
+      var cx = labelMargin + ci * cellSize + cellSize / 2;
+      var cy = labelMargin + ri * cellSize + cellSize / 2;
+      var abs = Math.abs(v);
+      var rad = Math.max(2, maxR * Math.sqrt(abs));
+      var color = valToColor(v, m);
+
+      ctx.fillStyle = color;
+      if (m === 'pearson') {
+        ctx.beginPath();
+        ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (m === 'theil_u') {
+        ctx.fillRect(cx - rad, cy - rad, rad * 2, rad * 2);
+      } else {
+        // Eta: triangle (pointing up)
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - rad);
+        ctx.lineTo(cx + rad, cy + rad * 0.75);
+        ctx.lineTo(cx - rad, cy + rad * 0.75);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+  }
+
+  var fontSize = Math.min(11, cellSize * 0.4);
+  var fontNormal = fontSize + 'px Inter, Lato, sans-serif';
+  var fontBold = 'bold ' + fontSize + 'px Inter, Lato, sans-serif';
+  var accentColor = '#169C76';
+
+  // Column labels (top, rotated)
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  for (var ci = 0; ci < n; ci++) {
+    var isTarget = ci === targetIdx;
+    ctx.fillStyle = isTarget ? accentColor : labelColor;
+    ctx.font = isTarget ? fontBold : fontNormal;
+    var lx = labelMargin + ci * cellSize + cellSize / 2;
+    ctx.save();
+    ctx.translate(lx, labelMargin - 6);
+    ctx.rotate(-Math.PI / 3);
+    ctx.fillText(feats[ci], 0, 0);
+    ctx.restore();
+  }
+
+  // Row labels (left)
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (var ri = 0; ri < n; ri++) {
+    var isTarget = ri === targetIdx;
+    ctx.fillStyle = isTarget ? accentColor : labelColor;
+    ctx.font = isTarget ? fontBold : fontNormal;
+    var ly = labelMargin + ri * cellSize + cellSize / 2;
+    var label = feats[ri].length > 16 ? feats[ri].slice(0, 14) + '\u2026' : feats[ri];
+    ctx.fillText(label, labelMargin - 8, ly);
+  }
+
+  // Tooltip
+  var tooltipEl = document.getElementById('assoc-tooltip');
+  var canvasParent = canvas.parentElement;
+  canvas.addEventListener('mousemove', function(e) {
+    var rect = canvas.getBoundingClientRect();
+    var mx = e.clientX - rect.left;
+    var my = e.clientY - rect.top;
+    var ci = Math.floor((mx - labelMargin) / cellSize);
+    var ri = Math.floor((my - labelMargin) / cellSize);
+    if (ci >= 0 && ci < n && ri >= 0 && ri < n && ri !== ci && vals[ri][ci] != null) {
+      var tv = vals[ri][ci], tm = meths[ri][ci];
+      var methodLabel = tm === 'pearson' ? 'Pearson' : tm === 'theil_u' ? "Theil's U" : 'Correlation Ratio';
+      var dirNote = tm === 'theil_u' ? '\n' + feats[ri] + ' \u2192 ' + feats[ci] : '';
+      var ttTitle = document.createElement('div');
+      ttTitle.className = 'font-medium';
+      ttTitle.style.color = 'var(--c-tooltip-title)';
+      ttTitle.textContent = feats[ri] + ' \u00d7 ' + feats[ci];
+      var ttBody = document.createElement('div');
+      ttBody.className = 'mt-1';
+      ttBody.textContent = methodLabel + ': ' + tv.toFixed(4);
+      if (dirNote) { var ttDir = document.createElement('div'); ttDir.className = 'opacity-70 mt-0.5'; ttDir.textContent = feats[ri] + ' \u2192 ' + feats[ci]; ttBody.appendChild(ttDir); }
+      tooltipEl.replaceChildren(ttTitle, ttBody);
+      tooltipEl.classList.remove('hidden');
+      var tx = e.clientX - canvasParent.getBoundingClientRect().left + 12;
+      var ty = e.clientY - canvasParent.getBoundingClientRect().top - 10;
+      tooltipEl.style.left = tx + 'px';
+      tooltipEl.style.top = ty + 'px';
+    } else {
+      tooltipEl.classList.add('hidden');
+    }
+  });
+  canvas.addEventListener('mouseleave', function() { tooltipEl.classList.add('hidden'); });
+
+  canvas.addEventListener('click', function(e) {
+    var rect = canvas.getBoundingClientRect();
+    var mx = e.clientX - rect.left;
+    var my = e.clientY - rect.top;
+    var ri = Math.floor((my - labelMargin) / cellSize);
+    if (ri >= 0 && ri < n) goToFeature(feats[ri]);
+  });
+}
+
+// ── Navigation ──
+function goToFeature(n) { S.selectedFeature = n; switchTab('deepdive'); }
+
+function switchTab(tab) {
+  S.tab = tab;
+  var btns = document.querySelectorAll('#tab-nav button');
+  for (var i=0;i<btns.length;i++) btns[i].className = btns[i].dataset.tab === tab ? 'tab-active pb-3 border-b-2 text-sm font-medium transition-colors' : 'tab-inactive pb-3 border-b-2 text-sm font-medium transition-colors';
+  var tabs = ['summary','catalog','deepdive','associations'];
+  for (var i=0;i<tabs.length;i++) { var p=document.getElementById('panel-'+tabs[i]); if(tabs[i]===tab){p.classList.remove('hidden');p.classList.add('fade-in');p.style.display=tabs[i]==='deepdive'?'flex':'block';}else{p.classList.add('hidden');p.style.display='';} }
+  if (tab==='summary') renderSummary(); else if (tab==='catalog') renderCatalog(); else if (tab==='deepdive') renderDeepDive(); else if (tab==='associations') renderAssociations();
+}
+
+// ── Events ──
+document.addEventListener('click', function(e) {
+  if (e.target.closest('#theme-toggle')) { toggleTheme(); return; }
+  var pm = e.target.closest('[data-psi-mode]'); if (pm) { S.psiMode = pm.dataset.psiMode; renderCatalog(); if (S.tab === 'deepdive') renderDeepDive(); return; }
+  var tb = e.target.closest('#tab-nav button'); if (tb) { switchTab(tb.dataset.tab); return; }
+  var st = e.target.closest('[data-sort]'); if (st) { var k=st.dataset.sort; if(S.catalogSort.key===k) S.catalogSort.dir=S.catalogSort.dir==='asc'?'desc':'asc'; else{S.catalogSort.key=k;S.catalogSort.dir='asc';} S.catalogPage=1; renderCatalog(); return; }
+  var dds = e.target.closest('[data-dd-sort]'); if (dds) { var k=dds.dataset.ddSort; if(S.deepDiveSort.key===k) S.deepDiveSort.dir=S.deepDiveSort.dir==='asc'?'desc':'asc'; else{S.deepDiveSort.key=k;S.deepDiveSort.dir='asc';} S.deepDivePage=1; renderDeepDive(); return; }
+  var pg = e.target.closest('[data-catalog-page]'); if (pg && !pg.disabled) { S.catalogPage=parseInt(pg.dataset.catalogPage); renderCatalog(); return; }
+  var dp = e.target.closest('[data-deepdive-page]'); if (dp && !dp.disabled) { S.deepDivePage=parseInt(dp.dataset.deepdivePage); renderDeepDive(); return; }
+  var gt = e.target.closest('[data-goto-feature]'); if (gt) { goToFeature(gt.dataset.gotoFeature); return; }
+  var rw = e.target.closest('.catalog-row[data-feature]'); if (rw) { goToFeature(rw.dataset.feature); return; }
+  var fs = e.target.closest('[data-feature-select]'); if (fs) { S.selectedFeature = fs.dataset.featureSelect; renderDeepDive(); return; }
+  var sf = e.target.closest('[data-select-feature]'); if (sf) { S.selectedFeature = sf.dataset.selectFeature; renderDeepDive(); return; }
+});
+
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'catalog-search') { S.catalogSearch = e.target.value; S.catalogPage = 1; renderCatalog(); }
+  if (e.target.id === 'deepdive-search') { S.deepDiveSearch = e.target.value; S.deepDivePage = 1; renderDeepDive(); }
+});
+document.addEventListener('change', function(e) {
+  if (e.target.id === 'catalog-page-size') { S.catalogPageSize = parseInt(e.target.value); S.catalogPage = 1; renderCatalog(); }
+  if (e.target.id === 'catalog-filter-type') { S.catalogFilterType = e.target.value; S.catalogPage = 1; renderCatalog(); }
+  if (e.target.id === 'catalog-filter-provider') { S.catalogFilterProvider = e.target.value; S.catalogPage = 1; renderCatalog(); }
+  if (e.target.id === 'deepdive-filter-type') { S.deepDiveFilterType = e.target.value; S.deepDivePage = 1; renderDeepDive(); }
+  if (e.target.id === 'deepdive-filter-provider') { S.deepDiveFilterProvider = e.target.value; S.deepDivePage = 1; renderDeepDive(); }
+  if (e.target.id === 'deepdive-page-size') { S.deepDivePageSize = parseInt(e.target.value); S.deepDivePage = 1; renderDeepDive(); }
+});
+
+// ── Init ──
+renderHeader();
+renderSummary();
+</script>
+</body>
+</html>

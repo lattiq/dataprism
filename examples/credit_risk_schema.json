@@ -1,0 +1,101 @@
+{
+    "columns": [
+        {
+            "name": "id",
+            "role": "identifier",
+            "description": "Unique record identifier (UUID)"
+        },
+        {
+            "name": "onboarding_date",
+            "role": "observation_date",
+            "description": "Date the loan application was submitted"
+        },
+        {
+            "name": "person_age",
+            "type": "continuous",
+            "role": "feature",
+            "description": "Age of the person in years",
+            "provider": "application"
+        },
+        {
+            "name": "person_income",
+            "type": "continuous",
+            "role": "feature",
+            "description": "Annual income of the person",
+            "provider": "application"
+        },
+        {
+            "name": "person_home_ownership",
+            "type": "categorical",
+            "role": "feature",
+            "description": "Home ownership status (RENT, MORTGAGE, OWN, OTHER)",
+            "provider": "application"
+        },
+        {
+            "name": "person_emp_length",
+            "type": "continuous",
+            "role": "feature",
+            "description": "Employment length in years",
+            "provider": "application"
+        },
+        {
+            "name": "loan_intent",
+            "type": "categorical",
+            "role": "feature",
+            "description": "Purpose of the loan (EDUCATION, MEDICAL, VENTURE, PERSONAL, DEBTCONSOLIDATION, HOMEIMPROVEMENT)",
+            "provider": "application"
+        },
+        {
+            "name": "loan_grade",
+            "type": "categorical",
+            "role": "feature",
+            "description": "Loan grade assigned (A through G, A being best)",
+            "provider": "application"
+        },
+        {
+            "name": "loan_amnt",
+            "type": "continuous",
+            "role": "feature",
+            "description": "Loan amount requested",
+            "provider": "application"
+        },
+        {
+            "name": "loan_int_rate",
+            "type": "continuous",
+            "role": "feature",
+            "description": "Interest rate on the loan",
+            "provider": "application"
+        },
+        {
+            "name": "loan_status",
+            "role": "target",
+            "description": "Loan default status (0 = no default, 1 = default)"
+        },
+        {
+            "name": "loan_percent_income",
+            "type": "continuous",
+            "role": "feature",
+            "description": "Loan amount as a percentage of annual income",
+            "provider": "application"
+        },
+        {
+            "name": "cb_person_default_on_file",
+            "type": "categorical",
+            "role": "feature",
+            "description": "Historical default on file from credit bureau (Y/N)",
+            "provider": "bureau"
+        },
+        {
+            "name": "cb_person_cred_hist_length",
+            "type": "continuous",
+            "role": "feature",
+            "description": "Length of credit history in years",
+            "provider": "bureau"
+        },
+        {
+            "name": "split",
+            "role": "split",
+            "description": "Train/test split indicator (train=80%, test=20%)"
+        }
+    ]
+}

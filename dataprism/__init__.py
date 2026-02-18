@@ -1,14 +1,59 @@
-"""
-DataPrism - A Python library for exploratory data analysis.
+"""DataPrism - Lightweight EDA library for data analysis."""
 
-This is a minimal package for name reservation on PyPI.
-Full functionality will be implemented in future releases.
-"""
+from importlib.metadata import version, PackageNotFoundError
 
-__version__ = "0.0.1"
+from dataprism.exceptions import (
+    AnalysisError,
+    ConfigurationError,
+    DataLoadError,
+    DataValidationError,
+    DataPrismError,
+    FeatureTypeError,
+    MissingDataError,
+    OutputFormattingError,
+    StabilityAnalysisError,
+    TargetAnalysisError,
+)
+from dataprism.data.loader import DataLoader
+from dataprism.schema import (
+    ColumnConfig,
+    ColumnRole,
+    ColumnType,
+    DatasetSchema,
+    Sentinels,
+)
+from dataprism.eda import EDARunner
+from dataprism.viewer import serve_results
+
+try:
+    __version__ = version("dataprism")
+except PackageNotFoundError:
+    __version__ = "0.1.0"
+
 __author__ = "LattIQ Development Team"
 __email__ = "dev@lattiq.com"
 
-def hello():
-    """A simple hello function for testing the package installation."""
-    return "Hello from DataPrism! This package is under development."
+__all__ = [
+    "EDARunner",
+    # Viewer
+    "serve_results",
+    # Data Loading Utilities
+    "DataLoader",
+    # Schema types
+    "ColumnConfig",
+    "ColumnType",
+    "ColumnRole",
+    "Sentinels",
+    "DatasetSchema",
+    # Exceptions
+    "DataPrismError",
+    "DataLoadError",
+    "DataValidationError",
+    "AnalysisError",
+    "ConfigurationError",
+    "FeatureTypeError",
+    "MissingDataError",
+    "StabilityAnalysisError",
+    "OutputFormattingError",
+    "TargetAnalysisError",
+]

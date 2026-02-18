@@ -50,7 +50,7 @@ release:
 release-version:
 	@if [ -z "$(VERSION)" ]; then echo "VERSION is required"; exit 1; fi
 	@echo "Creating release $(VERSION)..."
-	@sed -i.bak 's/version = "[^"]*"/version = "$(VERSION)"/' pyproject.toml && rm pyproject.toml.bak
+	@sed -i.bak 's/^version = "[^"]*"/version = "$(VERSION)"/' pyproject.toml && rm pyproject.toml.bak
 	@sed -i.bak 's/__version__ = "[^"]*"/__version__ = "$(VERSION)"/' dataprism/__init__.py && rm dataprism/__init__.py.bak
 	@git add pyproject.toml dataprism/__init__.py
 	@git commit -m "Bump version to $(VERSION)"

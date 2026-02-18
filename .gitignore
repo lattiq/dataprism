@@ -149,6 +149,7 @@ figures/
 *.svg
 *.pdf
 !docs/images/  # Keep documentation images
+!docs/images/**
 !examples/plots/  # Keep example plots
 
 # Jupyter Notebook outputs (keep notebooks, ignore outputs)
