@@ -31,7 +31,7 @@ from dataprism.viewer import serve_results
 try:
     __version__ = version("dataprism")
 except PackageNotFoundError:
-    __version__ = "0.1.0"
+    __version__ = "0.1.1"
 
 __author__ = "LattIQ Development Team"
 __email__ = "dev@lattiq.com"
