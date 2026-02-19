@@ -20,7 +20,7 @@ from dataprism.output.formatter import JSONFormatter
 logger = get_logger(__name__)
 
 
-class EDARunner:
+class DataPrism:
     """Main orchestrator for EDA pipeline."""
 
     def __init__(
@@ -29,6 +29,7 @@ class EDARunner:
         sample_size: Optional[int] = None,
         top_correlations: int = 10,
         max_correlation_features: Optional[int] = None,
+        max_association_features: int = 50,
         # Cohort-based stability
         calculate_stability: bool = False,
         cohort_column: Optional[str] = None,
@@ -46,6 +47,7 @@ class EDARunner:
         self.sample_size = sample_size
         self.top_correlations = top_correlations
         self.max_correlation_features = max_correlation_features
+        self.max_association_features = max_association_features
 
         # Cohort-based stability
         self.calculate_stability = calculate_stability
@@ -70,13 +72,17 @@ class EDARunner:
         # JSON formatter
         self.formatter = JSONFormatter()
 
-    def run(
+        # Store last run results for view()
+        self._last_results = None
+
+    def analyze(
         self,
         data: pd.DataFrame,
         schema: Optional[DatasetSchema] = None,
         output_path: Optional[Union[str, Path]] = None,
         compact_json: bool = False,
         columns: Optional[List[str]] = None,
+        exclude_columns: Optional[List[str]] = None,
         target_variable: Optional[str] = None
     ) -> Dict[str, Any]:
         """
@@ -88,6 +94,11 @@ class EDARunner:
             output_path: Optional path to save JSON output
             compact_json: If True, minimize JSON size
             columns: Optional list of columns to analyze (overrides schema)
+            exclude_columns: Optional list of columns to exclude from analysis.
+                Works with or without schema. Useful for skipping identifiers,
+                dates, or other non-feature columns. The target_variable,
+                cohort_column, and time_column are never excluded even if
+                listed here (they are needed internally).
             target_variable: Name of target variable column
 
         Returns:
@@ -115,6 +126,26 @@ class EDARunner:
             logger.info("Found %s features in schema", len(requested_columns))
         elif requested_columns:
             logger.info("Using explicitly provided columns list with %s features", len(requested_columns))
+
+        # Apply exclude_columns — build requested_columns from DataFrame if not yet set
+        if exclude_columns:
+            # Protect internal columns from exclusion
+            protected = {target_variable, self.cohort_column, self.time_column} - {None}
+            exclude_set = set(exclude_columns) - protected
+            if protected & set(exclude_columns):
+                logger.info("Kept protected columns from exclude list: %s",
+                            sorted(protected & set(exclude_columns)))
+
+            if requested_columns is None:
+                # No schema and no explicit columns — start from all DataFrame columns
+                requested_columns = [c for c in df.columns if c not in exclude_set]
+            else:
+                requested_columns = [c for c in requested_columns if c not in exclude_set]
+
+            not_found = [c for c in exclude_columns if c not in df.columns and c not in protected]
+            if not_found:
+                logger.warning("Exclude columns not found in DataFrame: %s", not_found)
+            logger.info("Excluded %s columns from analysis", len(exclude_set & set(df.columns)))
 
         # Filter columns if specified (either from schema or explicit list)
         if requested_columns:
@@ -287,20 +318,40 @@ class EDARunner:
                 logger.warning(" Time column '%s' not found. Skipping time-based stability calculation.", self.time_column)
 
         # Build unified association matrix from the already-computed matrices
-        # Only include when <= 25 features to keep output size reasonable
         association_matrix = None
-        if len(features) <= 25:
-            # Target variable first, then remaining features in original order
+        if self.max_association_features > 0:
             assoc_features = list(features.keys())
-            if target_variable and target_variable in assoc_features:
-                assoc_features.remove(target_variable)
-                assoc_features.insert(0, target_variable)
+
+            if len(assoc_features) > self.max_association_features:
+                assoc_features = self.correlation_engine.select_features_for_association(
+                    feature_names=assoc_features,
+                    features_data=features,
+                    target_variable=target_variable,
+                    correlation_matrix=correlation_matrix,
+                    theils_u_matrix=theils_u_matrix,
+                    eta_matrix=eta_matrix,
+                    max_features=self.max_association_features,
+                )
+            else:
+                # Target variable first, then remaining in original order
+                if target_variable and target_variable in assoc_features:
+                    assoc_features.remove(target_variable)
+                    assoc_features.insert(0, target_variable)
+
             association_matrix = self.correlation_engine.build_association_matrix(
                 feature_names=assoc_features,
                 correlation_matrix=correlation_matrix,
                 theils_u_matrix=theils_u_matrix,
                 eta_matrix=eta_matrix,
             )
+
+            # Add selection metadata if selection was applied
+            if association_matrix and len(features) > self.max_association_features:
+                association_matrix["feature_selection"] = {
+                    "total_features": len(features),
+                    "selected_features": len(assoc_features),
+                    "method": "composite_scoring",
+                }
 
         # Compute provider match rates before formatting
         logger.info("\nComputing provider match rates...")
@@ -324,6 +375,8 @@ class EDARunner:
                 "sample_size": self.sample_size,
                 "top_correlations": self.top_correlations,
                 "max_correlation_features": self.max_correlation_features,
+                "max_association_features": self.max_association_features,
+                "exclude_columns": exclude_columns or [],
                 "schema_available": bool(column_configs),
                 "feature_types": basic_analysis.get('feature_types', {}),
                 "correlation_config": {
@@ -356,4 +409,27 @@ class EDARunner:
             self.formatter.save_json(results, output_path, compact=compact_json)
 
         logger.info("EDA completed in %.2f seconds", execution_time)
+        self._last_results = results
         return results
+
+    def view(
+        self,
+        results: Optional[Dict[str, Any]] = None,
+        *,
+        port: int = 0,
+        open_browser: bool = True,
+    ) -> None:
+        """Launch the interactive viewer for EDA results.
+
+        Args:
+            results: EDA results dict. If None, uses the results from
+                the last call to analyze().
+            port: Port to serve on (0 = auto-select a free port).
+            open_browser: Whether to open the browser automatically.
+        """
+        from dataprism.viewer.server import serve_results
+
+        data = results if results is not None else self._last_results
+        if data is None:
+            raise ValueError("No results to view. Call analyze() first or pass results explicitly.")
+        serve_results(data, port=port, open_browser=open_browser)

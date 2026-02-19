@@ -8,7 +8,7 @@ import time
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 
 
 def test_real_dataset_sample():
@@ -40,11 +40,11 @@ def test_real_dataset_sample():
     print("\nRunning EDA with feature metadata...")
     start_time = time.time()
 
-    runner = EDARunner(
+    prism = DataPrism(
         max_correlation_features=100  # Limit correlation matrix for speed
     )
 
-    results = runner.run(
+    results = prism.analyze(
         data=DataLoader.load_csv(sample_csv),
         schema=DataLoader.load_schema(base_path / 'credit_risk_schema.json'),
         target_variable=target,

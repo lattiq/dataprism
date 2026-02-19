@@ -14,7 +14,7 @@ class DataPrismError(Exception):
 
     Example:
         >>> try:
-        ...     runner.run(df)
+        ...     prism.analyze(df)
         ... except DataPrismError as e:
         ...     print(f"DataPrism error: {e}")
     """

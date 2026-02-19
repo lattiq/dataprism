@@ -347,8 +347,7 @@ class StabilityAnalyzer:
                 )
 
                 period_stability[feature] = psi_result
-                if psi_result['psi'] is not None:
-                    feature_stability_by_period[feature].append(psi_result['psi'])
+                feature_stability_by_period[feature].append(psi_result['psi'])
 
             period_results.append({
                 "period_id": i,
@@ -361,7 +360,7 @@ class StabilityAnalyzer:
         # Compute temporal trends for each feature
         feature_temporal_analysis = {}
         for feature, psi_values in feature_stability_by_period.items():
-            if len(psi_values) == 0:
+            if not any(v is not None for v in psi_values):
                 continue
 
             analysis = self._analyze_temporal_trend(psi_values)
@@ -531,27 +530,34 @@ class StabilityAnalyzer:
         mask = (df[time_column] >= start) & (df[time_column] < end)
         return df[mask]
 
-    def _analyze_temporal_trend(self, psi_values: List[float]) -> Dict[str, Any]:
-        """Analyze temporal trend in PSI values."""
-        if len(psi_values) == 0:
+    def _analyze_temporal_trend(self, psi_values: List) -> Dict[str, Any]:
+        """Analyze temporal trend in PSI values.
+
+        psi_values may contain None entries for periods where a feature
+        had insufficient samples.  We keep the full list (with Nones) in
+        ``psi_by_period`` so it stays index-aligned with comparison_periods,
+        but compute stats only on valid (non-None) values.
+        """
+        valid = [v for v in psi_values if v is not None]
+        if len(valid) == 0:
             return {"trend": "unknown", "note": "No PSI values available"}
 
-        avg_psi = np.mean(psi_values)
-        max_psi = np.max(psi_values)
-        min_psi = np.min(psi_values)
+        avg_psi = np.mean(valid)
+        max_psi = np.max(valid)
+        min_psi = np.min(valid)
 
         # Determine trend
-        if len(psi_values) >= 2:
+        if len(valid) >= 2:
             # Simple linear trend: compare first half vs second half
-            mid = len(psi_values) // 2
-            first_half_avg = np.mean(psi_values[:mid])
-            second_half_avg = np.mean(psi_values[mid:])
+            mid = len(valid) // 2
+            first_half_avg = np.mean(valid[:mid])
+            second_half_avg = np.mean(valid[mid:])
 
             if second_half_avg > first_half_avg * 1.5:
                 trend = "increasing_drift"
             elif second_half_avg < first_half_avg * 0.67:
                 trend = "decreasing_drift"
-            elif np.std(psi_values) > avg_psi * 0.5:
+            elif np.std(valid) > avg_psi * 0.5:
                 trend = "volatile"
             else:
                 trend = "stable"
@@ -559,9 +565,9 @@ class StabilityAnalyzer:
             trend = "stable" if avg_psi < 0.1 else "drifting"
 
         # Count stable/drifting periods
-        stable_periods = sum(1 for p in psi_values if p < 0.1)
-        minor_shift_periods = sum(1 for p in psi_values if 0.1 <= p < 0.2)
-        major_shift_periods = sum(1 for p in psi_values if p >= 0.2)
+        stable_periods = sum(1 for p in valid if p < 0.1)
+        minor_shift_periods = sum(1 for p in valid if 0.1 <= p < 0.2)
+        major_shift_periods = sum(1 for p in valid if p >= 0.2)
 
         # Overall stability classification
         if avg_psi < 0.1:
@@ -572,7 +578,7 @@ class StabilityAnalyzer:
             stability = "major_shift"
 
         return {
-            "psi_by_period": [safe_round(p, 4) for p in psi_values],
+            "psi_by_period": [safe_round(p, 4) if p is not None else None for p in psi_values],
             "avg_psi": safe_round(avg_psi, 4),
             "max_psi": safe_round(max_psi, 4),
             "min_psi": safe_round(min_psi, 4),

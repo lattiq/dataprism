@@ -10,14 +10,21 @@ A comprehensive Python library for exploratory data analysis with advanced featu
 DataPrism includes a built-in interactive dashboard to explore your analysis results in the browser.
 
 ```python
-from dataprism.viewer.server import serve_results
+from dataprism import DataPrism, DataLoader
 
-# From a saved JSON file
-serve_results("eda_results.json")
+# Load data from CSV or Parquet
+df = DataLoader.load_csv("data.csv")
+# df = DataLoader.load_parquet("data.parquet")
 
-# Or directly from EDA results
-results = runner.run(data=df, schema=schema, target_variable="target")
-serve_results(results)
+# Run analysis and launch viewer
+prism = DataPrism()
+prism.analyze(
+    data=df,
+    target_variable="target",
+    exclude_columns=["id", "split", "onboarding_date"],
+    output_path="eda_results.json",
+)
+prism.view()
 ```
 
 **Summary** — Dataset overview, insights, top features by IV, data quality score, and provider match rates.
@@ -28,13 +35,64 @@ serve_results(results)
 
 ![Catalog](docs/images/viewer-catalog.png)
 
-**Deep Dive** — Per-feature detail view with statistics, box plots, distribution charts, target associations, and correlations.
+**Deep Dive** — Per-feature detail view with statistics, violin plots, distribution charts, PSI trend analysis, target associations, and correlations.
 
 ![Deep Dive](docs/images/viewer-deepdive.png)
 
 **Associations** — Mixed-method heatmap (Pearson, Theil's U, Eta) showing relationships across all features.
 
 ![Associations](docs/images/viewer-associations.png)
+
+## How DataPrism Compares
+
+| Feature                      |             DataPrism             |     Sweetviz     |          ydata-profiling          | AutoViz |    D-Tale    |          DataPrep          |
+| ---------------------------- | :-------------------------------: | :--------------: | :-------------------------------: | :-----: | :----------: | :------------------------: |
+| Programmatic API             |                Yes                |       Yes        |                Yes                |   Yes   |     Yes      |            Yes             |
+| Interactive Viewer           |                Yes                |       Yes        |                Yes                | Partial |     Yes      |            Yes             |
+| Correlation Analysis         | Pearson, Spearman, Theil's U, Eta | Pearson, UC, Eta | Pearson, Spearman, Kendall, Phi-k | Pearson | Pearson, PPS | Pearson, Spearman, Kendall |
+| Histogram / Bar Chart        |                Yes                |       Yes        |                Yes                |   Yes   |     Yes      |            Yes             |
+| Box Plot                     |                Yes                |        —         |                Yes                |    —    |     Yes      |            Yes             |
+| Association Heatmap          |                Yes                |       Yes        |                Yes                |    —    |     Yes      |            Yes             |
+| Target-Overlaid Distribution |                Yes                |       Yes        |                 —                 |    —    |      —       |             —              |
+| Scatter / Pair Plot          |                 —                 |        —         |                Yes                |   Yes   |     Yes      |            Yes             |
+| Violin Plot                  |                Yes                |        —         |                 —                 |   Yes   |      —       |             —              |
+| Time Series / Trend          |                Yes                |        —         |                Yes                |    —    |     Yes      |             —              |
+| Schema-Driven Analysis       |                Yes                |     Partial      |                Yes                |    —    |   Partial    |          Partial           |
+| Mixed-Type Associations      |                Yes                |       Yes        |                Yes                |    —    |   Partial    |          Partial           |
+| Structured JSON Export       |                Yes                |        —         |                Yes                |    —    |   Partial    |             —              |
+| **Target Analysis (IV/WoE)** |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
+| **Drift / PSI Stability**    |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
+| **Data Quality Score**       |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
+| **Sentinel Value Handling**  |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
+| **Provider Match Rates**     |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
+
+**Where DataPrism leads:** Schema-aware profiling with column roles and sentinel codes, IV/WoE for credit risk, PSI-based stability monitoring (cohort + time-based), automated data quality scoring, and provider-level match rates. No other EDA library covers these out of the box.
+
+**Where DataPrism lags:** No dataset comparison (train vs test side-by-side), no auto-visualization per feature, and no Spark/Dask support for distributed datasets. These are on the roadmap.
+
+## Roadmap
+
+DataPrism is being built for the AI era — where data analysis is increasingly driven by LLM agents, automated pipelines, and programmatic consumers rather than humans clicking through dashboards.
+
+### AI-Native Analysis
+
+- **LLM-consumable output** — Structured JSON output designed for AI agents to read, reason about, and act on. No screen-scraping HTML reports or parsing PDFs.
+- **Natural language insights** — Auto-generated plain-English summaries of each feature, anomalies, and recommendations that LLMs can directly incorporate into reports.
+- **Agent-friendly API** — Minimal, predictable interface (`analyze()` → `view()`) that AI coding assistants can invoke without ambiguity. Schema-driven configuration over magic defaults.
+
+### Closing the Gaps
+
+- **Dataset comparison** — Side-by-side train/test/production profiling with automatic drift highlights.
+- **Scatter & pair plots** — Interactive scatter matrices for continuous feature pairs with target coloring.
+- **Auto-visualization** — One-line generation of per-feature visual summaries exportable as images.
+- **Spark/Dask support** — Distributed computation for datasets that don't fit in memory.
+- **Streaming analysis** — Incremental profiling for real-time data pipelines without re-analyzing the full dataset.
+
+### Deeper Intelligence
+
+- **Automated feature recommendations** — Go beyond flagging issues to suggesting transformations (log, binning, encoding) based on distribution shape and target relationship.
+- **Anomaly explanations** — When outliers or drift are detected, surface the likely cause (data pipeline issues, population shift, seasonality).
+- **Cross-dataset lineage** — Track how feature distributions evolve across model versions and data refreshes.
 
 ## Features
 
@@ -59,7 +117,7 @@ pip install dataprism
 ### Basic Usage
 
 ```python
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 import pandas as pd
 
 # Option 1: Load from file using DataLoader
@@ -68,15 +126,17 @@ df = DataLoader.load_csv("data.csv")
 # Option 2: Use existing DataFrame
 df = pd.read_csv("data.csv")  # or from database, etc.
 
-# Initialize runner
-runner = EDARunner(
+# Initialize prism
+prism = DataPrism(
     max_categories=50,
     top_correlations=10
 )
 
-# Run analysis
-results = runner.run(
+# Run analysis (exclude non-feature columns when no schema is available)
+results = prism.analyze(
     data=df,
+    exclude_columns=["customer_id", "created_at"],
+    target_variable="target",
     output_path="eda_results.json"
 )
 ```
@@ -85,7 +145,7 @@ results = runner.run(
 
 ```python
 from dataprism import (
-    EDARunner, DataLoader,
+    DataPrism, DataLoader,
     ColumnConfig, ColumnType, ColumnRole, Sentinels, DatasetSchema,
 )
 
@@ -105,8 +165,8 @@ schema = DatasetSchema([
 ])
 
 # Run with schema
-runner = EDARunner()
-results = runner.run(
+prism = DataPrism()
+results = prism.analyze(
     data=df,
     schema=schema,
     target_variable="target",
@@ -115,6 +175,7 @@ results = runner.run(
 ```
 
 **Schema JSON format** (`schema.json`):
+
 ```json
 {
   "columns": [
@@ -138,21 +199,21 @@ results = runner.run(
 #### Cohort-Based (Train/Test)
 
 ```python
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 
 # Load data and schema
 df = DataLoader.load_parquet("data.parquet")
 schema = DataLoader.load_schema("schema.json")
 
 # Configure for stability analysis
-runner = EDARunner(
+prism = DataPrism(
     calculate_stability=True,
     cohort_column='dataTag',
     baseline_cohort='training',
     comparison_cohort='test'
 )
 
-results = runner.run(
+results = prism.analyze(
     data=df,
     schema=schema
 )
@@ -161,14 +222,14 @@ results = runner.run(
 #### Time-Based
 
 ```python
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 
 # Load data and schema
 df = DataLoader.load_parquet("data.parquet")
 schema = DataLoader.load_schema("schema.json")
 
 # Configure for time-based stability
-runner = EDARunner(
+prism = DataPrism(
     time_based_stability=True,
     time_column='onboarding_time',
     time_window_strategy='monthly',  # or 'weekly', 'quartiles', 'custom'
@@ -177,7 +238,7 @@ runner = EDARunner(
     min_samples_per_period=100
 )
 
-results = runner.run(
+results = prism.analyze(
     data=df,
     schema=schema
 )
@@ -213,6 +274,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## Contact
 
 For questions or suggestions:
+
 - Email: dev@lattiq.com
 - GitHub: [https://github.com/lattiq/dataprism](https://github.com/lattiq/dataprism)
 

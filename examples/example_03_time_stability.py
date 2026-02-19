@@ -1,7 +1,7 @@
 """Example 3: Time-based stability analysis (monthly, weekly, quartile windows)."""
 
 from pathlib import Path
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 
 DATA_DIR = Path(__file__).parent
 
@@ -16,7 +16,7 @@ schema = DataLoader.load_schema(DATA_DIR / "credit_risk_schema.json")
 print("\n1. Monthly Windows:")
 print("-" * 80)
 
-runner_monthly = EDARunner(
+prism_monthly = DataPrism(
     max_categories=20,
     time_based_stability=True,
     time_column='onboarding_date',
@@ -26,7 +26,7 @@ runner_monthly = EDARunner(
     min_samples_per_period=100
 )
 
-results_monthly = runner_monthly.run(
+results_monthly = prism_monthly.analyze(
     data=df,
     schema=schema,
     target_variable="loan_status",
@@ -44,7 +44,7 @@ for feat in results_monthly.get('features', [])[:5]:
 print("\n2. Weekly Windows:")
 print("-" * 80)
 
-runner_weekly = EDARunner(
+prism_weekly = DataPrism(
     max_categories=20,
     time_based_stability=True,
     time_column='onboarding_date',
@@ -54,7 +54,7 @@ runner_weekly = EDARunner(
     min_samples_per_period=50
 )
 
-results_weekly = runner_weekly.run(
+results_weekly = prism_weekly.analyze(
     data=df,
     schema=schema,
     target_variable="loan_status",
@@ -71,7 +71,7 @@ for feat in results_weekly.get('features', [])[:5]:
 print("\n3. Quartile Windows (Equal Sample Sizes):")
 print("-" * 80)
 
-runner_quartile = EDARunner(
+prism_quartile = DataPrism(
     max_categories=20,
     time_based_stability=True,
     time_column='onboarding_date',
@@ -81,7 +81,7 @@ runner_quartile = EDARunner(
     min_samples_per_period=100
 )
 
-results_quartile = runner_quartile.run(
+results_quartile = prism_quartile.analyze(
     data=df,
     schema=schema,
     target_variable="loan_status",

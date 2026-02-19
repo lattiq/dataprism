@@ -58,9 +58,9 @@ Provider match rates are computed automatically during EDA using one of two meth
 If your dataset includes columns like `payu_record_not_found`, `truecaller_record_not_found`, etc., DataPrism will automatically detect and use them:
 
 ```python
-runner = EDARunner()
+prism = DataPrism()
 df = DataLoader.load_csv("data.csv")
-results = runner.run(data=df)
+results = prism.analyze(data=df)
 
 # Access provider stats
 provider_stats = results['summary']['provider_match_rates']
@@ -74,8 +74,8 @@ If no `record_not_found` columns exist, you can use a schema to group features b
 df = DataLoader.load_csv("data.csv")
 schema = DataLoader.load_schema("schema.json")
 
-runner = EDARunner()
-results = runner.run(data=df, schema=schema)
+prism = DataPrism()
+results = prism.analyze(data=df, schema=schema)
 
 # Provider stats show match rates based on feature null analysis
 provider_stats = results['summary']['provider_match_rates']
@@ -94,11 +94,11 @@ DataPrism automatically computes feature counts across 16+ categories — useful
 Feature counts are computed automatically during EDA and included in the results:
 
 ```python
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 
-runner = EDARunner()
+prism = DataPrism()
 df = DataLoader.load_csv("data.csv")
-results = runner.run(
+results = prism.analyze(
     data=df,
     target_variable="target"  # Required for correlation and IV
 )
@@ -157,7 +157,7 @@ print(f"High Stability: {feature_counts['high_stability']['count']}")
 ### Correlation Settings
 
 ```python
-runner = EDARunner(
+prism = DataPrism(
     top_correlations=10,           # Top N correlations per feature
     max_correlation_features=500   # Limit features in correlation matrix
 )
@@ -166,7 +166,7 @@ runner = EDARunner(
 ### Sampling for Large Datasets
 
 ```python
-runner = EDARunner(
+prism = DataPrism(
     sample_size=10000  # Analyze sample of 10K rows
 )
 ```
@@ -175,7 +175,7 @@ runner = EDARunner(
 
 ```python
 df = DataLoader.load_csv("data.csv")
-results = runner.run(
+results = prism.analyze(
     data=df,
     columns=['age', 'income', 'zip_code']  # Analyze specific columns
 )
@@ -185,7 +185,7 @@ results = runner.run(
 
 ```python
 df = DataLoader.load_csv("data.csv")
-results = runner.run(
+results = prism.analyze(
     data=df,
     output_path="results.json",
     compact_json=True  # Minimize JSON size
@@ -208,6 +208,6 @@ df.to_parquet("data.parquet", index=False)
 
 # Then use Parquet for faster analysis
 df = DataLoader.load_parquet("data.parquet")
-runner = EDARunner()
-results = runner.run(data=df)
+prism = DataPrism()
+results = prism.analyze(data=df)
 ```

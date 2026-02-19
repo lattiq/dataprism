@@ -7,7 +7,7 @@ import sys
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 
 
 def test_time_based_stability():
@@ -43,7 +43,7 @@ def test_time_based_stability():
     print("TEST 1: MONTHLY TIME WINDOWS")
     print("="*80)
 
-    runner = EDARunner(
+    prism = DataPrism(
         time_based_stability=True,
         time_column='onboarding_time',
         time_window_strategy='monthly',
@@ -53,7 +53,7 @@ def test_time_based_stability():
         max_correlation_features=50
     )
 
-    results = runner.run(
+    results = prism.analyze(
         data=DataLoader.load_csv(sample_csv),
         schema=DataLoader.load_schema(base_path / 'credit_risk_schema.json'),
         target_variable='loan_status',
@@ -109,7 +109,7 @@ def test_time_based_stability():
     print("TEST 2: WEEKLY TIME WINDOWS")
     print("="*80)
 
-    runner_weekly = EDARunner(
+    prism_weekly = DataPrism(
         time_based_stability=True,
         time_column='onboarding_time',
         time_window_strategy='weekly',
@@ -119,7 +119,7 @@ def test_time_based_stability():
         max_correlation_features=50
     )
 
-    results_weekly = runner_weekly.run(
+    results_weekly = prism_weekly.analyze(
         data=DataLoader.load_csv(sample_csv),
         schema=DataLoader.load_schema(base_path / 'credit_risk_schema.json'),
         target_variable='loan_status',
@@ -139,7 +139,7 @@ def test_time_based_stability():
     print("TEST 3: QUARTILE-BASED WINDOWS (Equal Sample Sizes)")
     print("="*80)
 
-    runner_quartile = EDARunner(
+    prism_quartile = DataPrism(
         time_based_stability=True,
         time_column='onboarding_time',
         time_window_strategy='quartiles',
@@ -149,7 +149,7 @@ def test_time_based_stability():
         max_correlation_features=50
     )
 
-    results_quartile = runner_quartile.run(
+    results_quartile = prism_quartile.analyze(
         data=DataLoader.load_csv(sample_csv),
         schema=DataLoader.load_schema(base_path / 'credit_risk_schema.json'),
         target_variable='loan_status',

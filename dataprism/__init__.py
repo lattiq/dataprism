@@ -22,7 +22,10 @@ from dataprism.schema import (
     DatasetSchema,
     Sentinels,
 )
-from dataprism.eda import EDARunner
+from dataprism.eda import DataPrism
+
+# Backward compatibility alias
+EDARunner = DataPrism
 from dataprism.viewer import serve_results
 
 try:
@@ -34,7 +37,8 @@ __author__ = "LattIQ Development Team"
 __email__ = "dev@lattiq.com"
 
 __all__ = [
-    "EDARunner",
+    "DataPrism",
+    "EDARunner",  # backward compat alias
     # Viewer
     "serve_results",
     # Data Loading Utilities

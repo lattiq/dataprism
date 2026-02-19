@@ -1,7 +1,7 @@
 """Example 2: Cohort-based stability analysis (Train/Test validation)."""
 
 from pathlib import Path
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 
 DATA_DIR = Path(__file__).parent
 
@@ -9,7 +9,7 @@ print("=" * 80)
 print("Example 2: Cohort-Based Stability (Train/Test Validation)")
 print("=" * 80)
 
-runner = EDARunner(
+prism = DataPrism(
     max_categories=20,
     calculate_stability=True,
     cohort_column='split',
@@ -21,7 +21,7 @@ df = DataLoader.load_csv(DATA_DIR / "credit_risk_dataset.csv")
 schema = DataLoader.load_schema(DATA_DIR / "credit_risk_schema.json")
 
 
-results = runner.run(
+results = prism.analyze(
     data=df,
     schema=schema,
     target_variable="loan_status",

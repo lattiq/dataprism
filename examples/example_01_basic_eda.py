@@ -1,7 +1,7 @@
 """Example 1: Basic EDA without stability analysis."""
 
 from pathlib import Path
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 
 DATA_DIR = Path(__file__).parent
 
@@ -14,9 +14,9 @@ df = DataLoader.load_csv(DATA_DIR / "credit_risk_dataset.csv")
 schema = DataLoader.load_schema(DATA_DIR / "credit_risk_schema.json")
 
 # Run EDA
-runner = EDARunner(max_categories=20)
+prism = DataPrism(max_categories=20)
 
-results = runner.run(
+results = prism.analyze(
     data=df,
     schema=schema,
     target_variable="loan_status",

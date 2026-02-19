@@ -7,7 +7,7 @@ import sys
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism, DataLoader
 
 
 def test_stability():
@@ -36,7 +36,7 @@ def test_stability():
     print("Running EDA with stability calculation...")
     print("="*80)
 
-    runner = EDARunner(
+    prism = DataPrism(
         calculate_stability=True,
         cohort_column='split',
         baseline_cohort='train',
@@ -44,7 +44,7 @@ def test_stability():
         max_correlation_features=50  # Limit for speed
     )
 
-    results = runner.run(
+    results = prism.analyze(
         data=DataLoader.load_csv(sample_csv),
         schema=DataLoader.load_schema(base_path / 'credit_risk_schema.json'),
         target_variable='loan_status',

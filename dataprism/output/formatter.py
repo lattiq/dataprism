@@ -166,6 +166,7 @@ class JSONFormatter:
                             'min_psi': time_stability.get('min_psi'),
                             'stability': time_stability.get('stability'),
                             'trend': time_stability.get('trend'),
+                            'psi_by_period': time_stability.get('psi_by_period'),
                             'interpretation': JSONFormatter._time_stability_interpretation(time_stability)
                         }
 
@@ -216,6 +217,22 @@ class JSONFormatter:
         # Add unified association matrix if available
         if association_matrix:
             summary_section["association_matrix"] = association_matrix
+
+        # Add stability period metadata for viewer time-series charts
+        if stability_results:
+            stability_summary = {'time_based_available': False}
+            time_src = (
+                stability_results if stability_results.get('method') == 'time_based'
+                else stability_results.get('time_based_analysis')
+            )
+            if time_src:
+                periods = time_src.get('comparison_periods', [])
+                stability_summary['time_based_available'] = True
+                stability_summary['time_periods'] = [
+                    {'label': p.get('start', ''), 'end': p.get('end', '')}
+                    for p in periods
+                ]
+            summary_section['stability_analysis'] = stability_summary
 
         # Build output with only 3 sections
         output = {

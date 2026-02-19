@@ -2,9 +2,7 @@
 
 import pandas as pd
 import numpy as np
-import pytest
-
-from dataprism import EDARunner, DataLoader, ColumnConfig, ColumnType, ColumnRole, DatasetSchema
+from dataprism import DataPrism, ColumnConfig, ColumnType, ColumnRole, DatasetSchema
 
 
 def test_feature_filtering_with_schema():
@@ -24,8 +22,8 @@ def test_feature_filtering_with_schema():
         ColumnConfig('target_variable', ColumnType.BINARY, ColumnRole.TARGET),
     ])
 
-    runner = EDARunner()
-    results = runner.run(
+    prism = DataPrism()
+    results = prism.analyze(
         data=df,
         schema=schema,
         target_variable='target_variable'
@@ -63,14 +61,14 @@ def test_feature_filtering_with_stability():
         ColumnConfig('target_variable', ColumnType.BINARY, ColumnRole.TARGET),
     ])
 
-    runner = EDARunner(
+    prism = DataPrism(
         calculate_stability=True,
         cohort_column='dataTag',
         baseline_cohort='training',
         comparison_cohort='test'
     )
 
-    results = runner.run(
+    results = prism.analyze(
         data=df,
         schema=schema,
         target_variable='target_variable'

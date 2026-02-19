@@ -1,9 +1,9 @@
-"""Example 6: Using DataFrame objects directly with EDARunner."""
+"""Example 6: Using DataFrame objects directly with DataPrism."""
 
 import pandas as pd
 import numpy as np
 from dataprism import (
-    EDARunner, DataLoader,
+    DataPrism,
     ColumnConfig, ColumnType, ColumnRole, DatasetSchema,
 )
 
@@ -23,8 +23,8 @@ def example_simple_dataframe():
         'default': np.random.choice([0, 1], 1000, p=[0.8, 0.2])
     })
 
-    runner = EDARunner(max_categories=20)
-    results = runner.run(data=df, target_variable='default')
+    prism = DataPrism(max_categories=20)
+    results = prism.analyze(data=df, target_variable='default')
 
     print(f"  Features analyzed: {len(results['features'])}")
     print(f"  Target: {results['metadata']['target_variable']}")
@@ -57,8 +57,8 @@ def example_with_schema():
         ColumnConfig('loan_approved', ColumnType.BINARY, ColumnRole.TARGET),
     ])
 
-    runner = EDARunner(max_categories=20)
-    results = runner.run(data=df, schema=schema, target_variable='loan_approved')
+    prism = DataPrism(max_categories=20)
+    results = prism.analyze(data=df, schema=schema, target_variable='loan_approved')
 
     print(f"  Features analyzed: {len(results['features'])}")
     print(f"  Schema available: {results['metadata']['schema_available']}")
@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print("Key takeaways:")
-    print("  1. EDARunner.run() accepts DataFrame objects directly")
+    print("  1. DataPrism.analyze() accepts DataFrame objects directly")
     print("  2. Use DataLoader utilities to load CSV/Parquet files")
     print("  3. Use DatasetSchema + ColumnConfig for column configuration")
     print("=" * 70)

@@ -884,7 +884,11 @@ function renderDeepDive() {
     var el = document.getElementById('deepdive-search');
     if (el) { el.focus(); el.setSelectionRange(cursorPos, cursorPos); }
   }
-  if (selected) renderDistributionChart(selected);
+  if (selected) {
+    renderDistributionChart(selected);
+    renderPsiTrendChart(selected);
+    drawViolinCanvas(selected);
+  }
 }
 
 function renderFeatureDetail(f) {
@@ -948,11 +952,16 @@ function renderFeatureDetail(f) {
     }
     h += '</div></div>';
 
-    // Box plot
+    // Violin / Box plot
     if (cont && stats.min != null && stats.max != null) {
       h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
-      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Box Plot</h3>';
-      h += renderBoxPlot(stats, out);
+      if (dist.bin_centers && dist.counts && dist.counts.length > 0) {
+        h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Violin Plot</h3>';
+        h += renderViolinPlot(stats, out, dist);
+      } else {
+        h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Box Plot</h3>';
+        h += renderBoxPlot(stats, out);
+      }
       h += '</div>';
     }
 
@@ -961,6 +970,13 @@ function renderFeatureDetail(f) {
       h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
       h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Distribution</h3>';
       h += '<div style="height:260px"><canvas id="chart-dist"></canvas></div></div>';
+    }
+
+    // PSI Trend chart (time-based stability)
+    if (stab && stab.time_based && stab.time_based.psi_by_period && stab.time_based.psi_by_period.length > 0) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">PSI Trend</h3>';
+      h += '<div style="height:220px"><canvas id="chart-psi-trend"></canvas></div></div>';
     }
 
     // Target Association
@@ -1106,6 +1122,269 @@ function renderBoxPlot(s, o) {
   for(var li=0;li<legendItems.length;li++) h+='<span class="flex items-center gap-1.5">'+legendItems[li].icon+legendItems[li].label+' <span class="text-mt">('+fmt(legendItems[li].val)+')</span></span>';
   h+='</div>';
   return h;
+}
+
+function renderViolinPlot(s, o, dist) {
+  var mn=s.min,mx=s.max,q1=s.q1,med=s.median,q3=s.q3,mean=s.mean;
+  if (mn==null||mx==null||q1==null||med==null||q3==null) return '<div class="text-sb text-sm">Insufficient data for violin plot</div>';
+  var rng=mx-mn;
+  if (rng===0) return '<div class="text-sb text-sm">Constant value: '+fmt(mn)+'</div>';
+  var h='<canvas id="chart-violin" style="width:100%;height:120px"></canvas>';
+  // Legend – sorted by value
+  var legendItems = [
+    {label:'Q1',val:q1,icon:'<span class="inline-block" style="width:2px;height:12px;background:#169C76"></span>'},
+    {label:'Median',val:med,icon:'<span class="inline-block" style="width:2px;height:12px;background:#065f46"></span>'},
+    {label:'Q3',val:q3,icon:'<span class="inline-block" style="width:2px;height:12px;background:#169C76"></span>'}
+  ];
+  if(mean!=null) legendItems.push({label:'Mean',val:mean,icon:'<span class="inline-block rounded-full bg-hd" style="width:8px;height:8px"></span>'});
+  legendItems.sort(function(a,b){return a.val-b.val;});
+  h+='<div class="flex items-center justify-center gap-6 text-sm text-sb mt-3">';
+  for(var li=0;li<legendItems.length;li++) h+='<span class="flex items-center gap-1.5">'+legendItems[li].icon+legendItems[li].label+' <span class="text-mt">('+fmt(legendItems[li].val)+')</span></span>';
+  h+='</div>';
+  return h;
+}
+
+function drawViolinCanvas(f) {
+  var canvas = document.getElementById('chart-violin');
+  if (!canvas) return;
+  var stats = f.statistics || {}, dist = f.distribution || {};
+  if (!dist.bin_centers || !dist.counts || dist.counts.length === 0) return;
+  var mn=stats.min,mx=stats.max,q1=stats.q1,med=stats.median,q3=stats.q3,mean=stats.mean;
+  if (mn==null||mx==null) return;
+  var rng=mx-mn;
+  if (rng===0) return;
+
+  var dpr = window.devicePixelRatio || 1;
+  var rect = canvas.parentElement.getBoundingClientRect();
+  var W = rect.width || canvas.offsetWidth || 500;
+  var H = 120;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  var cs = getComputedStyle(document.documentElement);
+  var isDark = document.documentElement.classList.contains('dark');
+
+  var pad = 40; // horizontal padding for min/max labels
+  var plotW = W - pad * 2;
+  var centerY = H / 2;
+  var maxHalf = H * 0.38; // max half-height for violin
+
+  // Map data value to x position, clamped to canvas bounds
+  function valToX(v) { return Math.max(pad, Math.min(pad + plotW, pad + (v - mn) / rng * plotW)); }
+
+  var bins = dist.bin_centers;
+  var counts = dist.counts;
+  var maxCount = Math.max.apply(null, counts);
+  if (maxCount === 0) return;
+
+  // Build points for the violin shape
+  var points = [];
+  for (var i = 0; i < bins.length; i++) {
+    var x = valToX(bins[i]);
+    var h = (counts[i] / maxCount) * maxHalf;
+    points.push({x: x, h: h});
+  }
+
+  // Draw violin shape (mirrored)
+  var violinFill = isDark ? 'rgba(22,156,118,0.15)' : 'rgba(22,156,118,0.12)';
+  var violinStroke = isDark ? 'rgba(22,156,118,0.4)' : 'rgba(22,156,118,0.35)';
+
+  ctx.beginPath();
+  // Top half (above center)
+  ctx.moveTo(points[0].x, centerY - points[0].h);
+  for (var i = 1; i < points.length; i++) {
+    ctx.lineTo(points[i].x, centerY - points[i].h);
+  }
+  // Bottom half (below center, reversed)
+  for (var i = points.length - 1; i >= 0; i--) {
+    ctx.lineTo(points[i].x, centerY + points[i].h);
+  }
+  ctx.closePath();
+  ctx.fillStyle = violinFill;
+  ctx.fill();
+  ctx.strokeStyle = violinStroke;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Whisker lines: min→Q1 and Q3→max
+  var whiskerColor = isDark ? '#6b7280' : '#94a3b8';
+  ctx.strokeStyle = whiskerColor;
+  ctx.lineWidth = 1.5;
+  // Left whisker
+  ctx.beginPath();
+  ctx.moveTo(valToX(mn), centerY);
+  ctx.lineTo(valToX(q1), centerY);
+  ctx.stroke();
+  // Right whisker
+  ctx.beginPath();
+  ctx.moveTo(valToX(q3), centerY);
+  ctx.lineTo(valToX(mx), centerY);
+  ctx.stroke();
+  // Whisker caps
+  var capH = 8;
+  ctx.beginPath();
+  ctx.moveTo(valToX(mn), centerY - capH);
+  ctx.lineTo(valToX(mn), centerY + capH);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(valToX(mx), centerY - capH);
+  ctx.lineTo(valToX(mx), centerY + capH);
+  ctx.stroke();
+
+  // IQR box
+  var boxH = 20;
+  var boxX = valToX(q1);
+  var boxW = valToX(q3) - boxX;
+  ctx.fillStyle = isDark ? 'rgba(22,156,118,0.25)' : 'rgba(22,156,118,0.2)';
+  ctx.fillRect(boxX, centerY - boxH / 2, boxW, boxH);
+  ctx.strokeStyle = '#169C76';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(boxX, centerY - boxH / 2, boxW, boxH);
+
+  // Median line
+  ctx.strokeStyle = '#065f46';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(valToX(med), centerY - boxH / 2);
+  ctx.lineTo(valToX(med), centerY + boxH / 2);
+  ctx.stroke();
+
+  // Mean dot
+  if (mean != null) {
+    ctx.fillStyle = isDark ? '#e2e8f0' : '#0f172a';
+    ctx.beginPath();
+    ctx.arc(valToX(mean), centerY, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Min/Max labels
+  ctx.fillStyle = cs.getPropertyValue('--c-chart-tick').trim();
+  ctx.font = '10px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(fmt(mn), valToX(mn), centerY + capH + 14);
+  ctx.fillText(fmt(mx), valToX(mx), centerY + capH + 14);
+}
+
+function renderPsiTrendChart(f) {
+  if (S.charts.psiTrend) { S.charts.psiTrend.destroy(); S.charts.psiTrend = null; }
+  var canvas = document.getElementById('chart-psi-trend');
+  if (!canvas) return;
+  var stab = f.stability;
+  if (!stab || !stab.time_based || !stab.time_based.psi_by_period) return;
+  var psiValues = stab.time_based.psi_by_period;
+  if (!psiValues || psiValues.length === 0) return;
+
+  // Build labels from summary.stability_analysis.time_periods
+  var sa = summary.stability_analysis;
+  var labels = [];
+  for (var i = 0; i < psiValues.length; i++) {
+    if (sa && sa.time_periods && sa.time_periods[i]) {
+      var lbl = sa.time_periods[i].label || '';
+      // Try to format as short date (e.g., "Jan 23")
+      if (lbl) {
+        try {
+          var d = new Date(lbl);
+          if (!isNaN(d.getTime())) {
+            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            lbl = months[d.getMonth()] + ' ' + String(d.getFullYear()).slice(2);
+          }
+        } catch(e) {}
+      }
+      labels.push(lbl || 'Period ' + (i + 1));
+    } else {
+      labels.push('Period ' + (i + 1));
+    }
+  }
+
+  var cs = getComputedStyle(document.documentElement);
+  var isDark = document.documentElement.classList.contains('dark');
+  var lineColor = cs.getPropertyValue('--c-chart-border').trim();
+  var pointColor = '#169C76';
+  var gridColor = cs.getPropertyValue('--c-chart-grid').trim();
+  var tickColor = cs.getPropertyValue('--c-chart-tick').trim();
+
+  // Threshold datasets
+  var stableLine = new Array(psiValues.length).fill(0.1);
+  var majorLine = new Array(psiValues.length).fill(0.2);
+
+  S.charts.psiTrend = new Chart(canvas.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'PSI',
+          data: psiValues,
+          borderColor: lineColor,
+          backgroundColor: pointColor,
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: pointColor,
+          pointBorderColor: lineColor,
+          pointBorderWidth: 1,
+          tension: 0.3,
+          fill: false,
+          spanGaps: false,
+          order: 1
+        },
+        {
+          label: 'Stable (0.1)',
+          data: stableLine,
+          borderColor: isDark ? 'rgba(22,156,118,0.5)' : 'rgba(22,156,118,0.4)',
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+          order: 2
+        },
+        {
+          label: 'Major Shift (0.2)',
+          data: majorLine,
+          borderColor: isDark ? 'rgba(239,68,68,0.5)' : 'rgba(239,68,68,0.4)',
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+          order: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          labels: { color: tickColor, font: { size: 10 }, usePointStyle: true, pointStyleWidth: 16 }
+        },
+        tooltip: {
+          backgroundColor: cs.getPropertyValue('--c-tooltip-bg').trim(),
+          titleColor: cs.getPropertyValue('--c-tooltip-title').trim(),
+          bodyColor: cs.getPropertyValue('--c-tooltip-body').trim(),
+          borderColor: cs.getPropertyValue('--c-tooltip-border').trim(),
+          borderWidth: 1,
+          callbacks: {
+            label: function(ctx) {
+              if (ctx.datasetIndex !== 0) return ctx.dataset.label;
+              var v = ctx.parsed.y;
+              if (v == null) return 'PSI: N/A (insufficient samples)';
+              var rating = v < 0.1 ? 'Stable' : v < 0.2 ? 'Minor Shift' : 'Major Shift';
+              return 'PSI: ' + v.toFixed(4) + ' (' + rating + ')';
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 10 }, maxRotation: 45 } },
+        y: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 10 } }, beginAtZero: true }
+      }
+    }
+  });
 }
 
 function renderDistributionChart(f) {

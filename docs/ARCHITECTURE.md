@@ -9,7 +9,7 @@ DataPrism is a Python library for exploratory data analysis. It provides automat
 ```
 dataprism/
 ├── __init__.py          # Public API surface
-├── eda.py               # EDARunner — main orchestrator
+├── eda.py               # DataPrism — main orchestrator
 ├── schema.py            # DatasetSchema, ColumnConfig, Sentinels, enums
 ├── processor.py         # FeatureProcessor — routes columns to analyzers
 ├── exceptions.py        # Exception hierarchy (10 domain-specific exceptions)
@@ -43,7 +43,7 @@ All public imports live in `__init__.py`:
 
 ```python
 from dataprism import (
-    EDARunner,          # Main orchestrator
+    DataPrism,          # Main orchestrator
     DataLoader,         # CSV/Parquet/schema loading
     DatasetSchema,      # Schema container with filtered queries
     ColumnConfig,       # Per-column configuration
@@ -57,11 +57,11 @@ from dataprism import (
 ## Data Flow
 
 ```
-DataLoader ──→ EDARunner.run() ──→ JSON output
+DataLoader ──→ DataPrism.analyze() ──→ JSON output
 ```
 
 1. **Load** — `DataLoader` reads CSV/Parquet + schema JSON into DataFrame + `DatasetSchema`
-2. **Configure** — `EDARunner` resolves column types from schema, filters features, identifies target/split/time columns by role
+2. **Configure** — `DataPrism` resolves column types from schema, filters features, identifies target/split/time columns by role
 3. **Preprocess** — Sentinel values (`not_found`, `missing`) replaced with nulls via `replace_sentinel_values_with_nulls()`. Integer columns are converted to pandas nullable types (e.g. `Int64`) to avoid silent float upcasting when NaN is introduced.
 4. **Basic analysis** — `BasicStatsAnalyzer` computes dataset-level stats (row counts, memory, duplicates, missing cells). Runs on feature columns only (excludes metadata like cohort/time columns).
 5. **Correlations** — `CorrelationEngine` computes three association types:
@@ -71,7 +71,7 @@ DataLoader ──→ EDARunner.run() ──→ JSON output
 6. **Feature analysis** — `FeatureProcessor` routes each column to `ContinuousAnalyzer` or `CategoricalAnalyzer`, adds correlations (including reverse Theil's U), target relationships (IV/WoE), and quality flags. Per-feature analysis is wrapped in try/except for resilience. `ResultMapper` transforms each feature to the output schema.
 7. **Stability** — Optional PSI computation: cohort-based (train/test split) or time-based (monthly/weekly/quarterly windows). Wrapped in try/except so failures don't abort the run.
 8. **Match rates** — `compute_provider_match_rates()` calculates provider-level match statistics
-9. **Association matrix** — `CorrelationEngine.build_association_matrix()` merges Pearson, Theil's U, and Eta into a single N×N structure with per-cell method labels. Only computed when ≤25 features.
+9. **Association matrix** — `CorrelationEngine.build_association_matrix()` merges Pearson, Theil's U, and Eta into a single N×N structure with per-cell method labels. When the dataset exceeds `max_association_features` (default 50), `select_features_for_association()` picks the most informative subset using IV/association scoring, cardinality penalties, and redundancy pruning. Set to 0 to disable.
 10. **Format** — `JSONFormatter` assembles results into 3-section JSON with summary metrics, data quality scores, feature counts (16+ categories), and feature rankings
 
 ## Schema Design
@@ -175,9 +175,9 @@ DataPrismError
 └── TargetAnalysisError        # Non-binary target for IV, insufficient samples
 ```
 
-## EDARunner Configuration
+## DataPrism Configuration
 
-`EDARunner.__init__()` accepts:
+`DataPrism.__init__()` accepts:
 
 | Parameter | Default | Purpose |
 |---|---|---|
@@ -185,6 +185,7 @@ DataPrismError
 | `sample_size` | None | Limit rows analyzed (head-based sampling) |
 | `top_correlations` | 10 | Number of top correlated features per feature |
 | `max_correlation_features` | None | Limit features in correlation matrix |
+| `max_association_features` | 50 | Max features in association matrix (0 = disabled) |
 | `calculate_stability` | False | Enable cohort-based PSI stability |
 | `cohort_column` | None | Column containing cohort labels |
 | `baseline_cohort` | None | Label for baseline cohort (default: "training") |
@@ -195,6 +196,19 @@ DataPrismError
 | `baseline_period` | "first" | Baseline time window |
 | `comparison_periods` | "all" | Comparison time windows |
 | `min_samples_per_period` | 100 | Minimum samples required per time period |
+
+`DataPrism.analyze()` accepts:
+
+| Parameter | Default | Purpose |
+|---|---|---|
+| `data` | *(required)* | DataFrame to analyze |
+| `schema` | None | DatasetSchema with column configs |
+| `output_path` | None | Path to save JSON output |
+| `columns` | None | Explicit list of columns to analyze (overrides schema) |
+| `exclude_columns` | None | Columns to exclude from analysis (works with or without schema) |
+| `target_variable` | None | Name of target variable column |
+
+`exclude_columns` is useful when no schema is available and you need to skip identifiers, dates, or other non-feature columns. The target variable, cohort column, and time column are protected and never excluded.
 
 ## Statistical Methods
 

@@ -8,7 +8,7 @@ import sys
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dataprism import EDARunner, DataLoader
+from dataprism import DataPrism
 from dataprism.schema import (
     ColumnConfig, ColumnRole, ColumnType, DatasetSchema, Sentinels
 )
@@ -47,8 +47,8 @@ def test_new_schema():
 
     # Run EDA directly on DataFrame (not file path)
     print("\nRunning EDA...")
-    runner = EDARunner()
-    results = runner.run(
+    prism = DataPrism()
+    results = prism.analyze(
         data=df,
         target_variable='target',
     )

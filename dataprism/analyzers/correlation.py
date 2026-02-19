@@ -109,6 +109,226 @@ class CorrelationEngine:
         )
         return top_features
 
+    def select_features_for_association(
+        self,
+        feature_names: List[str],
+        features_data: Dict[str, Any],
+        target_variable: Optional[str],
+        correlation_matrix: Optional[pd.DataFrame],
+        theils_u_matrix: Optional[pd.DataFrame],
+        eta_matrix: Optional[Dict[str, Dict[str, float]]],
+        max_features: int,
+    ) -> List[str]:
+        """
+        Select the most informative features for the association matrix.
+
+        Uses composite scoring: IV ranking (or association strength without target),
+        cardinality penalty for high-cardinality categoricals, and redundancy pruning
+        to remove near-duplicate features.
+
+        Args:
+            feature_names: All candidate feature names
+            features_data: Per-feature analysis results dict
+            target_variable: Target variable name (or None)
+            correlation_matrix: Pearson correlation matrix (cont×cont)
+            theils_u_matrix: Theil's U matrix (cat×cat)
+            eta_matrix: Eta dict (cat↔cont)
+            max_features: Maximum features to select
+
+        Returns:
+            List of selected feature names
+        """
+        # Always include target variable
+        selected_target = None
+        if target_variable and target_variable in feature_names:
+            selected_target = target_variable
+
+        # Quality filter: remove constant or not-recommended features
+        candidates = []
+        for fname in feature_names:
+            if fname == target_variable:
+                continue
+            fdata = features_data.get(fname, {})
+            quality = fdata.get("quality", {})
+            if quality.get("is_constant", False):
+                continue
+            if quality.get("recommended_for_modeling") is False:
+                continue
+            candidates.append(fname)
+
+        # Score each candidate
+        scored = []
+        for fname in candidates:
+            fdata = features_data.get(fname, {})
+            if target_variable:
+                score = self._score_with_target(fdata)
+            else:
+                score = self._score_without_target(
+                    fname, correlation_matrix, theils_u_matrix, eta_matrix
+                )
+            score = self._apply_cardinality_penalty(score, fdata)
+            scored.append((fname, score))
+
+        # Sort by score descending
+        scored.sort(key=lambda x: x[1], reverse=True)
+
+        # Redundancy pruning: greedy forward selection
+        budget = max_features - (1 if selected_target else 0)
+        selected = []
+        for fname, _score in scored:
+            if len(selected) >= budget:
+                break
+            if not self._is_redundant(
+                fname, selected, correlation_matrix, theils_u_matrix, eta_matrix
+            ):
+                selected.append(fname)
+
+        # Backfill if pruning removed too many
+        if len(selected) < budget:
+            selected_set = set(selected)
+            for fname, _score in scored:
+                if len(selected) >= budget:
+                    break
+                if fname not in selected_set:
+                    selected.append(fname)
+                    selected_set.add(fname)
+
+        result = ([selected_target] if selected_target else []) + selected
+        logger.info(
+            "Association matrix feature selection: %d/%d features selected",
+            len(result), len(feature_names),
+        )
+        return result
+
+    @staticmethod
+    def _score_with_target(fdata: Dict[str, Any]) -> float:
+        """Score a feature by its relationship with the target variable.
+
+        Priority: IV > |Pearson| > |Spearman| > Theil's U > Eta > 0.0
+        """
+        tr = fdata.get("target_relationship", {})
+        if not tr:
+            return 0.0
+
+        iv = tr.get("iv")
+        if iv is not None and not (isinstance(iv, float) and np.isnan(iv)):
+            return float(iv)
+
+        pearson = tr.get("pearson_correlation")
+        if pearson is not None and not (isinstance(pearson, float) and np.isnan(pearson)):
+            return abs(float(pearson))
+
+        spearman = tr.get("spearman_correlation")
+        if spearman is not None and not (isinstance(spearman, float) and np.isnan(spearman)):
+            return abs(float(spearman))
+
+        theils_u = tr.get("theils_u")
+        if theils_u is not None and not (isinstance(theils_u, float) and np.isnan(theils_u)):
+            return float(theils_u)
+
+        eta = tr.get("eta")
+        if eta is not None and not (isinstance(eta, float) and np.isnan(eta)):
+            return float(eta)
+
+        return 0.0
+
+    @staticmethod
+    def _score_without_target(
+        fname: str,
+        correlation_matrix: Optional[pd.DataFrame],
+        theils_u_matrix: Optional[pd.DataFrame],
+        eta_matrix: Optional[Dict[str, Dict[str, float]]],
+    ) -> float:
+        """Score a feature by average absolute association strength with all other features."""
+        values = []
+
+        if correlation_matrix is not None and fname in correlation_matrix.columns:
+            row = correlation_matrix[fname].drop(fname, errors="ignore").dropna()
+            values.extend(row.abs().tolist())
+
+        if theils_u_matrix is not None and fname in theils_u_matrix.index:
+            row = theils_u_matrix.loc[fname].drop(fname, errors="ignore").dropna()
+            values.extend(row.abs().tolist())
+
+        if eta_matrix and fname in eta_matrix:
+            values.extend(abs(v) for v in eta_matrix[fname].values())
+
+        if not values:
+            return 0.0
+        return sum(values) / len(values)
+
+    @staticmethod
+    def _apply_cardinality_penalty(score: float, fdata: Dict[str, Any]) -> float:
+        """Penalize high-cardinality categorical features.
+
+        High cardinality (ratio > 0.5): score × 0.3
+        Medium cardinality (0.1–0.5): score × 0.7
+        Low cardinality or continuous: no penalty
+        """
+        # Only penalize categorical features — continuous features naturally
+        # have high cardinality ratios and should not be penalized for it.
+        ftype = fdata.get("type", "")
+        if ftype not in ("categorical",):
+            return score
+
+        cardinality = fdata.get("cardinality")
+        if cardinality is None:
+            return score
+
+        ratio = cardinality.get("cardinality_ratio")
+        if ratio is None:
+            return score
+
+        if ratio > 0.5:
+            return score * 0.3
+        elif ratio > 0.1:
+            return score * 0.7
+        return score
+
+    @staticmethod
+    def _is_redundant(
+        fname: str,
+        selected: List[str],
+        correlation_matrix: Optional[pd.DataFrame],
+        theils_u_matrix: Optional[pd.DataFrame],
+        eta_matrix: Optional[Dict[str, Dict[str, float]]],
+        threshold: float = 0.9,
+    ) -> bool:
+        """Check if a feature is redundant with any already-selected feature.
+
+        Returns True if any association (Pearson, Theil's U in both directions, or Eta)
+        exceeds the threshold with an already-selected feature.
+        """
+        for sel in selected:
+            # Pearson
+            if correlation_matrix is not None:
+                if fname in correlation_matrix.columns and sel in correlation_matrix.columns:
+                    val = correlation_matrix.loc[fname, sel]
+                    if not (isinstance(val, float) and np.isnan(val)) and abs(val) > threshold:
+                        return True
+
+            # Theil's U: both directions
+            if theils_u_matrix is not None:
+                if fname in theils_u_matrix.index and sel in theils_u_matrix.columns:
+                    val = theils_u_matrix.loc[fname, sel]
+                    if not (isinstance(val, float) and np.isnan(val)) and abs(val) > threshold:
+                        return True
+                if sel in theils_u_matrix.index and fname in theils_u_matrix.columns:
+                    val = theils_u_matrix.loc[sel, fname]
+                    if not (isinstance(val, float) and np.isnan(val)) and abs(val) > threshold:
+                        return True
+
+            # Eta
+            if eta_matrix:
+                if fname in eta_matrix and sel in eta_matrix[fname]:
+                    if abs(eta_matrix[fname][sel]) > threshold:
+                        return True
+                if sel in eta_matrix and fname in eta_matrix[sel]:
+                    if abs(eta_matrix[sel][fname]) > threshold:
+                        return True
+
+        return False
+
     @staticmethod
     def _theils_u(x: pd.Series, y: pd.Series) -> float:
         """
