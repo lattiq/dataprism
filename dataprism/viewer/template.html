@@ -917,9 +917,9 @@ function renderFeatureDetail(f) {
   // Target variable: show only distribution + associations
   if (f.is_target) {
     if (dist.counts || dist.value_counts) {
-      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4 overflow-hidden">';
       h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Distribution</h3>';
-      h += '<div style="height:260px"><canvas id="chart-dist"></canvas></div></div>';
+      h += '<div style="height:260px;position:relative"><canvas id="chart-dist"></canvas></div></div>';
     }
   } else {
     // Non-target: full stats, box plot, distribution, target association
@@ -954,7 +954,7 @@ function renderFeatureDetail(f) {
 
     // Violin / Box plot
     if (cont && stats.min != null && stats.max != null) {
-      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4 overflow-hidden">';
       if (dist.bin_centers && dist.counts && dist.counts.length > 0) {
         h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Violin Plot</h3>';
         h += renderViolinPlot(stats, out, dist);
@@ -967,16 +967,16 @@ function renderFeatureDetail(f) {
 
     // Distribution chart
     if (dist.counts || dist.value_counts) {
-      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4 overflow-hidden">';
       h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Distribution</h3>';
-      h += '<div style="height:260px"><canvas id="chart-dist"></canvas></div></div>';
+      h += '<div style="height:260px;position:relative"><canvas id="chart-dist"></canvas></div></div>';
     }
 
     // PSI Trend chart (time-based stability)
     if (stab && stab.time_based && stab.time_based.psi_by_period && stab.time_based.psi_by_period.length > 0) {
-      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4">';
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4 overflow-hidden">';
       h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">PSI Trend</h3>';
-      h += '<div style="height:220px"><canvas id="chart-psi-trend"></canvas></div></div>';
+      h += '<div style="height:220px;position:relative"><canvas id="chart-psi-trend"></canvas></div></div>';
     }
 
     // Target Association
@@ -1129,7 +1129,7 @@ function renderViolinPlot(s, o, dist) {
   if (mn==null||mx==null||q1==null||med==null||q3==null) return '<div class="text-sb text-sm">Insufficient data for violin plot</div>';
   var rng=mx-mn;
   if (rng===0) return '<div class="text-sb text-sm">Constant value: '+fmt(mn)+'</div>';
-  var h='<canvas id="chart-violin" style="width:100%;height:120px"></canvas>';
+  var h='<div style="overflow:hidden;width:100%"><canvas id="chart-violin" style="display:block;width:100%;height:120px"></canvas></div>';
   // Legend – sorted by value
   var legendItems = [
     {label:'Q1',val:q1,icon:'<span class="inline-block" style="width:2px;height:12px;background:#169C76"></span>'},
@@ -1155,8 +1155,7 @@ function drawViolinCanvas(f) {
   if (rng===0) return;
 
   var dpr = window.devicePixelRatio || 1;
-  var rect = canvas.parentElement.getBoundingClientRect();
-  var W = rect.width || canvas.offsetWidth || 500;
+  var W = canvas.clientWidth || canvas.parentElement.clientWidth || 500;
   var H = 120;
   canvas.width = W * dpr;
   canvas.height = H * dpr;
