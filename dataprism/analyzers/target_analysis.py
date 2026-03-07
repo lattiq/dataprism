@@ -11,6 +11,7 @@ from scipy import stats
 from dataprism.analyzers.correlation import CorrelationEngine
 from dataprism.utils.logger import get_logger
 from dataprism.output.formatter import safe_round
+from dataprism.woe import compute_woe_iv, _classify_predictive_power as _classify_pp
 
 # Setup module logger
 logger = get_logger(__name__)
@@ -206,78 +207,22 @@ class TargetAnalyzer:
         feature: pd.Series,
         target: pd.Series
     ) -> Dict[str, Any]:
-        """
-        Compute Information Value and WoE for categorical features.
-
-        IV = Σ (% of goods - % of bads) * WoE
-        WoE = ln(% of goods / % of bads)
-        """
-        # Create crosstab
-        df = pd.DataFrame({'feature': feature, 'target': target})
-
-        # Get counts of goods (0) and bads (1)
-        crosstab = pd.crosstab(df['feature'], df['target'])
-
-        # Handle case where target only has one class in some bins
-        if crosstab.shape[1] < 2:
+        """Compute Information Value and WoE for categorical features."""
+        result = compute_woe_iv(feature, target, smoothing=0.5)
+        if result is None:
             return {
                 "information_value": None,
                 "woe_mapping": None,
-                "iv_contribution": None
+                "iv_contribution": None,
             }
 
-        # Assume binary target: column 0 is good, column 1 is bad
-        # Get the actual column names (could be 0/1, True/False, etc.)
-        cols = sorted(crosstab.columns)
-        goods_col = cols[0]  # Typically 0 or False (negative class)
-        bads_col = cols[1]   # Typically 1 or True (positive class)
-
-        goods = crosstab[goods_col]
-        bads = crosstab[bads_col]
-
-        # Calculate distributions
-        total_goods = goods.sum()
-        total_bads = bads.sum()
-
-        if total_goods == 0 or total_bads == 0:
-            return {
-                "information_value": None,
-                "woe_mapping": None,
-                "iv_contribution": None
-            }
-
-        # Calculate WoE and IV for each category
-        woe_mapping = {}
-        iv_contribution = {}
-        total_iv = 0.0
-        num_categories = len(crosstab.index)
-
-        for category in crosstab.index:
-            good_count = goods[category]
-            bad_count = bads[category]
-
-            # Laplace smoothing: add 0.5 per category, normalize denominator accordingly
-            good_pct = (good_count + 0.5) / (total_goods + 0.5 * num_categories)
-            bad_pct = (bad_count + 0.5) / (total_bads + 0.5 * num_categories)
-
-            # WoE = ln(% of bads / % of goods) — standard convention (Siddiqi 2006)
-            # Positive WoE = higher proportion of bads (higher risk)
-            woe = np.log(bad_pct / good_pct)
-
-            # IV contribution = (% of bads - % of goods) * WoE
-            iv_contrib = (bad_pct - good_pct) * woe
-
-            woe_mapping[str(category)] = safe_round(woe, 4)
-            iv_contribution[str(category)] = safe_round(iv_contrib, 4)
-            total_iv += iv_contrib
-
-        # Add default WoE for unseen categories (use 0)
+        woe_mapping = {k: safe_round(v, 4) for k, v in result.woe_mapping.items()}
         woe_mapping["_default"] = 0.0
 
         return {
-            "information_value": safe_round(total_iv, 4),
+            "information_value": safe_round(result.iv, 4),
             "woe_mapping": woe_mapping,
-            "iv_contribution": iv_contribution
+            "iv_contribution": {k: safe_round(v, 4) for k, v in result.iv_contributions.items()},
         }
 
     def _compute_target_mean_per_bin(
@@ -349,34 +294,10 @@ class TargetAnalyzer:
             return None
 
     def _classify_predictive_power(self, iv: Optional[float]) -> Optional[str]:
-        """
-        Classify predictive power based on Information Value.
-
-        Thresholds follow the Siddiqi classification (Credit Risk
-        Scorecards, 2006) — the industry-standard reference for
-        scorecard development. IV >= 0.5 is flagged as suspicious
-        because it often indicates data leakage rather than
-        genuinely strong predictive power.
-
-        IV < 0.02: Unpredictive
-        0.02 <= IV < 0.1: Weak
-        0.1 <= IV < 0.3: Medium
-        0.3 <= IV < 0.5: Strong
-        IV >= 0.5: Very Strong / Suspicious
-        """
+        """Classify predictive power based on IV (Siddiqi thresholds)."""
         if iv is None:
             return None
-
-        if iv < 0.02:
-            return "unpredictive"
-        elif iv < 0.1:
-            return "weak"
-        elif iv < 0.3:
-            return "medium"
-        elif iv < 0.5:
-            return "strong"
-        else:
-            return "very_strong"
+        return _classify_pp(iv)
 
     def compute_vif(self, df: pd.DataFrame, feature_col: str) -> Optional[float]:
         """

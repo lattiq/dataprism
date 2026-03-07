@@ -23,10 +23,7 @@ from dataprism.schema import (
     Sentinels,
 )
 from dataprism.eda import DataPrism
-
-# Backward compatibility alias
-EDARunner = DataPrism
-from dataprism.viewer import serve_results
+from dataprism.explorer import Explorer
 
 try:
     __version__ = version("dataprism")
@@ -38,9 +35,6 @@ __email__ = "dev@lattiq.com"
 
 __all__ = [
     "DataPrism",
-    "EDARunner",  # backward compat alias
-    # Viewer
-    "serve_results",
     # Data Loading Utilities
     "DataLoader",
     # Schema types
@@ -49,6 +43,8 @@ __all__ = [
     "ColumnRole",
     "Sentinels",
     "DatasetSchema",
+    # Explorer
+    "Explorer",
     # Exceptions
     "DataPrismError",
     "DataLoadError",

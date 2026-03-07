@@ -887,6 +887,7 @@ function renderDeepDive() {
   if (selected) {
     renderDistributionChart(selected);
     renderPsiTrendChart(selected);
+    renderWoeChart(selected);
     drawViolinCanvas(selected);
   }
 }
@@ -977,6 +978,13 @@ function renderFeatureDetail(f) {
       h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4 overflow-hidden">';
       h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">PSI Trend</h3>';
       h += '<div style="height:220px;position:relative"><canvas id="chart-psi-trend"></canvas></div></div>';
+    }
+
+    // WoE Mapped Bins
+    if (tgt.woe_mapping && Object.keys(tgt.woe_mapping).length > 0) {
+      h += '<div class="bg-srf rounded-xl p-5 border border-bdr mb-4 overflow-hidden">';
+      h += '<h3 class="text-sm font-semibold text-sb uppercase tracking-wider mb-3">Weight of Evidence</h3>';
+      h += '<div style="height:260px;position:relative"><canvas id="chart-woe"></canvas></div></div>';
     }
 
     // Target Association
@@ -1458,6 +1466,68 @@ function renderDistributionChart(f) {
         } }
       } },
       scales: scales
+    }
+  });
+}
+
+// ── WoE Mapped Bins chart ──
+function renderWoeChart(f) {
+  if (S.charts.woe) { S.charts.woe.destroy(); S.charts.woe = null; }
+  var canvas = document.getElementById('chart-woe');
+  if (!canvas) return;
+  var tgt = f.target_relationship || {};
+  var woeMap = tgt.woe_mapping || {};
+  var ivMap = tgt.iv_contribution || {};
+  var entries = Object.entries(woeMap).filter(function(e){ return e[0] !== '_default'; });
+  if (entries.length === 0) return;
+
+  var labels = entries.map(function(e){ return e[0].length > 25 ? e[0].slice(0,22) + '...' : e[0]; });
+  var woeValues = entries.map(function(e){ return e[1]; });
+  var ivValues = entries.map(function(e){ return ivMap[e[0]] || 0; });
+
+  var cs = getComputedStyle(document.documentElement);
+  var isDarkWoe = document.documentElement.classList.contains('dark');
+  var alpha = isDarkWoe ? 0.5 : 0.35;
+  var barColors = woeValues.map(function(v){ return v >= 0 ? 'rgba(32,183,140,' + alpha + ')' : 'rgba(220,38,38,' + alpha + ')'; });
+  var borderAlpha = isDarkWoe ? 0.8 : 0.7;
+  var woeBorderColors = woeValues.map(function(v){ return v >= 0 ? 'rgba(22,156,118,' + borderAlpha + ')' : 'rgba(185,28,28,' + borderAlpha + ')'; });
+
+  // Scale IV contributions to bubble radii (4–20px range)
+  var maxIv = Math.max.apply(null, ivValues.map(function(v){ return Math.abs(v); }));
+  var bubbleRadii = ivValues.map(function(v){ return maxIv > 0 ? 4 + 16 * (Math.abs(v) / maxIv) : 8; });
+
+  S.charts.woe = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'WoE', data: woeValues,
+          backgroundColor: barColors, borderColor: woeBorderColors,
+          borderWidth: 1, borderRadius: 3, order: 2 },
+        { label: 'IV Contribution', data: woeValues, type: 'scatter',
+          pointRadius: bubbleRadii, pointHoverRadius: bubbleRadii.map(function(r){ return r + 2; }),
+          pointBackgroundColor: 'rgba(245,158,11,0.5)', pointBorderWidth: 0, order: 1 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, labels: { color: cs.getPropertyValue('--c-chart-tick').trim(), font: { size: 10 }, usePointStyle: true, pointStyleWidth: 16 } },
+        tooltip: {
+          backgroundColor: cs.getPropertyValue('--c-tooltip-bg').trim(),
+          titleColor: cs.getPropertyValue('--c-tooltip-title').trim(),
+          bodyColor: cs.getPropertyValue('--c-tooltip-body').trim(),
+          borderColor: cs.getPropertyValue('--c-tooltip-border').trim(), borderWidth: 1,
+          callbacks: { label: function(ctx) {
+            if (ctx.datasetIndex === 0) return 'WoE: ' + fmt(ctx.parsed.y, 4);
+            return 'IV Contribution: ' + fmt(ivValues[ctx.dataIndex], 4);
+          } }
+        }
+      },
+      scales: {
+        x: { grid: { color: cs.getPropertyValue('--c-chart-grid').trim() }, ticks: { color: cs.getPropertyValue('--c-chart-tick').trim(), font: { size: 10 }, maxRotation: 45 } },
+        y: { grid: { color: cs.getPropertyValue('--c-chart-grid').trim() }, ticks: { color: cs.getPropertyValue('--c-chart-tick').trim(), font: { size: 10 } }, title: { display: true, text: 'WoE', color: cs.getPropertyValue('--c-chart-tick').trim(), font: { size: 10 } } }
+      }
     }
   });
 }

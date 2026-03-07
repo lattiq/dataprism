@@ -416,7 +416,7 @@ class DataPrism:
         self,
         results: Optional[Dict[str, Any]] = None,
         *,
-        port: int = 0,
+        port: int = 5332,
         open_browser: bool = True,
     ) -> None:
         """Launch the interactive viewer for EDA results.
@@ -427,9 +427,9 @@ class DataPrism:
             port: Port to serve on (0 = auto-select a free port).
             open_browser: Whether to open the browser automatically.
         """
-        from dataprism.viewer.server import serve_results
+        from dataprism.explorer import Explorer
 
         data = results if results is not None else self._last_results
         if data is None:
             raise ValueError("No results to view. Call analyze() first or pass results explicitly.")
-        serve_results(data, port=port, open_browser=open_browser)
+        Explorer.launch(data, port=port, open_browser=open_browser)

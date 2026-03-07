@@ -138,7 +138,26 @@ def test_column_config_is_type():
     assert continuous.is_type() is False
 
 
+def test_validation_role():
+    """Test VALIDATION column role is recognized and round-trips."""
+    schema = DatasetSchema([
+        ColumnConfig('isValidation', role=ColumnRole.VALIDATION),
+        ColumnConfig('target', ColumnType.BINARY, ColumnRole.TARGET),
+        ColumnConfig('age', ColumnType.CONTINUOUS, ColumnRole.FEATURE),
+    ])
+
+    assert len(schema.get_by_role(ColumnRole.VALIDATION)) == 1
+    assert schema.get_by_role(ColumnRole.VALIDATION)[0].name == 'isValidation'
+
+    # Round-trip
+    data = schema.to_dict()
+    restored = DatasetSchema.from_dict(data)
+    assert len(restored.get_by_role(ColumnRole.VALIDATION)) == 1
+    assert restored['isValidation'].role is ColumnRole.VALIDATION
+
+
 if __name__ == '__main__':
     test_new_schema()
     test_schema_round_trip_with_sentinels()
     test_column_config_is_type()
+    test_validation_role()

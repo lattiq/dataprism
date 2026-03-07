@@ -16,7 +16,7 @@ def main(argv: list[str] | None = None) -> None:
     # view subcommand
     view_parser = subparsers.add_parser("view", help="Open EDA results in an interactive dashboard")
     view_parser.add_argument("file", help="Path to a JSON results file")
-    view_parser.add_argument("--port", type=int, default=8765, help="Port to serve on (default: 8765)")
+    view_parser.add_argument("--port", type=int, default=5332, help="Port to serve on (default: 5332)")
     view_parser.add_argument(
         "--no-browser", action="store_true", help="Don't open the browser automatically"
     )
@@ -24,9 +24,9 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     if args.command == "view":
-        from dataprism.viewer import serve_results
+        from dataprism.explorer import Explorer
 
-        serve_results(args.file, port=args.port, open_browser=not args.no_browser)
+        Explorer.launch(args.file, port=args.port, open_browser=not args.no_browser)
     else:
         parser.print_help()
         sys.exit(1)

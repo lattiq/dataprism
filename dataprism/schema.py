@@ -23,6 +23,7 @@ class ColumnRole(str, Enum):
     TARGET = "target"
     IDENTIFIER = "identifier"
     SPLIT = "split"
+    VALIDATION = "validation"
     OBSERVATION_DATE = "observation_date"
 
 

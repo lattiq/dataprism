@@ -233,9 +233,9 @@ Measures association between a categorical and continuous variable. Infinite val
 ### Column Type Inference
 When a `ColumnConfig` exists but has `type=None`, inference falls through to automatic detection instead of returning `None`. The unique ratio denominator uses non-null count (not total count) to handle columns with missing values. All-null columns default to categorical.
 
-## Interactive Viewer
+## Interactive Explorer
 
-The `dataprism.viewer` module provides a single-page dashboard served via a local HTTP server.
+The `dataprism.explorer` module provides a single-page dashboard served via a local HTTP server.
 
 ### Architecture
 - `server.py` — Starts `HTTPServer` on localhost, injects JSON data into the HTML template
