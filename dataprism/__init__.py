@@ -29,7 +29,7 @@ from dataprism.explorer import Explorer
 try:
     __version__ = version("dataprism")
 except PackageNotFoundError:
-    __version__ = "0.1.2"
+    __version__ = "0.1.3"
 
 __author__ = "LattIQ Development Team"
 __email__ = "dev@lattiq.com"
