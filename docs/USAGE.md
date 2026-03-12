@@ -2,155 +2,115 @@
 
 Reference documentation for advanced features. For quick start and basic usage, see the [README](../README.md).
 
-## DatasetSchema Reference
+## DatasetSchema
 
-`DatasetSchema` enables advanced functionality by defining column types, roles, providers, and sentinel values.
+`DatasetSchema` enables schema-aware profiling by defining column types, roles, providers, and sentinel values.
 
-### Variable Type Override
-
-Override automatic type inference:
-```json
-{
-  "name": "customer_id",
-  "type": "categorical",
-  "role": "feature"
-}
-```
-
-### Sentinel Values
-
-Define values that should be treated as missing:
-```json
-{
-  "name": "income",
-  "type": "continuous",
-  "role": "feature",
-  "sentinels": {
-    "not_found": "-1",
-    "missing": "0"
-  }
-}
-```
-
-### Provider Tracking
-
-Track data sources:
-```json
-{
-  "name": "credit_score",
-  "type": "continuous",
-  "role": "feature",
-  "provider": "bureau_provider",
-  "description": "FICO credit score"
-}
-```
-
-## Provider Match Rates
-
-DataPrism automatically computes provider match rates (also called "hit rates") to help you understand data coverage from different third-party data providers.
-
-### Automatic Detection
-
-Provider match rates are computed automatically during EDA using one of two methods:
-
-#### Method 1: Using `<provider>_record_not_found` columns (Preferred)
-
-If your dataset includes columns like `payu_record_not_found`, `truecaller_record_not_found`, etc., DataPrism will automatically detect and use them:
-
-```python
-prism = DataPrism()
-df = DataLoader.load_csv("data.csv")
-results = prism.analyze(data=df)
-
-# Access provider stats
-provider_stats = results['summary']['provider_match_rates']
-```
-
-#### Method 2: Using DatasetSchema (Fallback)
-
-If no `record_not_found` columns exist, you can use a schema to group features by provider:
-
-```python
-df = DataLoader.load_csv("data.csv")
-schema = DataLoader.load_schema("schema.json")
-
-prism = DataPrism()
-results = prism.analyze(data=df, schema=schema)
-
-# Provider stats show match rates based on feature null analysis
-provider_stats = results['summary']['provider_match_rates']
-```
-
-### Example
-
-See [examples/example_06_provider_match_rates.py](../examples/example_06_provider_match_rates.py) for a complete working example.
-
-## Feature Counts
-
-DataPrism automatically computes feature counts across 16+ categories — useful for dashboards, feature selection, and data quality monitoring.
-
-### Automatic Computation
-
-Feature counts are computed automatically during EDA and included in the results:
+### Loading from JSON
 
 ```python
 from dataprism import DataPrism, DataLoader
 
-prism = DataPrism()
 df = DataLoader.load_csv("data.csv")
+schema = DataLoader.load_schema("schema.json")
+
+prism = DataPrism()
 results = prism.analyze(
     data=df,
-    target_variable="target"  # Required for correlation and IV
+    schema=schema,
+    target_variable="target",
+    output_path="eda_results.json"
 )
-
-# Access feature counts
-feature_counts = results['summary']['feature_counts']
-
-print(f"High Correlation: {feature_counts['high_correlation']['count']}")
-print(f"Redundant Features: {feature_counts['redundant_features']['count']}")
-print(f"High IV: {feature_counts['high_iv']['count']}")
-print(f"High Stability: {feature_counts['high_stability']['count']}")
 ```
 
-### Categories
+**Schema JSON format** (`schema.json`):
 
-**Target Relationship**
+```json
+{
+  "columns": [
+    {
+      "name": "age",
+      "type": "continuous",
+      "role": "feature",
+      "provider": "demographics",
+      "description": "User age",
+      "sentinels": { "not_found": "-1", "missing": null }
+    }
+  ]
+}
+```
 
-| Category | Threshold | Description |
-|----------|-----------|-------------|
-| **High Correlation** | best association > 0.1 | Features associated with target (Pearson, Eta, or Theil's U) |
-| **High IV** | IV > 0.1 | Features with strong predictive power |
-| **Significant Correlations** | p-value < 0.05 | Statistically significant target correlations |
-| **Suspected Leakage** | IV > 0.5 | Features with suspiciously high predictive power |
+Supported types: `continuous`, `categorical`, `ordinal`, `binary`. Supported roles: `feature`, `target`, `identifier`, `split`, `observation_date`.
 
-**Feature Quality**
+### Programmatic Schema
 
-| Category | Threshold | Description |
-|----------|-----------|-------------|
-| **Redundant Features** | correlation > 0.7 | Highly correlated with another feature |
-| **High Missing** | > 30% | Features with substantial missing values |
-| **Constant Features** | 1 unique value | Zero-variance features |
-| **Low Variance** | low CV | Features with very low coefficient of variation |
-| **Not Recommended** | composite | Features flagged as unsuitable for modeling |
-| **Highly Skewed** | \|skewness\| > 1.0 | Features with heavy distributional skew |
-| **High Kurtosis** | kurtosis > 3.0 | Outlier-prone features |
-| **High Cardinality** | — | Categoricals with high unique-value ratio |
+```python
+from dataprism import (
+    DataPrism, DataLoader,
+    ColumnConfig, ColumnType, ColumnRole, Sentinels, DatasetSchema,
+)
 
-**Predictive Power Breakdown**
+df = DataLoader.load_csv("data.csv")
 
-| Category | Description |
-|----------|-------------|
-| **Predictive Power** | Count of features by IV class: unpredictive, weak, medium, strong, very strong |
+schema = DatasetSchema([
+    ColumnConfig('age', ColumnType.CONTINUOUS, ColumnRole.FEATURE,
+                 provider='demographics', description='User age',
+                 sentinels=Sentinels(not_found='-1')),
+    ColumnConfig('zip_code', ColumnType.CATEGORICAL, ColumnRole.FEATURE,
+                 provider='address', description='ZIP code',
+                 sentinels=Sentinels(not_found='', missing='00000')),
+    ColumnConfig('target', ColumnType.BINARY, ColumnRole.TARGET),
+])
 
-**Stability**
+prism = DataPrism()
+results = prism.analyze(data=df, schema=schema, target_variable="target")
+```
 
-| Category | Threshold | Description |
-|----------|-----------|-------------|
-| **High Stability** | PSI < 0.1 | Stable distribution across cohorts/time |
-| **Minor Shift** | 0.1 ≤ PSI < 0.2 | Minor distribution drift |
-| **Major Shift** | PSI ≥ 0.2 | Major distribution drift |
-| **Increasing Drift** | — | Worsening distribution drift over time |
-| **Volatile Stability** | — | Inconsistent stability across periods |
+## Stability Analysis
+
+DataPrism supports PSI-based drift detection in two modes: cohort-based and time-based.
+
+### Cohort-Based (Train/Test)
+
+Compare distributions between two cohorts (e.g. training vs test split):
+
+```python
+from dataprism import DataPrism, DataLoader
+
+df = DataLoader.load_parquet("data.parquet")
+schema = DataLoader.load_schema("schema.json")
+
+prism = DataPrism(
+    calculate_stability=True,
+    cohort_column='dataTag',
+    baseline_cohort='training',
+    comparison_cohort='test'
+)
+
+results = prism.analyze(data=df, schema=schema)
+```
+
+### Time-Based
+
+Track distribution drift over time windows:
+
+```python
+from dataprism import DataPrism, DataLoader
+
+df = DataLoader.load_parquet("data.parquet")
+schema = DataLoader.load_schema("schema.json")
+
+prism = DataPrism(
+    time_based_stability=True,
+    time_column='onboarding_time',
+    time_window_strategy='monthly',  # or 'weekly', 'quartiles', 'custom'
+    baseline_period='first',
+    comparison_periods='all',
+    min_samples_per_period=100
+)
+
+results = prism.analyze(data=df, schema=schema)
+```
 
 ## Advanced Configuration
 
@@ -211,3 +171,47 @@ df = DataLoader.load_parquet("data.parquet")
 prism = DataPrism()
 results = prism.analyze(data=df)
 ```
+
+## Provider Match Rates
+
+DataPrism automatically computes provider match rates (hit rates) to measure data coverage from third-party providers.
+
+Match rates are detected using one of two methods:
+
+**Method 1: `<provider>_record_not_found` columns (Preferred)** — If your dataset includes columns like `payu_record_not_found`, DataPrism will automatically detect and use them.
+
+**Method 2: DatasetSchema (Fallback)** — If no `record_not_found` columns exist, set `provider` on columns in your schema to group features by source.
+
+```python
+prism = DataPrism()
+results = prism.analyze(data=df, schema=schema)
+
+provider_stats = results['summary']['provider_match_rates']
+```
+
+See [examples/example_06_provider_match_rates.py](../examples/example_06_provider_match_rates.py) for a complete working example.
+
+## Feature Counts Reference
+
+DataPrism automatically computes feature counts across 16+ categories in `results['summary']['feature_counts']`.
+
+| Category | Threshold | Description |
+|----------|-----------|-------------|
+| **High Correlation** | best association > 0.1 | Features associated with target (Pearson, Eta, or Theil's U) |
+| **High IV** | IV > 0.1 | Features with strong predictive power |
+| **Significant Correlations** | p-value < 0.05 | Statistically significant target correlations |
+| **Suspected Leakage** | IV > 0.5 | Suspiciously high predictive power |
+| **Redundant Features** | correlation > 0.7 | Highly correlated with another feature |
+| **High Missing** | > 30% | Features with substantial missing values |
+| **Constant Features** | 1 unique value | Zero-variance features |
+| **Low Variance** | low CV | Very low coefficient of variation |
+| **Not Recommended** | composite | Flagged as unsuitable for modeling |
+| **Highly Skewed** | \|skewness\| > 1.0 | Heavy distributional skew |
+| **High Kurtosis** | kurtosis > 3.0 | Outlier-prone features |
+| **High Cardinality** | — | Categoricals with high unique-value ratio |
+| **High Stability** | PSI < 0.1 | Stable distribution across cohorts/time |
+| **Minor Shift** | 0.1 ≤ PSI < 0.2 | Minor distribution drift |
+| **Major Shift** | PSI ≥ 0.2 | Major distribution drift |
+| **Increasing Drift** | — | Worsening distribution drift over time |
+| **Volatile Stability** | — | Inconsistent stability across periods |
+| **Predictive Power** | — | Count by IV class: unpredictive, weak, medium, strong, very strong |

@@ -1,6 +1,6 @@
 # DataPrism
 
-A comprehensive Python library for exploratory data analysis with advanced features for data profiling, quality assessment, and stability monitoring.
+A Python library for exploratory data analysis with data profiling, quality assessment, and stability monitoring.
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -45,7 +45,6 @@ prism.view()
 
 ## How DataPrism Compares
 
-
 | Capability                  | DataPrism | ydata-profiling | Sweetviz | D-Tale | AutoViz | DataPrep |
 | --------------------------- | --------- | --------------- | -------- | ------ | ------- | -------- |
 | Predictive power (IV / WoE) | ✅         | ➖               | 🟡       | 🟡     | ➖       | ➖        |
@@ -56,8 +55,31 @@ prism.view()
 | Structured JSON output      | ✅         | ✅               | ➖        | 🟡     | ➖       | 🟡       |
 | Interactive explorer        | ✅         | ✅               | 🟡       | ✅      | 🟡      | ✅        |
 
-
 > ✅ Supported  🟡 Partial  ➖ Not supported
+
+## Installation
+
+```bash
+pip install dataprism
+```
+
+## Quick Start
+
+```python
+from dataprism import DataPrism, DataLoader
+
+df = DataLoader.load_csv("data.csv")
+
+prism = DataPrism()
+results = prism.analyze(
+    data=df,
+    exclude_columns=["customer_id", "created_at"],
+    target_variable="target",
+    output_path="eda_results.json"
+)
+```
+
+For schema-aware profiling, stability analysis, and advanced configuration, see the [Usage Guide](docs/USAGE.md).
 
 ## Roadmap
 
@@ -66,7 +88,6 @@ DataPrism is being built for the AI era — where data analysis is increasingly 
 ### AI-Native Analysis
 
 - **Natural language insights** — Auto-generated plain-English summaries of each feature, anomalies, and recommendations that LLMs can directly incorporate into reports.
-- **Agent-friendly API** — Minimal, predictable interface (`analyze()` → `view()`) that AI coding assistants can invoke without ambiguity. Schema-driven configuration over magic defaults.
 
 ### Closing the Gaps
 
@@ -82,155 +103,12 @@ DataPrism is being built for the AI era — where data analysis is increasingly 
 - **Anomaly explanations** — When outliers or drift are detected, surface the likely cause (data pipeline issues, population shift, seasonality).
 - **Cross-dataset lineage** — Track how feature distributions evolve across model versions and data refreshes.
 
-## Features
+## Documentation
 
-- **Automated Feature Analysis** — Continuous and categorical profiling with automatic type inference and missing value detection
-- **Target Relationship Analysis** — Information Value (IV), Weight of Evidence (WoE), predictive power classification
-- **Correlation & Association Analysis** — Pearson, Spearman, Theil's U, Eta with unified association matrix across all feature types
-- **Quality Assessment** — Automated scoring (0-10), per-feature quality flags, actionable recommendations
-- **Sentinel Value Handling** — Automatic detection and replacement of no-hit values with nullable type preservation
-- **Cohort-Based Stability** — PSI for train/test drift detection
-- **Time-Based Stability** — Monthly, weekly, quartile, or custom time windows with temporal trend analysis
-- **Provider Match Rates** — Automatic data coverage statistics by provider
-- **Large Dataset Support** — CSV and Parquet formats, chunked reading, configurable sampling
-
-## Installation
-
-```bash
-pip install dataprism
-```
-
-## Quick Start
-
-### Basic Usage
-
-```python
-from dataprism import DataPrism, DataLoader
-import pandas as pd
-
-# Option 1: Load from file using DataLoader
-df = DataLoader.load_csv("data.csv")
-
-# Option 2: Use existing DataFrame
-df = pd.read_csv("data.csv")  # or from database, etc.
-
-# Initialize prism
-prism = DataPrism(
-    max_categories=50,
-    top_correlations=10
-)
-
-# Run analysis (exclude non-feature columns when no schema is available)
-results = prism.analyze(
-    data=df,
-    exclude_columns=["customer_id", "created_at"],
-    target_variable="target",
-    output_path="eda_results.json"
-)
-```
-
-### With DatasetSchema
-
-```python
-from dataprism import (
-    DataPrism, DataLoader,
-    ColumnConfig, ColumnType, ColumnRole, Sentinels, DatasetSchema,
-)
-
-# Load data and schema
-df = DataLoader.load_csv("data.csv")
-schema = DataLoader.load_schema("schema.json")
-
-# Or create schema programmatically
-schema = DatasetSchema([
-    ColumnConfig('age', ColumnType.CONTINUOUS, ColumnRole.FEATURE,
-                 provider='demographics', description='User age',
-                 sentinels=Sentinels(not_found='-1')),
-    ColumnConfig('zip_code', ColumnType.CATEGORICAL, ColumnRole.FEATURE,
-                 provider='address', description='ZIP code',
-                 sentinels=Sentinels(not_found='', missing='00000')),
-    ColumnConfig('target', ColumnType.BINARY, ColumnRole.TARGET),
-])
-
-# Run with schema
-prism = DataPrism()
-results = prism.analyze(
-    data=df,
-    schema=schema,
-    target_variable="target",
-    output_path="eda_results.json"
-)
-```
-
-**Schema JSON format** (`schema.json`):
-
-```json
-{
-  "columns": [
-    {
-      "name": "age",
-      "type": "continuous",
-      "role": "feature",
-      "provider": "demographics",
-      "description": "User age",
-      "sentinels": {
-        "not_found": "-1",
-        "missing": null
-      }
-    }
-  ]
-}
-```
-
-### Stability Analysis
-
-#### Cohort-Based (Train/Test)
-
-```python
-from dataprism import DataPrism, DataLoader
-
-# Load data and schema
-df = DataLoader.load_parquet("data.parquet")
-schema = DataLoader.load_schema("schema.json")
-
-# Configure for stability analysis
-prism = DataPrism(
-    calculate_stability=True,
-    cohort_column='dataTag',
-    baseline_cohort='training',
-    comparison_cohort='test'
-)
-
-results = prism.analyze(
-    data=df,
-    schema=schema
-)
-```
-
-#### Time-Based
-
-```python
-from dataprism import DataPrism, DataLoader
-
-# Load data and schema
-df = DataLoader.load_parquet("data.parquet")
-schema = DataLoader.load_schema("schema.json")
-
-# Configure for time-based stability
-prism = DataPrism(
-    time_based_stability=True,
-    time_column='onboarding_time',
-    time_window_strategy='monthly',  # or 'weekly', 'quartiles', 'custom'
-    baseline_period='first',
-    comparison_periods='all',
-    min_samples_per_period=100
-)
-
-results = prism.analyze(
-    data=df,
-    schema=schema
-)
-```
+- [Usage Guide](docs/USAGE.md) — schema, stability analysis, advanced configuration, provider match rates
+- [Architecture](docs/ARCHITECTURE.md) — internals, module structure, data flow
+- [Decision Records](docs/decisions/) — key design decisions and rationale
+- [Examples](examples/) — usage examples and demos
 
 ## Development
 
@@ -239,13 +117,6 @@ pip install -e .           # Install for development
 python -m build            # Build package
 python -m pytest tests/    # Run tests
 ```
-
-## Documentation
-
-- [Architecture](docs/ARCHITECTURE.md) — internals, module structure, data flow
-- [Usage Guide](docs/USAGE.md) — advanced configuration, provider match rates, feature counts reference
-- [Decision Records](docs/decisions/) — key design decisions and rationale
-- [Examples](examples/) — usage examples and demos
 
 ## Requirements
 
