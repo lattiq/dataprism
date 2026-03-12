@@ -11,7 +11,7 @@ from scipy import stats
 from dataprism.analyzers.correlation import CorrelationEngine
 from dataprism.utils.logger import get_logger
 from dataprism.output.formatter import safe_round
-from dataprism.woe import compute_woe_iv, _classify_predictive_power as _classify_pp
+from dataprism.analyzers.woe import WoEAnalyzer
 
 # Setup module logger
 logger = get_logger(__name__)
@@ -208,7 +208,8 @@ class TargetAnalyzer:
         target: pd.Series
     ) -> Dict[str, Any]:
         """Compute Information Value and WoE for categorical features."""
-        result = compute_woe_iv(feature, target, smoothing=0.5)
+        woe = WoEAnalyzer(smoothing=0.5)
+        result = woe.compute(feature, target)
         if result is None:
             return {
                 "information_value": None,
@@ -297,7 +298,7 @@ class TargetAnalyzer:
         """Classify predictive power based on IV (Siddiqi thresholds)."""
         if iv is None:
             return None
-        return _classify_pp(iv)
+        return WoEAnalyzer.classify_predictive_power(iv)
 
     def compute_vif(self, df: pd.DataFrame, feature_col: str) -> Optional[float]:
         """

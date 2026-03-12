@@ -62,7 +62,7 @@ include = ["dataprism*"]
 exclude = ["tests*", "examples*", "tmp*", "docs*"]
 
 [tool.setuptools.package-data]
-dataprism = ["py.typed", "viewer/*.html"]
+dataprism = ["py.typed", "explorer/*.html"]
 
 [tool.mypy]
 python_version = "3.9"

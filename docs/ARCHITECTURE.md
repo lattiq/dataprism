@@ -22,14 +22,15 @@ dataprism/
 │   ├── stability.py     # PSI-based cohort and time-based stability
 │   ├── match_rates.py   # Provider-level match rate analysis
 │   ├── target_analysis.py  # IV, WoE, target correlation
-│   └── types.py         # Analyzer type definitions (DatasetInfo, ContinuousStats, etc.)
+│   ├── types.py         # Analyzer type definitions (DatasetInfo, ContinuousStats, etc.)
+│   └── woe.py           # WoEAnalyzer — IV/WoE computation, predictive power classification
 ├── data/
 │   ├── loader.py        # DataLoader — CSV/Parquet loading, schema parsing
 │   └── sentinels.py     # Sentinel value replacement (not_found/missing → nullable types)
 ├── output/
 │   ├── formatter.py     # JSONFormatter — output composition, summary metrics, data quality
 │   └── mapper.py        # ResultMapper — transforms analyzer output to final schema
-├── viewer/
+├── explorer/
 │   ├── server.py        # HTTP server for interactive dashboard
 │   └── template.html    # Single-page viewer (Summary, Catalog, Deep Dive, Associations)
 └── utils/
@@ -50,6 +51,8 @@ from dataprism import (
     ColumnType,         # continuous | categorical | ordinal | binary
     ColumnRole,         # feature | target | identifier | split | observation_date
     Sentinels,          # Provider sentinel codes
+    WoEAnalyzer,        # IV/WoE computation with configurable smoothing
+    WoEResult,          # IV/WoE result dataclass
     DataPrismError,      # Base exception (catch-all)
 )
 ```
@@ -216,10 +219,10 @@ DataPrismError
 Shannon entropy in **bits** (log base 2) via `scipy.stats.entropy(probabilities, base=2)`. Applies to both categorical value distributions and continuous histogram bins. Zero-count bins are excluded from the calculation.
 
 ### Weight of Evidence (WoE)
-Follows the Siddiqi (2006) convention: `WoE = ln(bad% / good%)`. Positive WoE indicates a higher proportion of bad outcomes (higher risk). Laplace smoothing with `0.5 / num_categories` per bin prevents log(0).
+Follows the Siddiqi (2006) convention: `WoE = ln(good% / bad%)`. Positive WoE indicates a lower proportion of bad outcomes (lower risk). Laplace smoothing (default 0.5) is applied per category to prevent log(0). Implemented in `WoEAnalyzer.compute()`.
 
 ### Information Value (IV)
-`IV = Σ (bad% - good%) × WoE` over all bins/categories. Uses the same Siddiqi convention as WoE above.
+`IV = Σ (good% - bad%) × WoE` over all bins/categories. Uses the same Siddiqi convention as WoE above.
 
 ### PSI (Population Stability Index)
 Bin distributions are normalized to proportions. Zero bins are replaced with `ε = 1e-4` to avoid log(0). Continuous features use quantile-based binning with edges extended to `[-∞, +∞]` to capture out-of-range comparison values. Constant-value features are detected and handled separately.

@@ -45,30 +45,19 @@ prism.view()
 
 ## How DataPrism Compares
 
-| Feature                      |             DataPrism             |     Sweetviz     |          ydata-profiling          | AutoViz |    D-Tale    |          DataPrep          |
-| ---------------------------- | :-------------------------------: | :--------------: | :-------------------------------: | :-----: | :----------: | :------------------------: |
-| Programmatic API             |                Yes                |       Yes        |                Yes                |   Yes   |     Yes      |            Yes             |
-| Interactive Viewer           |                Yes                |       Yes        |                Yes                | Partial |     Yes      |            Yes             |
-| Correlation Analysis         | Pearson, Spearman, Theil's U, Eta | Pearson, UC, Eta | Pearson, Spearman, Kendall, Phi-k | Pearson | Pearson, PPS | Pearson, Spearman, Kendall |
-| Histogram / Bar Chart        |                Yes                |       Yes        |                Yes                |   Yes   |     Yes      |            Yes             |
-| Box Plot                     |                Yes                |        —         |                Yes                |    —    |     Yes      |            Yes             |
-| Association Heatmap          |                Yes                |       Yes        |                Yes                |    —    |     Yes      |            Yes             |
-| Target-Overlaid Distribution |                Yes                |       Yes        |                 —                 |    —    |      —       |             —              |
-| Scatter / Pair Plot          |                 —                 |        —         |                Yes                |   Yes   |     Yes      |            Yes             |
-| Violin Plot                  |                Yes                |        —         |                 —                 |   Yes   |      —       |             —              |
-| Time Series / Trend          |                Yes                |        —         |                Yes                |    —    |     Yes      |             —              |
-| Schema-Driven Analysis       |                Yes                |     Partial      |                Yes                |    —    |   Partial    |          Partial           |
-| Mixed-Type Associations      |                Yes                |       Yes        |                Yes                |    —    |   Partial    |          Partial           |
-| Structured JSON Export       |                Yes                |        —         |                Yes                |    —    |   Partial    |             —              |
-| **Target Analysis (IV/WoE)** |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
-| **Drift / PSI Stability**    |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
-| **Data Quality Score**       |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
-| **Sentinel Value Handling**  |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
-| **Provider Match Rates**     |              **Yes**              |        —         |                 —                 |    —    |      —       |             —              |
 
-**Where DataPrism leads:** Schema-aware profiling with column roles and sentinel codes, IV/WoE for credit risk, PSI-based stability monitoring (cohort + time-based), automated data quality scoring, and provider-level match rates. No other EDA library covers these out of the box.
+| Capability                  | DataPrism | ydata-profiling | Sweetviz | D-Tale | AutoViz | DataPrep |
+| --------------------------- | --------- | --------------- | -------- | ------ | ------- | -------- |
+| Predictive power (IV / WoE) | ✅         | ➖               | 🟡       | 🟡     | ➖       | ➖        |
+| Drift detection (PSI)       | ✅         | 🟡              | 🟡       | ➖      | ➖       | 🟡       |
+| Data quality score          | ✅         | ➖               | ➖        | ➖      | ➖       | ➖        |
+| Multi-source match rates    | ✅         | ➖               | ➖        | ➖      | ➖       | ➖        |
+| Schema-aware profiling      | ✅         | 🟡              | 🟡       | 🟡     | ➖       | 🟡       |
+| Structured JSON output      | ✅         | ✅               | ➖        | 🟡     | ➖       | 🟡       |
+| Interactive explorer        | ✅         | ✅               | 🟡       | ✅      | 🟡      | ✅        |
 
-**Where DataPrism lags:** No dataset comparison (train vs test side-by-side), no auto-visualization per feature, and no Spark/Dask support for distributed datasets. These are on the roadmap.
+
+> ✅ Supported  🟡 Partial  ➖ Not supported
 
 ## Roadmap
 
@@ -76,7 +65,6 @@ DataPrism is being built for the AI era — where data analysis is increasingly 
 
 ### AI-Native Analysis
 
-- **LLM-consumable output** — Structured JSON output designed for AI agents to read, reason about, and act on. No screen-scraping HTML reports or parsing PDFs.
 - **Natural language insights** — Auto-generated plain-English summaries of each feature, anomalies, and recommendations that LLMs can directly incorporate into reports.
 - **Agent-friendly API** — Minimal, predictable interface (`analyze()` → `view()`) that AI coding assistants can invoke without ambiguity. Schema-driven configuration over magic defaults.
 
@@ -97,11 +85,11 @@ DataPrism is being built for the AI era — where data analysis is increasingly 
 ## Features
 
 - **Automated Feature Analysis** — Continuous and categorical profiling with automatic type inference and missing value detection
-- **Target Relationship Analysis** — Information Value (IV), Weight of Evidence (WoE), optimal binning, predictive power classification
+- **Target Relationship Analysis** — Information Value (IV), Weight of Evidence (WoE), predictive power classification
 - **Correlation & Association Analysis** — Pearson, Spearman, Theil's U, Eta with unified association matrix across all feature types
 - **Quality Assessment** — Automated scoring (0-10), per-feature quality flags, actionable recommendations
 - **Sentinel Value Handling** — Automatic detection and replacement of no-hit values with nullable type preservation
-- **Cohort-Based Stability** — PSI and KS test for train/test drift detection
+- **Cohort-Based Stability** — PSI for train/test drift detection
 - **Time-Based Stability** — Monthly, weekly, quartile, or custom time windows with temporal trend analysis
 - **Provider Match Rates** — Automatic data coverage statistics by provider
 - **Large Dataset Support** — CSV and Parquet formats, chunked reading, configurable sampling
@@ -275,7 +263,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 For questions or suggestions:
 
-- Email: dev@lattiq.com
+- Email: [dev@lattiq.com](mailto:dev@lattiq.com)
 - GitHub: [https://github.com/lattiq/dataprism](https://github.com/lattiq/dataprism)
 
 ## Contributing

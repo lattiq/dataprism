@@ -22,6 +22,7 @@ from dataprism.schema import (
     DatasetSchema,
     Sentinels,
 )
+from dataprism.analyzers.woe import WoEAnalyzer, WoEResult
 from dataprism.eda import DataPrism
 from dataprism.explorer import Explorer
 
@@ -43,6 +44,9 @@ __all__ = [
     "ColumnRole",
     "Sentinels",
     "DatasetSchema",
+    # WoE / IV
+    "WoEAnalyzer",
+    "WoEResult",
     # Explorer
     "Explorer",
     # Exceptions
