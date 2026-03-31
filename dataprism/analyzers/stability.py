@@ -1,7 +1,7 @@
 """Stability analysis for features across cohorts and time periods."""
 
 from datetime import datetime
-from typing import Any, Union
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -260,8 +260,8 @@ class StabilityAnalyzer:
         self,
         df: pd.DataFrame,
         time_column: str,
-        baseline_window: Union[str, tuple[str, str]],
-        comparison_windows: Union[str, list[tuple[str, str]]],
+        baseline_window: str | tuple[str, str],
+        comparison_windows: str | list[tuple[str, str]],
         features_to_analyze: list[str],
         feature_types: dict[str, str],
         window_strategy: str = "monthly",
@@ -527,7 +527,7 @@ class StabilityAnalyzer:
         self,
         df: pd.DataFrame,
         time_column: str,
-        window: tuple[Union[str, datetime], Union[str, datetime]],
+        window: tuple[str | datetime, str | datetime],
     ) -> pd.DataFrame:
         """Filter DataFrame by time window."""
         start, end = window

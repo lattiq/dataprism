@@ -1,7 +1,7 @@
 """Target relationship analysis including IV and WoE calculation."""
 
 import warnings
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -33,7 +33,7 @@ class TargetAnalyzer:
         feature_series: pd.Series,
         target_series: pd.Series,
         feature_type: str,
-        distribution: Optional[dict[str, Any]] = None,
+        distribution: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
         Analyze relationship between feature and target variable.
@@ -221,8 +221,8 @@ class TargetAnalyzer:
         feature: pd.Series,
         target: pd.Series,
         feature_type: str,
-        distribution: Optional[dict[str, Any]] = None,
-    ) -> Optional[list]:
+        distribution: dict[str, Any] | None = None,
+    ) -> list | None:
         """
         Compute mean target value per distribution bin.
 
@@ -283,13 +283,13 @@ class TargetAnalyzer:
             logger.debug("Target mean per bin failed for '%s': %s", feature.name, e)
             return None
 
-    def _classify_predictive_power(self, iv: Optional[float]) -> Optional[str]:
+    def _classify_predictive_power(self, iv: float | None) -> str | None:
         """Classify predictive power based on IV (Siddiqi thresholds)."""
         if iv is None:
             return None
         return WoEAnalyzer.classify_predictive_power(iv)
 
-    def compute_vif(self, df: pd.DataFrame, feature_col: str) -> Optional[float]:
+    def compute_vif(self, df: pd.DataFrame, feature_col: str) -> float | None:
         """
         Compute Variance Inflation Factor for a feature.
 

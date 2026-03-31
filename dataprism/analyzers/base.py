@@ -3,7 +3,7 @@
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -15,7 +15,7 @@ class AnalysisResult:
     """Container for analysis results with metadata."""
 
     analyzer_name: str
-    column_name: Optional[str]
+    column_name: str | None
     data: dict[str, Any]
     metadata: dict[str, Any] = field(default_factory=dict)
     execution_time: float = 0.0
@@ -41,7 +41,7 @@ class BaseAnalyzer(ABC):
         pass
 
     @abstractmethod
-    def can_analyze(self, series: pd.Series, column_config: Optional[ColumnConfig] = None) -> bool:
+    def can_analyze(self, series: pd.Series, column_config: ColumnConfig | None = None) -> bool:
         """Check if this analyzer can process the given series."""
         pass
 
@@ -51,7 +51,7 @@ class BaseAnalyzer(ABC):
         pass
 
     def analyze(
-        self, series: pd.Series, column_config: Optional[ColumnConfig] = None
+        self, series: pd.Series, column_config: ColumnConfig | None = None
     ) -> AnalysisResult:
         """
         Main analysis method implementing the template pattern.
@@ -86,7 +86,7 @@ class BaseAnalyzer(ABC):
 
     @staticmethod
     def determine_column_type(
-        series: pd.Series, column_config: Optional[ColumnConfig] = None
+        series: pd.Series, column_config: ColumnConfig | None = None
     ) -> ColumnType:
         """
         Determine column type from config or infer from data.

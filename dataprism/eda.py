@@ -2,7 +2,7 @@
 
 import time
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import pandas as pd
 
@@ -27,21 +27,21 @@ class DataPrism:
     def __init__(
         self,
         max_categories: int = 50,
-        sample_size: Optional[int] = None,
+        sample_size: int | None = None,
         top_correlations: int = 10,
-        max_correlation_features: Optional[int] = None,
+        max_correlation_features: int | None = None,
         max_association_features: int = 50,
         # Cohort-based stability
         calculate_stability: bool = False,
-        cohort_column: Optional[str] = None,
-        baseline_cohort: Optional[str] = None,
-        comparison_cohort: Optional[str] = None,
+        cohort_column: str | None = None,
+        baseline_cohort: str | None = None,
+        comparison_cohort: str | None = None,
         # Time-based stability
         time_based_stability: bool = False,
-        time_column: Optional[str] = None,
+        time_column: str | None = None,
         time_window_strategy: str = "monthly",
-        baseline_period: Union[str, tuple] = "first",
-        comparison_periods: Union[str, list[tuple]] = "all",
+        baseline_period: str | tuple = "first",
+        comparison_periods: str | list[tuple] = "all",
         min_samples_per_period: int = 100,
     ):
         self.max_categories = max_categories
@@ -74,17 +74,17 @@ class DataPrism:
         self.formatter = JSONFormatter()
 
         # Store last run results for view()
-        self._last_results: Optional[dict[str, Any]] = None
+        self._last_results: dict[str, Any] | None = None
 
     def analyze(
         self,
         data: pd.DataFrame,
-        schema: Optional[DatasetSchema] = None,
-        output_path: Optional[Union[str, Path]] = None,
+        schema: DatasetSchema | None = None,
+        output_path: str | Path | None = None,
         compact_json: bool = False,
-        columns: Optional[list[str]] = None,
-        exclude_columns: Optional[list[str]] = None,
-        target_variable: Optional[str] = None,
+        columns: list[str] | None = None,
+        exclude_columns: list[str] | None = None,
+        target_variable: str | None = None,
     ) -> dict[str, Any]:
         """
         Run complete EDA pipeline.
@@ -455,7 +455,7 @@ class DataPrism:
 
     def view(
         self,
-        results: Optional[dict[str, Any]] = None,
+        results: dict[str, Any] | None = None,
         *,
         port: int = 5332,
         open_browser: bool = True,

@@ -1,7 +1,7 @@
 """Correlation analysis engine for EDA."""
 
 import math
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 class CorrelationEngine:
     """Handles correlation computation and analysis for features."""
 
-    def __init__(self, top_correlations: int = 10, max_correlation_features: Optional[int] = None):
+    def __init__(self, top_correlations: int = 10, max_correlation_features: int | None = None):
         """
         Initialize correlation engine.
 
@@ -30,9 +30,9 @@ class CorrelationEngine:
     def compute_correlation_matrix(
         self,
         df: pd.DataFrame,
-        target_variable: Optional[str] = None,
-        column_configs: Optional[dict[str, ColumnConfig]] = None,
-    ) -> Optional[pd.DataFrame]:
+        target_variable: str | None = None,
+        column_configs: dict[str, ColumnConfig] | None = None,
+    ) -> pd.DataFrame | None:
         """
         Compute correlation matrix for continuous features.
 
@@ -71,7 +71,7 @@ class CorrelationEngine:
         self,
         df: pd.DataFrame,
         numeric_cols: list[str],
-        target_variable: Optional[str],
+        target_variable: str | None,
         max_features: int,
     ) -> list[str]:
         """
@@ -113,10 +113,10 @@ class CorrelationEngine:
         self,
         feature_names: list[str],
         features_data: dict[str, Any],
-        target_variable: Optional[str],
-        correlation_matrix: Optional[pd.DataFrame],
-        theils_u_matrix: Optional[pd.DataFrame],
-        eta_matrix: Optional[dict[str, dict[str, float]]],
+        target_variable: str | None,
+        correlation_matrix: pd.DataFrame | None,
+        theils_u_matrix: pd.DataFrame | None,
+        eta_matrix: dict[str, dict[str, float]] | None,
         max_features: int,
     ) -> list[str]:
         """
@@ -236,9 +236,9 @@ class CorrelationEngine:
     @staticmethod
     def _score_without_target(
         fname: str,
-        correlation_matrix: Optional[pd.DataFrame],
-        theils_u_matrix: Optional[pd.DataFrame],
-        eta_matrix: Optional[dict[str, dict[str, float]]],
+        correlation_matrix: pd.DataFrame | None,
+        theils_u_matrix: pd.DataFrame | None,
+        eta_matrix: dict[str, dict[str, float]] | None,
     ) -> float:
         """Score a feature by average absolute association strength with all other features."""
         values = []
@@ -290,9 +290,9 @@ class CorrelationEngine:
     def _is_redundant(
         fname: str,
         selected: list[str],
-        correlation_matrix: Optional[pd.DataFrame],
-        theils_u_matrix: Optional[pd.DataFrame],
-        eta_matrix: Optional[dict[str, dict[str, float]]],
+        correlation_matrix: pd.DataFrame | None,
+        theils_u_matrix: pd.DataFrame | None,
+        eta_matrix: dict[str, dict[str, float]] | None,
         threshold: float = 0.9,
     ) -> bool:
         """Check if a feature is redundant with any already-selected feature.
@@ -414,8 +414,8 @@ class CorrelationEngine:
     def compute_association_matrices(
         self,
         df: pd.DataFrame,
-        col_configs: Optional[dict[str, ColumnConfig]] = None,
-    ) -> tuple[Optional[pd.DataFrame], Optional[dict[str, dict[str, float]]]]:
+        col_configs: dict[str, ColumnConfig] | None = None,
+    ) -> tuple[pd.DataFrame | None, dict[str, dict[str, float]] | None]:
         """
         Compute Theil's U matrix (cat↔cat) and Eta dict (cat↔cont).
 
@@ -444,7 +444,7 @@ class CorrelationEngine:
                 cat_cols.append(col)
 
         theils_u_matrix = None
-        eta_matrix: Optional[dict[str, dict[str, float]]] = None
+        eta_matrix: dict[str, dict[str, float]] | None = None
 
         # Theil's U: categorical × categorical
         if len(cat_cols) >= 2:
@@ -481,10 +481,10 @@ class CorrelationEngine:
     @staticmethod
     def build_association_matrix(
         feature_names: list[str],
-        correlation_matrix: Optional[pd.DataFrame] = None,
-        theils_u_matrix: Optional[pd.DataFrame] = None,
-        eta_matrix: Optional[dict[str, dict[str, float]]] = None,
-    ) -> Optional[dict[str, Any]]:
+        correlation_matrix: pd.DataFrame | None = None,
+        theils_u_matrix: pd.DataFrame | None = None,
+        eta_matrix: dict[str, dict[str, float]] | None = None,
+    ) -> dict[str, Any] | None:
         """
         Merge precomputed Pearson, Theil's U, and Eta into a single N×N
         structure suitable for JSON serialization and heatmap rendering.
@@ -503,7 +503,7 @@ class CorrelationEngine:
         if n == 0:
             return None
 
-        values: list[list[Optional[float]]] = [[None] * n for _ in range(n)]
+        values: list[list[float | None]] = [[None] * n for _ in range(n)]
         methods: list[list[str]] = [[""] * n for _ in range(n)]
 
         idx = {name: i for i, name in enumerate(feature_names)}
@@ -568,13 +568,13 @@ class CorrelationEngine:
     def get_feature_correlations(
         self,
         feature_name: str,
-        correlation_matrix: Optional[pd.DataFrame],
-        precomputed_correlations: Optional[dict[str, Any]],
-        target_variable: Optional[str] = None,
-        theils_u_matrix: Optional[pd.DataFrame] = None,
-        eta_matrix: Optional[dict[str, dict[str, float]]] = None,
-        column_type: Optional[ColumnType] = None,
-    ) -> Optional[dict[str, Any]]:
+        correlation_matrix: pd.DataFrame | None,
+        precomputed_correlations: dict[str, Any] | None,
+        target_variable: str | None = None,
+        theils_u_matrix: pd.DataFrame | None = None,
+        eta_matrix: dict[str, dict[str, float]] | None = None,
+        column_type: ColumnType | None = None,
+    ) -> dict[str, Any] | None:
         """
         Get correlation information for a feature.
 
@@ -671,8 +671,8 @@ class CorrelationEngine:
         self,
         feature_name: str,
         precomputed_correlations: dict[str, Any],
-        target_variable: Optional[str] = None,
-    ) -> Optional[list[dict[str, Any]]]:
+        target_variable: str | None = None,
+    ) -> list[dict[str, Any]] | None:
         """
         Get precomputed correlations from metadata.
 
@@ -726,7 +726,7 @@ class CorrelationEngine:
         self,
         feature_name: str,
         correlation_matrix: pd.DataFrame,
-        target_variable: Optional[str] = None,
+        target_variable: str | None = None,
     ) -> list[dict[str, Any]]:
         """
         Compute correlations for a feature from correlation matrix.

@@ -2,9 +2,9 @@
 
 import json
 import math
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import numpy as np
 
@@ -46,7 +46,7 @@ def sanitize_for_json(obj: Any) -> Any:
         return obj
 
 
-def safe_round(value: Any, decimals: int = 4) -> Optional[float]:
+def safe_round(value: Any, decimals: int = 4) -> float | None:
     """
     Safely round a numeric value, returning None for NaN or Infinity.
 
@@ -98,11 +98,11 @@ class JSONFormatter:
     def format_results(
         dataset_info: dict[str, Any],
         features: dict[str, Any],
-        stability_results: Optional[dict[str, Any]] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        stability_results: dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None,
         execution_time: float = 0.0,
-        provider_match_rates: Optional[dict[str, Any]] = None,
-        association_matrix: Optional[dict[str, Any]] = None,
+        provider_match_rates: dict[str, Any] | None = None,
+        association_matrix: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
         Format EDA results into structured JSON with 3 main sections:
@@ -199,7 +199,7 @@ class JSONFormatter:
 
         # Build metadata section with execution info
         metadata_section = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "execution_time_seconds": round(execution_time, 2),
         }
         if metadata:
@@ -252,7 +252,7 @@ class JSONFormatter:
 
     @staticmethod
     def save_json(
-        data: dict[str, Any], filepath: Union[str, Path], indent: int = 2, compact: bool = False
+        data: dict[str, Any], filepath: str | Path, indent: int = 2, compact: bool = False
     ) -> None:
         """
         Save formatted data to JSON file.
@@ -274,7 +274,7 @@ class JSONFormatter:
 
     @staticmethod
     def to_json_string(
-        data: dict[str, Any], indent: Optional[int] = 2, compact: bool = False
+        data: dict[str, Any], indent: int | None = 2, compact: bool = False
     ) -> str:
         """
         Convert data to JSON string.
@@ -357,7 +357,7 @@ class JSONFormatter:
             return f"Major distribution shift (avg PSI {psi_str}), {trend_text}"
 
     @staticmethod
-    def _get_feature_stability_map(stability_results: Optional[dict[str, Any]]) -> dict[str, dict]:
+    def _get_feature_stability_map(stability_results: dict[str, Any] | None) -> dict[str, dict]:
         """Extract a flat feature_name -> stability dict from stability_results.
 
         Works for cohort-only, time-only, and combined stability.
@@ -393,7 +393,7 @@ class JSONFormatter:
         return psi_map
 
     @staticmethod
-    def _compute_summary(features: list, metadata: Optional[dict[str, Any]]) -> dict[str, Any]:
+    def _compute_summary(features: list, metadata: dict[str, Any] | None) -> dict[str, Any]:
         """
         Compute summary metrics - DERIVED INSIGHTS ONLY.
 
@@ -444,7 +444,7 @@ class JSONFormatter:
 
     @staticmethod
     def _compute_highest_metrics(
-        features: list, stability_results: Optional[dict[str, Any]] = None
+        features: list, stability_results: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """Find features with highest metrics."""
         highest_metrics = {}
@@ -517,7 +517,7 @@ class JSONFormatter:
 
     @staticmethod
     def _compute_top_features_by_statistical_score(
-        features: list, stability_results: Optional[dict] = None, top_n: int = 10
+        features: list, stability_results: dict | None = None, top_n: int = 10
     ) -> list:
         """Compute top N features ranked by Information Value (IV).
 
@@ -582,8 +582,8 @@ class JSONFormatter:
     @staticmethod
     def _compute_feature_counts(
         features: list,
-        stability_results: Optional[dict[str, Any]] = None,
-        target_variable: Optional[str] = None,
+        stability_results: dict[str, Any] | None = None,
+        target_variable: str | None = None,
     ) -> dict[str, Any]:
         """
         Compute feature counts for dashboard metrics.

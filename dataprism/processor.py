@@ -1,6 +1,6 @@
 """Feature analysis orchestration — routes each column to the right analyzer."""
 
-from typing import Any, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -23,7 +23,7 @@ class FeatureProcessor:
     def __init__(
         self,
         max_categories: int = 50,
-        correlation_engine: Optional[CorrelationEngine] = None,
+        correlation_engine: CorrelationEngine | None = None,
     ):
         self.max_categories = max_categories
         self.correlation_engine = correlation_engine
@@ -37,12 +37,12 @@ class FeatureProcessor:
         self,
         df: pd.DataFrame,
         col_configs: dict[str, ColumnConfig],
-        target_variable: Optional[str] = None,
-        correlation_matrix: Optional[pd.DataFrame] = None,
-        precomputed_correlations: Optional[dict[str, Any]] = None,
-        columns_to_analyze: Optional[list[str]] = None,
-        theils_u_matrix: Optional[pd.DataFrame] = None,
-        eta_matrix: Optional[dict[str, Any]] = None,
+        target_variable: str | None = None,
+        correlation_matrix: pd.DataFrame | None = None,
+        precomputed_correlations: dict[str, Any] | None = None,
+        columns_to_analyze: list[str] | None = None,
+        theils_u_matrix: pd.DataFrame | None = None,
+        eta_matrix: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
         Analyze features in the dataset.
@@ -149,8 +149,8 @@ class FeatureProcessor:
         col: str,
         df: pd.DataFrame,
         column_type: ColumnType,
-        column_config: Optional[ColumnConfig],
-    ) -> Optional[dict[str, Any]]:
+        column_config: ColumnConfig | None,
+    ) -> dict[str, Any] | None:
         """Analyze a single feature using appropriate analyzer."""
         analyzer: BaseAnalyzer
         if column_type is ColumnType.CONTINUOUS:

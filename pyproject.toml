@@ -7,17 +7,17 @@ name = "dataprism"
 version = "0.1.5"
 description = "A Python library for exploratory data analysis with advanced statistical features"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
     {name = "LattIQ Development Team", email = "dev@lattiq.com"},
 ]
 keywords = ["data analysis", "exploratory data analysis", "eda"]
 dependencies = [
-    "pandas>=2.0.0,<3.0.0",
-    "numpy>=1.24.0,<3.0.0",
-    "scipy>=1.10.0,<2.0.0",
-    "pyarrow>=10.0.0",
+    "pandas>=2.0,<4",
+    "numpy>=1.24,<3",
+    "scipy>=1.10,<2",
+    "pyarrow>=11.0,<24",
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -25,10 +25,9 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -43,18 +42,18 @@ Repository = "https://github.com/lattiq/dataprism"
 [project.optional-dependencies]
 dev = [
     "bandit>=1.8",
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "pytest-xdist>=3.0.0",
-    "pytest-benchmark>=4.0.0",
-    "black>=23.0.0",
-    "ruff>=0.1.0",
-    "mypy>=1.5.0",
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-xdist>=3.0",
+    "pytest-benchmark>=4.0",
+    "black>=23.0",
+    "ruff>=0.1",
+    "mypy>=1.5",
 ]
 test = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "pytest-xdist>=3.0.0",
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-xdist>=3.0",
 ]
 
 [tool.setuptools.packages.find]
@@ -66,7 +65,7 @@ exclude = ["tests*", "examples*", "tmp*", "docs*"]
 dataprism = ["py.typed", "explorer/*.html"]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false  # Set to true when all functions are typed
@@ -86,7 +85,7 @@ disallow_untyped_defs = false
 
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = [

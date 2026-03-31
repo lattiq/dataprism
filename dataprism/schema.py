@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class ColumnType(str, Enum):
+class ColumnType(StrEnum):
     """Semantic type of a column — how it behaves statistically."""
 
     CONTINUOUS = "continuous"
@@ -17,7 +17,7 @@ class ColumnType(str, Enum):
     BINARY = "binary"
 
 
-class ColumnRole(str, Enum):
+class ColumnRole(StrEnum):
     """How the pipeline should treat this column."""
 
     FEATURE = "feature"

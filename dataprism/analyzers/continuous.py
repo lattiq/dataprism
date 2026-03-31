@@ -1,6 +1,6 @@
 """Analyzer for continuous/numerical features."""
 
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -19,7 +19,7 @@ class ContinuousAnalyzer(BaseAnalyzer):
     def analyzer_name(self) -> str:
         return "continuous"
 
-    def can_analyze(self, series: pd.Series, column_config: Optional[ColumnConfig] = None) -> bool:
+    def can_analyze(self, series: pd.Series, column_config: ColumnConfig | None = None) -> bool:
         """
         Check if series can be analyzed as continuous.
 

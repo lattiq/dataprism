@@ -1,7 +1,7 @@
 """Result types used by analyzers."""
 
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass
@@ -36,8 +36,8 @@ class ContinuousStats:
     q1: float
     median: float
     q3: float
-    skewness: Optional[float] = None
-    kurtosis: Optional[float] = None
+    skewness: float | None = None
+    kurtosis: float | None = None
 
 
 @dataclass

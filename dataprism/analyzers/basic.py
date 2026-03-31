@@ -1,6 +1,6 @@
 """Basic statistics analyzer for dataset overview."""
 
-from typing import Any, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -19,7 +19,7 @@ class BasicStatsAnalyzer:
     def analyze_dataframe(
         self,
         df: pd.DataFrame,
-        col_configs: Optional[dict[str, ColumnConfig]] = None,
+        col_configs: dict[str, ColumnConfig] | None = None,
     ) -> dict[str, Any]:
         """
         Analyze entire DataFrame for basic statistics.

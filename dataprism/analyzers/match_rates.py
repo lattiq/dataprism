@@ -1,7 +1,7 @@
 """Provider-level match rate analysis."""
 
 import re
-from typing import Any, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -9,7 +9,7 @@ from dataprism.schema import ColumnConfig
 
 
 def compute_provider_match_rates(
-    df: pd.DataFrame, col_configs: Optional[dict[str, ColumnConfig]] = None
+    df: pd.DataFrame, col_configs: dict[str, ColumnConfig] | None = None
 ) -> dict[str, dict[str, Any]]:
     """
     Compute match rates by provider.

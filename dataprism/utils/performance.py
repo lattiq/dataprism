@@ -3,9 +3,10 @@
 import hashlib
 import json
 import pickle  # nosec B403
+from collections.abc import Callable
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -17,7 +18,7 @@ logger = get_logger(__name__)
 class CacheManager:
     """Manages caching of expensive computations."""
 
-    def __init__(self, cache_dir: Optional[Path] = None, enabled: bool = True):
+    def __init__(self, cache_dir: Path | None = None, enabled: bool = True):
         """
         Initialize cache manager.
 
@@ -52,7 +53,7 @@ class CacheManager:
         key_str = json.dumps(key_data, sort_keys=True)
         return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """
         Get cached value.
 
@@ -109,7 +110,7 @@ class CacheManager:
         logger.info("Cache cleared")
 
 
-def cached(cache_manager: Optional[CacheManager] = None) -> Callable:
+def cached(cache_manager: CacheManager | None = None) -> Callable:
     """
     Decorator to cache function results.
 
@@ -151,7 +152,7 @@ class ChunkedCSVReader:
         self,
         filepath: Path,
         chunksize: int = 10000,
-        sample_size: Optional[int] = None,
+        sample_size: int | None = None,
     ):
         """
         Initialize chunked CSV reader.

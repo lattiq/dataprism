@@ -1,6 +1,6 @@
 """Maps analysis results to the EDA output schema."""
 
-from typing import Any, Optional
+from typing import Any
 
 from dataprism.schema import ColumnConfig
 
@@ -12,7 +12,7 @@ class ResultMapper:
     def map_to_output_schema(
         feature_data: dict[str, Any],
         feature_name: str,
-        col_metadata: Optional[ColumnConfig] = None,
+        col_metadata: ColumnConfig | None = None,
     ) -> dict[str, Any]:
         """
         Transform analyzer output to final schema in a single pass.

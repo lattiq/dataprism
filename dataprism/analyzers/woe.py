@@ -5,7 +5,6 @@ used by both DataPrism EDA and the studio-processor pipeline.
 """
 
 from dataclasses import dataclass
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -45,7 +44,7 @@ class WoEAnalyzer:
         self,
         feature: pd.Series,
         target: pd.Series,
-    ) -> Optional[WoEResult]:
+    ) -> WoEResult | None:
         """Compute WoE mapping and IV from a feature and binary target.
 
         IV = Σ (% of goods - % of bads) * WoE

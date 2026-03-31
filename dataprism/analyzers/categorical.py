@@ -1,6 +1,6 @@
 """Analyzer for categorical features."""
 
-from typing import Any, Optional
+from typing import Any
 
 import pandas as pd
 from scipy import stats
@@ -26,7 +26,7 @@ class CategoricalAnalyzer(BaseAnalyzer):
     def analyzer_name(self) -> str:
         return "categorical"
 
-    def can_analyze(self, series: pd.Series, column_config: Optional[ColumnConfig] = None) -> bool:
+    def can_analyze(self, series: pd.Series, column_config: ColumnConfig | None = None) -> bool:
         """
         Check if series can be analyzed as categorical.
 
