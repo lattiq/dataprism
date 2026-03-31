@@ -42,7 +42,8 @@ release-version:
 	@echo "Creating release $(VERSION)..."
 	@sed -i.bak 's/^version = "[^"]*"/version = "$(VERSION)"/' pyproject.toml && rm pyproject.toml.bak
 	@sed -i.bak 's/__version__ = "[^"]*"/__version__ = "$(VERSION)"/' dataprism/__init__.py && rm dataprism/__init__.py.bak
-	@git add pyproject.toml dataprism/__init__.py
+	@uv lock
+	@git add pyproject.toml dataprism/__init__.py uv.lock
 	@git commit -m "Bump version to $(VERSION)"
 	@git tag v$(VERSION)
 	@echo "Run 'git push --tags' to publish"
