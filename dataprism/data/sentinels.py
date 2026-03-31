@@ -74,14 +74,11 @@ def replace_sentinel_values_with_nulls(
         for sentinel in sentinel_values:
             try:
                 if pd.api.types.is_numeric_dtype(df_clean[feature_name]):
-                    if isinstance(sentinel, str):
-                        try:
-                            sentinel_numeric = float(sentinel)
-                            mask = df_clean[feature_name] == sentinel_numeric
-                        except (ValueError, TypeError):
-                            mask = df_clean[feature_name].astype(str) == sentinel
-                    else:
-                        mask = df_clean[feature_name] == sentinel
+                    try:
+                        sentinel_numeric = float(sentinel)
+                        mask = df_clean[feature_name] == sentinel_numeric
+                    except (ValueError, TypeError):
+                        mask = df_clean[feature_name].astype(str) == sentinel
                 else:
                     if sentinel == '':
                         mask = (df_clean[feature_name] == '') & df_clean[feature_name].notna()

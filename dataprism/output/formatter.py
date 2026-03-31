@@ -4,7 +4,7 @@ import json
 import math
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
 import numpy as np
 
@@ -39,7 +39,7 @@ def sanitize_for_json(obj: Any) -> Any:
         if math.isnan(obj) or math.isinf(obj):
             return None
         return obj
-    elif hasattr(obj, 'isoformat'):
+    elif hasattr(obj, "isoformat"):
         # Handle pd.Timestamp, datetime, date objects
         return obj.isoformat()
     else:
@@ -64,7 +64,7 @@ def safe_round(value: Any, decimals: int = 4) -> Optional[float]:
             if math.isnan(value) or math.isinf(value):
                 return None
             return round(float(value), decimals)
-        return value
+        return float(value)
     except (ValueError, TypeError):
         return None
 
@@ -74,9 +74,8 @@ class SafeJSONEncoder(json.JSONEncoder):
 
     def default(self, obj):
         """Handle objects that can't be serialized."""
-        if isinstance(obj, float):
-            if math.isnan(obj) or math.isinf(obj):
-                return None
+        if isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
+            return None
         return super().default(obj)
 
     def encode(self, obj):
@@ -97,14 +96,14 @@ class JSONFormatter:
 
     @staticmethod
     def format_results(
-        dataset_info: Dict[str, Any],
-        features: Dict[str, Any],
-        stability_results: Optional[Dict[str, Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        dataset_info: dict[str, Any],
+        features: dict[str, Any],
+        stability_results: Optional[dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
         execution_time: float = 0.0,
-        provider_match_rates: Optional[Dict[str, Any]] = None,
-        association_matrix: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        provider_match_rates: Optional[dict[str, Any]] = None,
+        association_matrix: Optional[dict[str, Any]] = None,
+    ) -> dict[str, Any]:
         """
         Format EDA results into structured JSON with 3 main sections:
         - metadata: execution metadata and configuration
@@ -128,51 +127,53 @@ class JSONFormatter:
         for name, data in features.items():
             # Remove metadata subsection from individual features
             feature_data = data.copy()
-            if 'metadata' in feature_data:
-                del feature_data['metadata']
+            if "metadata" in feature_data:
+                del feature_data["metadata"]
 
-            feature_data['feature_name'] = name
+            feature_data["feature_name"] = name
 
             # Merge stability data into feature if available
             if stability_results:
                 stability_data = {}
-                is_time_only = stability_results.get('method') == 'time_based'
+                is_time_only = stability_results.get("method") == "time_based"
 
                 # Add cohort-based stability if available (only key fields)
-                if not is_time_only and 'feature_stability' in stability_results:
-                    cohort_stability = stability_results['feature_stability'].get(name)
+                if not is_time_only and "feature_stability" in stability_results:
+                    cohort_stability = stability_results["feature_stability"].get(name)
                     if cohort_stability:
-                        stability_data['cohort_based'] = {
-                            'psi': cohort_stability.get('psi'),
-                            'stability': cohort_stability.get('stability'),
-                            'interpretation': cohort_stability.get('interpretation')
+                        stability_data["cohort_based"] = {
+                            "psi": cohort_stability.get("psi"),
+                            "stability": cohort_stability.get("stability"),
+                            "interpretation": cohort_stability.get("interpretation"),
                         }
 
                 # Add time-based stability if available (only key fields)
                 time_source = None
-                if is_time_only and 'feature_stability' in stability_results:
-                    time_source = stability_results['feature_stability']
-                elif 'time_based_analysis' in stability_results:
-                    tba = stability_results['time_based_analysis']
-                    if 'feature_stability' in tba:
-                        time_source = tba['feature_stability']
+                if is_time_only and "feature_stability" in stability_results:
+                    time_source = stability_results["feature_stability"]
+                elif "time_based_analysis" in stability_results:
+                    tba = stability_results["time_based_analysis"]
+                    if "feature_stability" in tba:
+                        time_source = tba["feature_stability"]
 
                 if time_source:
                     time_stability = time_source.get(name)
                     if time_stability:
-                        stability_data['time_based'] = {
-                            'psi': time_stability.get('avg_psi'),
-                            'max_psi': time_stability.get('max_psi'),
-                            'min_psi': time_stability.get('min_psi'),
-                            'stability': time_stability.get('stability'),
-                            'trend': time_stability.get('trend'),
-                            'psi_by_period': time_stability.get('psi_by_period'),
-                            'interpretation': JSONFormatter._time_stability_interpretation(time_stability)
+                        stability_data["time_based"] = {
+                            "psi": time_stability.get("avg_psi"),
+                            "max_psi": time_stability.get("max_psi"),
+                            "min_psi": time_stability.get("min_psi"),
+                            "stability": time_stability.get("stability"),
+                            "trend": time_stability.get("trend"),
+                            "psi_by_period": time_stability.get("psi_by_period"),
+                            "interpretation": JSONFormatter._time_stability_interpretation(
+                                time_stability
+                            ),
                         }
 
                 # If we have any stability data, add it to the feature
                 if stability_data:
-                    feature_data['stability'] = stability_data
+                    feature_data["stability"] = stability_data
 
             features_list.append(feature_data)
 
@@ -183,14 +184,18 @@ class JSONFormatter:
         highest_metrics = JSONFormatter._compute_highest_metrics(features_list, stability_results)
 
         # Compute top 10 features by statistical score
-        top_features_by_score = JSONFormatter._compute_top_features_by_statistical_score(features_list, stability_results)
+        top_features_by_score = JSONFormatter._compute_top_features_by_statistical_score(
+            features_list, stability_results
+        )
 
         # Compute data quality summary
         data_quality = JSONFormatter._compute_data_quality(dataset_info, features_list)
 
         # Compute feature counts for dashboard
         target_variable = metadata.get("target_variable") if metadata else None
-        feature_counts = JSONFormatter._compute_feature_counts(features_list, stability_results, target_variable)
+        feature_counts = JSONFormatter._compute_feature_counts(
+            features_list, stability_results, target_variable
+        )
 
         # Build metadata section with execution info
         metadata_section = {
@@ -207,7 +212,7 @@ class JSONFormatter:
             "highest_metrics": highest_metrics,
             "top_features_by_statistical_score": top_features_by_score,
             "data_quality": data_quality,
-            "dataset_info": dataset_info  # Raw dataset statistics (single source of truth)
+            "dataset_info": dataset_info,  # Raw dataset statistics (single source of truth)
         }
 
         # Add provider_match_rates to summary if available
@@ -220,36 +225,34 @@ class JSONFormatter:
 
         # Add stability period metadata for viewer time-series charts
         if stability_results:
-            stability_summary = {'time_based_available': False}
+            stability_summary: dict[str, Any] = {"time_based_available": False}
             time_src = (
-                stability_results if stability_results.get('method') == 'time_based'
-                else stability_results.get('time_based_analysis')
+                stability_results
+                if stability_results.get("method") == "time_based"
+                else stability_results.get("time_based_analysis")
             )
             if time_src:
-                periods = time_src.get('comparison_periods', [])
-                stability_summary['time_based_available'] = True
-                stability_summary['time_periods'] = [
-                    {'label': p.get('start', ''), 'end': p.get('end', '')}
-                    for p in periods
+                periods = time_src.get("comparison_periods", [])
+                stability_summary["time_based_available"] = True
+                stability_summary["time_periods"] = [
+                    {"label": p.get("start", ""), "end": p.get("end", "")} for p in periods
                 ]
-            summary_section['stability_analysis'] = stability_summary
+            summary_section["stability_analysis"] = stability_summary
 
         # Build output with only 3 sections
         output = {
             "metadata": metadata_section,
             "summary": summary_section,
-            "features": features_list
+            "features": features_list,
         }
 
         # Sanitize all data to ensure valid JSON
-        return sanitize_for_json(output)
+        result: dict[str, Any] = sanitize_for_json(output)
+        return result
 
     @staticmethod
     def save_json(
-        data: Dict[str, Any],
-        filepath: Union[str, Path],
-        indent: int = 2,
-        compact: bool = False
+        data: dict[str, Any], filepath: Union[str, Path], indent: int = 2, compact: bool = False
     ) -> None:
         """
         Save formatted data to JSON file.
@@ -263,17 +266,15 @@ class JSONFormatter:
         filepath = Path(filepath)
         filepath.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             if compact:
-                json.dump(data, f, separators=(',', ':'), cls=SafeJSONEncoder)
+                json.dump(data, f, separators=(",", ":"), cls=SafeJSONEncoder)
             else:
                 json.dump(data, f, indent=indent, cls=SafeJSONEncoder)
 
     @staticmethod
     def to_json_string(
-        data: Dict[str, Any],
-        indent: Optional[int] = 2,
-        compact: bool = False
+        data: dict[str, Any], indent: Optional[int] = 2, compact: bool = False
     ) -> str:
         """
         Convert data to JSON string.
@@ -287,112 +288,112 @@ class JSONFormatter:
             JSON string
         """
         if compact:
-            return json.dumps(data, separators=(',', ':'), cls=SafeJSONEncoder)
+            return json.dumps(data, separators=(",", ":"), cls=SafeJSONEncoder)
         else:
             return json.dumps(data, indent=indent, cls=SafeJSONEncoder)
 
     @staticmethod
-    def compress_features(features: Dict[str, Any]) -> Dict[str, Any]:
+    def compress_features(features: dict[str, Any]) -> dict[str, Any]:
         """
         Compress feature data for efficient storage.
-        
+
         Removes redundant information and optimizes structure.
-        
+
         Args:
             features: Feature analysis results
-            
+
         Returns:
             Compressed feature data
         """
         compressed = {}
 
         for name, data in features.items():
-            if data.get('type') == 'continuous':
+            if data.get("type") == "continuous":
                 compressed[name] = {
-                    't': 'c',  # type: continuous
-                    'm': data.get('missing', {}),  # missing
-                    's': {  # stats (abbreviated keys)
-                        'mean': data['stats'].get('mean'),
-                        'std': data['stats'].get('std'),
-                        'min': data['stats'].get('min'),
-                        'max': data['stats'].get('max'),
-                        'med': data['stats'].get('median')
+                    "t": "c",  # continuous
+                    "m": data.get("missing", {}),  # missing
+                    "s": {  # stats (abbreviated keys)
+                        "mean": data["stats"].get("mean"),
+                        "std": data["stats"].get("std"),
+                        "min": data["stats"].get("min"),
+                        "max": data["stats"].get("max"),
+                        "med": data["stats"].get("median"),
                     },
-                    'o': data.get('outliers', {}).get('count', 0)  # outlier count
+                    "o": data.get("outliers", {}).get("count", 0),  # outlier count
                 }
-            elif data.get('type') == 'categorical':
+            elif data.get("type") == "categorical":
                 compressed[name] = {
-                    't': 'cat',  # type: categorical
-                    'm': data.get('missing', {}),  # missing
-                    'u': data['stats'].get('unique'),  # unique values
-                    'mode': data['stats'].get('mode'),
-                    'top5': dict(list(data['distribution']['value_counts'].items())[:5])
+                    "t": "cat",  # categorical
+                    "m": data.get("missing", {}),  # missing
+                    "u": data["stats"].get("unique"),  # unique values
+                    "mode": data["stats"].get("mode"),
+                    "top5": dict(list(data["distribution"]["value_counts"].items())[:5]),
                 }
 
         return compressed
 
     @staticmethod
-    def _time_stability_interpretation(ts: Dict[str, Any]) -> str:
+    def _time_stability_interpretation(ts: dict[str, Any]) -> str:
         """Build a human-readable interpretation for time-based stability."""
-        stability = ts.get('stability', 'unknown')
-        trend = ts.get('trend', 'unknown')
-        avg_psi = ts.get('avg_psi')
+        stability = ts.get("stability", "unknown")
+        trend = ts.get("trend", "unknown")
+        avg_psi = ts.get("avg_psi")
 
         trend_labels = {
-            'stable': 'stable trend',
-            'increasing_drift': 'increasing drift over time',
-            'decreasing_drift': 'decreasing drift over time',
-            'volatile': 'volatile across periods',
-            'drifting': 'drifting',
+            "stable": "stable trend",
+            "increasing_drift": "increasing drift over time",
+            "decreasing_drift": "decreasing drift over time",
+            "volatile": "volatile across periods",
+            "drifting": "drifting",
         }
         trend_text = trend_labels.get(trend, trend)
         psi_str = f"{avg_psi:.4f}" if avg_psi is not None else "N/A"
 
-        if stability == 'stable':
+        if stability == "stable":
             return f"Stable distribution (avg PSI {psi_str}), {trend_text}"
-        elif stability == 'minor_shift':
+        elif stability == "minor_shift":
             return f"Minor distribution shift (avg PSI {psi_str}), {trend_text}"
         else:
             return f"Major distribution shift (avg PSI {psi_str}), {trend_text}"
 
     @staticmethod
-    def _get_feature_stability_map(stability_results: Optional[Dict[str, Any]]) -> Dict[str, Dict]:
+    def _get_feature_stability_map(stability_results: Optional[dict[str, Any]]) -> dict[str, dict]:
         """Extract a flat feature_name -> stability dict from stability_results.
 
         Works for cohort-only, time-only, and combined stability.
         For time-based, maps avg_psi to 'psi' for uniform access.
         """
-        psi_map: Dict[str, Dict] = {}
+        psi_map: dict[str, dict] = {}
         if not stability_results:
             return psi_map
 
-        is_time_only = stability_results.get('method') == 'time_based'
+        is_time_only = stability_results.get("method") == "time_based"
 
         # Cohort-based stability (top-level feature_stability when not time-only)
-        if not is_time_only and 'feature_stability' in stability_results:
-            for fname, data in stability_results['feature_stability'].items():
+        if not is_time_only and "feature_stability" in stability_results:
+            for fname, data in stability_results["feature_stability"].items():
                 psi_map[fname] = data
 
         # Time-based stability
         time_source = None
-        if is_time_only and 'feature_stability' in stability_results:
-            time_source = stability_results['feature_stability']
-        elif 'time_based_analysis' in stability_results:
-            tba = stability_results['time_based_analysis']
-            if 'feature_stability' in tba:
-                time_source = tba['feature_stability']
+        if is_time_only and "feature_stability" in stability_results:
+            time_source = stability_results["feature_stability"]
+        elif "time_based_analysis" in stability_results:
+            tba = stability_results["time_based_analysis"]
+            if "feature_stability" in tba:
+                time_source = tba["feature_stability"]
 
         if time_source:
             for fname, data in time_source.items():
                 if fname not in psi_map:
                     # Normalize: use avg_psi as psi for uniform access
-                    psi_map[fname] = {**data, 'psi': data.get('avg_psi')}
+                    psi_map[fname] = {**data, "psi": data.get("avg_psi")}
                 # If cohort already present, don't overwrite
 
         return psi_map
 
     @staticmethod
-    def _compute_summary(features: list, metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    def _compute_summary(features: list, metadata: Optional[dict[str, Any]]) -> dict[str, Any]:
         """
         Compute summary metrics - DERIVED INSIGHTS ONLY.
 
@@ -408,21 +409,29 @@ class JSONFormatter:
             Dictionary with derived summary metrics
         """
         # Exclude target variable from feature count
-        total_features = sum(1 for f in features if not f.get('is_target', False))
+        total_features = sum(1 for f in features if not f.get("is_target", False))
 
         # Count feature types
-        feature_type_counts = metadata.get('feature_types', {}) if metadata else {}
+        feature_type_counts = metadata.get("feature_types", {}) if metadata else {}
 
         # Calculate averages across features (derived insights)
-        missing_percentages = [f.get('statistics', {}).get('missing_percentage', 0) for f in features]
-        outlier_percentages = [f.get('outliers', {}).get('percent', 0) for f in features if f.get('outliers')]
+        missing_percentages = [
+            f.get("statistics", {}).get("missing_percentage", 0) for f in features
+        ]
+        outlier_percentages = [
+            f.get("outliers", {}).get("percent", 0) for f in features if f.get("outliers")
+        ]
 
-        avg_missing = sum(missing_percentages) / len(missing_percentages) if missing_percentages else 0
-        avg_outliers = sum(outlier_percentages) / len(outlier_percentages) if outlier_percentages else 0
+        avg_missing = (
+            sum(missing_percentages) / len(missing_percentages) if missing_percentages else 0
+        )
+        avg_outliers = (
+            sum(outlier_percentages) / len(outlier_percentages) if outlier_percentages else 0
+        )
 
         # Count provider features (derived from feature metadata)
-        provider_features = sum(1 for f in features if f.get('source', {}).get('provider'))
-        derived_features = sum(1 for f in features if f.get('is_derived', False))
+        provider_features = sum(1 for f in features if f.get("source", {}).get("provider"))
+        derived_features = sum(1 for f in features if f.get("is_derived", False))
 
         return {
             "total_features": total_features,
@@ -434,76 +443,82 @@ class JSONFormatter:
         }
 
     @staticmethod
-    def _compute_highest_metrics(features: list, stability_results: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _compute_highest_metrics(
+        features: list, stability_results: Optional[dict[str, Any]] = None
+    ) -> dict[str, Any]:
         """Find features with highest metrics."""
         highest_metrics = {}
 
         # Highest target association (best of Pearson, Correlation Ratio, Theil's U)
         features_with_assoc = []
         for f in features:
-            target_rel = f.get('target_relationship', {})
-            pearson = target_rel.get('correlation_pearson')
-            corr_ratio = target_rel.get('correlation_ratio')
-            theils_u = target_rel.get('theils_u')
+            target_rel = f.get("target_relationship", {})
+            pearson = target_rel.get("correlation_pearson")
+            corr_ratio = target_rel.get("correlation_ratio")
+            theils_u = target_rel.get("theils_u")
             candidates = [abs(pearson) if pearson is not None else None, corr_ratio, theils_u]
             best = max((c for c in candidates if c is not None), default=None)
             if best is not None and best > 0:
-                features_with_assoc.append((f.get('feature_name'), best))
+                features_with_assoc.append((f.get("feature_name"), best))
         if features_with_assoc:
             top_assoc = max(features_with_assoc, key=lambda x: x[1])
-            highest_metrics['highest_association'] = {
-                'feature_name': top_assoc[0],
-                'value': safe_round(top_assoc[1], 4),
-                'target': features[0].get('target_relationship', {}).get('target_variable') if features else None
+            highest_metrics["highest_association"] = {
+                "feature_name": top_assoc[0],
+                "value": safe_round(top_assoc[1], 4),
+                "target": features[0].get("target_relationship", {}).get("target_variable")
+                if features
+                else None,
             }
 
         # Highest IV
         features_with_iv = [
-            (f.get('feature_name'), f.get('target_relationship', {}).get('information_value', 0))
+            (f.get("feature_name"), f.get("target_relationship", {}).get("information_value", 0))
             for f in features
-            if f.get('target_relationship', {}).get('information_value') is not None
+            if f.get("target_relationship", {}).get("information_value") is not None
         ]
         if features_with_iv:
             top_iv = max(features_with_iv, key=lambda x: x[1])
-            highest_metrics['highest_iv'] = {
-                'feature_name': top_iv[0],
-                'value': safe_round(top_iv[1], 4)
+            highest_metrics["highest_iv"] = {
+                "feature_name": top_iv[0],
+                "value": safe_round(top_iv[1], 4),
             }
 
         # Highest stability (use unified stability map)
         stability_map = JSONFormatter._get_feature_stability_map(stability_results)
         if stability_map:
             stable_features = [
-                (fname, data.get('psi'))
+                (fname, data.get("psi"))
                 for fname, data in stability_map.items()
-                if data.get('psi') is not None and data.get('stability') == 'stable'
+                if data.get("psi") is not None and data.get("stability") == "stable"
             ]
 
             if stable_features:
-                top_stable = min(stable_features, key=lambda x: x[1])
-                highest_metrics['highest_stability'] = {
-                    'feature_name': top_stable[0],
-                    'value': safe_round(top_stable[1], 4),
-                    'stability': 'stable',
-                    'interpretation': 'Most stable feature (lowest PSI)'
+                top_stable = min(stable_features, key=lambda x: x[1] if x[1] is not None else float("inf"))
+                highest_metrics["highest_stability"] = {
+                    "feature_name": top_stable[0],
+                    "value": safe_round(top_stable[1], 4),
+                    "stability": "stable",
+                    "interpretation": "Most stable feature (lowest PSI)",
                 }
             else:
-                highest_metrics['highest_stability'] = {
-                    'feature_name': None,
-                    'value': None,
-                    'note': 'No stable features found (all PSI >= 0.1)'
+                highest_metrics["highest_stability"] = {
+                    "feature_name": None,
+                    "value": None,
+                    "note": "No stable features found (all PSI >= 0.1)",
                 }
         else:
-            highest_metrics['highest_stability'] = {
-                'feature_name': None,
-                'value': None,
-                'note': 'Stability metrics require cohort or time-based data'
+            highest_metrics["highest_stability"] = {
+                "feature_name": None,
+                "value": None,
+                "note": "Stability metrics require cohort or time-based data",
             }
 
         return highest_metrics
 
     @staticmethod
-    def _compute_top_features_by_statistical_score(features: list, stability_results: Optional[Dict] = None, top_n: int = 10) -> list:
+    def _compute_top_features_by_statistical_score(
+        features: list, stability_results: Optional[dict] = None, top_n: int = 10
+    ) -> list:
         """Compute top N features ranked by Information Value (IV).
 
         IV is the industry-standard univariate metric for feature screening
@@ -517,51 +532,59 @@ class JSONFormatter:
         stability_map = JSONFormatter._get_feature_stability_map(stability_results)
         stability_psi = {}
         for fname, data in stability_map.items():
-            psi = data.get('psi')
+            psi = data.get("psi")
             if psi is not None:
                 stability_psi[fname] = psi
 
         scored_features = []
         for f in features:
-            target_rel = f.get('target_relationship', {})
-            iv = target_rel.get('information_value')
+            target_rel = f.get("target_relationship", {})
+            iv = target_rel.get("information_value")
             if iv is None:
                 continue
 
             # Best available target association for context
-            pearson = target_rel.get('correlation_pearson')
-            corr_ratio = target_rel.get('correlation_ratio')
-            theils_u = target_rel.get('theils_u')
+            pearson = target_rel.get("correlation_pearson")
+            corr_ratio = target_rel.get("correlation_ratio")
+            theils_u = target_rel.get("theils_u")
             association = abs(pearson) if pearson is not None else (corr_ratio or theils_u or 0)
 
-            feature_name = f.get('feature_name')
-            scored_features.append({
-                'feature_name': feature_name,
-                'iv': iv,
-                'association': safe_round(association, 4),
-                'psi': stability_psi.get(feature_name),
-                'predictive_power': target_rel.get('predictive_power'),
-            })
+            feature_name = f.get("feature_name")
+            scored_features.append(
+                {
+                    "feature_name": feature_name,
+                    "iv": iv,
+                    "association": safe_round(association, 4),
+                    "psi": stability_psi.get(feature_name),
+                    "predictive_power": target_rel.get("predictive_power"),
+                }
+            )
 
         # Rank by IV descending
-        scored_features.sort(key=lambda x: x['iv'], reverse=True)
+        scored_features.sort(key=lambda x: x["iv"], reverse=True)
         top_features = scored_features[:top_n]
 
         result = []
         for i, f in enumerate(top_features, 1):
-            result.append({
-                'rank': i,
-                'feature_name': f['feature_name'],
-                'iv': safe_round(f['iv'], 4),
-                'predictive_power': f['predictive_power'],
-                'association': f['association'],
-                'psi': safe_round(f['psi'], 4) if f['psi'] is not None else None,
-            })
+            result.append(
+                {
+                    "rank": i,
+                    "feature_name": f["feature_name"],
+                    "iv": safe_round(f["iv"], 4),
+                    "predictive_power": f["predictive_power"],
+                    "association": f["association"],
+                    "psi": safe_round(f["psi"], 4) if f["psi"] is not None else None,
+                }
+            )
 
         return result
 
     @staticmethod
-    def _compute_feature_counts(features: list, stability_results: Optional[Dict[str, Any]] = None, target_variable: Optional[str] = None) -> Dict[str, Any]:
+    def _compute_feature_counts(
+        features: list,
+        stability_results: Optional[dict[str, Any]] = None,
+        target_variable: Optional[str] = None,
+    ) -> dict[str, Any]:
         """
         Compute feature counts for dashboard metrics.
 
@@ -582,10 +605,10 @@ class JSONFormatter:
         high_correlation_count = 0
         high_correlation_threshold = 0.1
         for f in features:
-            target_rel = f.get('target_relationship', {})
-            corr = target_rel.get('correlation_pearson')
-            corr_ratio = target_rel.get('correlation_ratio')
-            theils_u = target_rel.get('theils_u')
+            target_rel = f.get("target_relationship", {})
+            corr = target_rel.get("correlation_pearson")
+            corr_ratio = target_rel.get("correlation_ratio")
+            theils_u = target_rel.get("theils_u")
             candidates = [abs(corr) if corr is not None else None, corr_ratio, theils_u]
             best = max((c for c in candidates if c is not None), default=0)
             if best > high_correlation_threshold:
@@ -595,13 +618,13 @@ class JSONFormatter:
         redundant_count = 0
         redundancy_threshold = 0.7
         for f in features:
-            correlations = f.get('correlations', {})
-            top_correlated = correlations.get('top_correlated_features', [])
+            correlations = f.get("correlations", {})
+            top_correlated = correlations.get("top_correlated_features", [])
             for corr_data in top_correlated:
-                corr_feat = corr_data.get('feature')
+                corr_feat = corr_data.get("feature")
                 if target_variable and corr_feat == target_variable:
                     continue
-                if abs(corr_data.get('correlation', 0)) > redundancy_threshold:
+                if abs(corr_data.get("correlation", 0)) > redundancy_threshold:
                     redundant_count += 1
                     break
 
@@ -609,7 +632,7 @@ class JSONFormatter:
         high_iv_count = 0
         high_iv_threshold = 0.1
         for f in features:
-            iv = f.get('target_relationship', {}).get('information_value')
+            iv = f.get("target_relationship", {}).get("information_value")
             if iv is not None and iv > high_iv_threshold:
                 high_iv_count += 1
 
@@ -618,53 +641,63 @@ class JSONFormatter:
         stability_threshold = 0.1
         stability_map = JSONFormatter._get_feature_stability_map(stability_results)
         for stability_data in stability_map.values():
-            psi = stability_data.get('psi')
+            psi = stability_data.get("psi")
             if psi is not None and psi < stability_threshold:
                 high_stability_count += 1
 
         # Count data quality flags
-        high_missing_count = sum(1 for f in features if f.get('quality', {}).get('has_high_missing', False))
-        constant_count = sum(1 for f in features if f.get('quality', {}).get('is_constant', False))
-        low_variance_count = sum(1 for f in features if f.get('quality', {}).get('has_low_variance', False))
-        not_recommended_count = sum(1 for f in features if not f.get('quality', {}).get('recommended_for_modeling', True))
+        high_missing_count = sum(
+            1 for f in features if f.get("quality", {}).get("has_high_missing", False)
+        )
+        constant_count = sum(1 for f in features if f.get("quality", {}).get("is_constant", False))
+        low_variance_count = sum(
+            1 for f in features if f.get("quality", {}).get("has_low_variance", False)
+        )
+        not_recommended_count = sum(
+            1 for f in features if not f.get("quality", {}).get("recommended_for_modeling", True)
+        )
 
         # Count distribution shape issues (continuous features only)
         highly_skewed_count = 0
         high_kurtosis_count = 0
         for f in features:
-            stats = f.get('stats', {})
-            skew = stats.get('skewness')
-            kurt = stats.get('kurtosis')
+            stats = f.get("stats", {})
+            skew = stats.get("skewness")
+            kurt = stats.get("kurtosis")
             if skew is not None and abs(skew) > 1.0:
                 highly_skewed_count += 1
             if kurt is not None and kurt > 3.0:
                 high_kurtosis_count += 1
 
         # Count high-cardinality categoricals
-        high_cardinality_count = sum(1 for f in features if f.get('cardinality', {}).get('is_high_cardinality', False))
+        high_cardinality_count = sum(
+            1 for f in features if f.get("cardinality", {}).get("is_high_cardinality", False)
+        )
 
         # Count suspected leakage (IV > 0.5)
         suspected_leakage_count = 0
         leakage_threshold = 0.5
         for f in features:
-            iv = f.get('target_relationship', {}).get('information_value')
+            iv = f.get("target_relationship", {}).get("information_value")
             if iv is not None and iv > leakage_threshold:
                 suspected_leakage_count += 1
 
         # Predictive power breakdown by IV class
         pp_counts = {"unpredictive": 0, "weak": 0, "medium": 0, "strong": 0, "very_strong": 0}
         for f in features:
-            pp = f.get('target_relationship', {}).get('predictive_power')
+            pp = f.get("target_relationship", {}).get("predictive_power")
             if pp and pp in pp_counts:
                 pp_counts[pp] += 1
 
         # Statistically significant correlations (p-value < 0.05)
         significant_count = 0
         for f in features:
-            tr = f.get('target_relationship', {})
-            pearson_p = tr.get('correlation_pearson_pvalue')
-            spearman_p = tr.get('correlation_spearman_pvalue')
-            if (pearson_p is not None and pearson_p < 0.05) or (spearman_p is not None and spearman_p < 0.05):
+            tr = f.get("target_relationship", {})
+            pearson_p = tr.get("correlation_pearson_pvalue")
+            spearman_p = tr.get("correlation_spearman_pvalue")
+            if (pearson_p is not None and pearson_p < 0.05) or (
+                spearman_p is not None and spearman_p < 0.05
+            ):
                 significant_count += 1
 
         # Stability trends (from stability map — works for both cohort and time-based)
@@ -673,74 +706,76 @@ class JSONFormatter:
         minor_shift_count_stability = 0
         major_shift_count_stability = 0
         for data in stability_map.values():
-            trend = data.get('trend')
-            stab = data.get('stability')
-            if trend == 'increasing_drift':
+            trend = data.get("trend")
+            stab = data.get("stability")
+            if trend == "increasing_drift":
                 increasing_drift_count += 1
-            if trend == 'volatile':
+            if trend == "volatile":
                 volatile_count += 1
-            if stab == 'minor_shift':
+            if stab == "minor_shift":
                 minor_shift_count_stability += 1
-            if stab == 'major_shift':
+            if stab == "major_shift":
                 major_shift_count_stability += 1
 
         return {
             "high_correlation": {
                 "count": high_correlation_count,
                 "threshold": high_correlation_threshold,
-                "description": f"Features with absolute correlation > {high_correlation_threshold}"
+                "description": f"Features with absolute correlation > {high_correlation_threshold}",
             },
             "redundant_features": {
                 "count": redundant_count,
                 "threshold": redundancy_threshold,
-                "description": f"Features with correlation > {redundancy_threshold} with another feature"
+                "description": f"Features with correlation > {redundancy_threshold} with another feature",
             },
             "high_iv": {
                 "count": high_iv_count,
                 "threshold": high_iv_threshold,
-                "description": f"Features with Information Value > {high_iv_threshold}"
+                "description": f"Features with Information Value > {high_iv_threshold}",
             },
             "high_stability": {
                 "count": high_stability_count,
                 "threshold": stability_threshold,
                 "description": f"Features with PSI < {stability_threshold} (stable distribution)",
-                "note": "Lower PSI values indicate higher stability" if high_stability_count > 0 else "Stability analysis not performed or no stable features found"
+                "note": "Lower PSI values indicate higher stability"
+                if high_stability_count > 0
+                else "Stability analysis not performed or no stable features found",
             },
             "high_missing": {
                 "count": high_missing_count,
                 "threshold": 0.3,
-                "description": "Features with >30% missing values"
+                "description": "Features with >30% missing values",
             },
             "constant_features": {
                 "count": constant_count,
-                "description": "Features with only one unique value"
+                "description": "Features with only one unique value",
             },
             "low_variance": {
                 "count": low_variance_count,
-                "description": "Features with very low coefficient of variation"
+                "description": "Features with very low coefficient of variation",
             },
             "not_recommended": {
                 "count": not_recommended_count,
-                "description": "Features not recommended for modeling"
+                "description": "Features not recommended for modeling",
             },
             "highly_skewed": {
                 "count": highly_skewed_count,
                 "threshold": 1.0,
-                "description": "Features with |skewness| > 1.0"
+                "description": "Features with |skewness| > 1.0",
             },
             "high_kurtosis": {
                 "count": high_kurtosis_count,
                 "threshold": 3.0,
-                "description": "Features with kurtosis > 3.0 (outlier-prone)"
+                "description": "Features with kurtosis > 3.0 (outlier-prone)",
             },
             "high_cardinality": {
                 "count": high_cardinality_count,
-                "description": "Categorical features with high unique-value ratio"
+                "description": "Categorical features with high unique-value ratio",
             },
             "suspected_leakage": {
                 "count": suspected_leakage_count,
                 "threshold": leakage_threshold,
-                "description": f"Features with IV > {leakage_threshold} (possible information leakage)"
+                "description": f"Features with IV > {leakage_threshold} (possible information leakage)",
             },
             "predictive_power": {
                 "unpredictive": pp_counts["unpredictive"],
@@ -748,53 +783,56 @@ class JSONFormatter:
                 "medium": pp_counts["medium"],
                 "strong": pp_counts["strong"],
                 "very_strong": pp_counts["very_strong"],
-                "description": "Feature count by IV-based predictive power class"
+                "description": "Feature count by IV-based predictive power class",
             },
             "significant_correlations": {
                 "count": significant_count,
                 "threshold": 0.05,
-                "description": "Features with statistically significant correlation (p < 0.05)"
+                "description": "Features with statistically significant correlation (p < 0.05)",
             },
             "increasing_drift": {
                 "count": increasing_drift_count,
-                "description": "Features with worsening distribution drift over time"
+                "description": "Features with worsening distribution drift over time",
             },
             "volatile_stability": {
                 "count": volatile_count,
-                "description": "Features with inconsistent stability across periods"
+                "description": "Features with inconsistent stability across periods",
             },
             "minor_shift": {
                 "count": minor_shift_count_stability,
-                "description": "Features with minor distribution shift (0.1 <= PSI < 0.2)"
+                "description": "Features with minor distribution shift (0.1 <= PSI < 0.2)",
             },
             "major_shift": {
                 "count": major_shift_count_stability,
-                "description": "Features with major distribution shift (PSI >= 0.2)"
+                "description": "Features with major distribution shift (PSI >= 0.2)",
             },
         }
 
     @staticmethod
-    def _compute_data_quality(dataset_info: Dict[str, Any], features: list) -> Dict[str, Any]:
+    def _compute_data_quality(dataset_info: dict[str, Any], features: list) -> dict[str, Any]:
         """Compute data quality summary."""
         # Find features with quality issues
         features_with_high_missing = [
-            f.get('feature_name') for f in features
-            if f.get('quality', {}).get('has_high_missing', False)
+            f.get("feature_name")
+            for f in features
+            if f.get("quality", {}).get("has_high_missing", False)
         ]
 
         features_with_low_variance = [
-            f.get('feature_name') for f in features
-            if f.get('quality', {}).get('has_low_variance', False)
+            f.get("feature_name")
+            for f in features
+            if f.get("quality", {}).get("has_low_variance", False)
         ]
 
         features_with_outliers = [
-            f.get('feature_name') for f in features
-            if f.get('quality', {}).get('has_outliers', False)
+            f.get("feature_name")
+            for f in features
+            if f.get("quality", {}).get("has_outliers", False)
         ]
 
         # Calculate overall quality score (0-10)
         # Based on: missing data, duplicates, low variance features, outliers
-        total_features = sum(1 for f in features if not f.get('is_target', False))
+        total_features = sum(1 for f in features if not f.get("is_target", False))
         score = 10.0
 
         # Penalize for high missing
@@ -806,8 +844,8 @@ class JSONFormatter:
             score -= min(1.5, len(features_with_low_variance) / total_features * 3)
 
         # Penalize for duplicates
-        duplicate_rows = dataset_info.get('duplicate_rows', 0)
-        total_rows = dataset_info.get('rows', 1)
+        duplicate_rows = dataset_info.get("duplicate_rows", 0)
+        total_rows = dataset_info.get("rows", 1)
         if duplicate_rows > 0:
             score -= min(2.0, duplicate_rows / total_rows * 5)
 
@@ -821,20 +859,24 @@ class JSONFormatter:
         # Generate recommendations
         recommendations = []
         if features_with_high_missing:
-            recommendations.append(f"Consider imputation for {len(features_with_high_missing)} features with >30% missing values")
+            recommendations.append(
+                f"Consider imputation for {len(features_with_high_missing)} features with >30% missing values"
+            )
         if features_with_outliers:
             recommendations.append(f"Review outliers in {len(features_with_outliers)} features")
         if features_with_low_variance:
-            recommendations.append(f"Consider removing {len(features_with_low_variance)} low-variance features")
+            recommendations.append(
+                f"Consider removing {len(features_with_low_variance)} low-variance features"
+            )
         if duplicate_rows > 0:
             recommendations.append(f"Remove {duplicate_rows} duplicate rows")
 
         return {
             "overall_score": safe_round(score, 1),
-            "total_missing_cells": dataset_info.get('missing_cells', 0),
+            "total_missing_cells": dataset_info.get("missing_cells", 0),
             "features_with_high_missing_count": len(features_with_high_missing),
             "features_with_low_variance_count": len(features_with_low_variance),
             "features_with_outliers_count": len(features_with_outliers),
-            "duplicate_rows": dataset_info.get('duplicate_rows', 0),
-            "recommended_actions": recommendations
+            "duplicate_rows": dataset_info.get("duplicate_rows", 0),
+            "recommended_actions": recommendations,
         }

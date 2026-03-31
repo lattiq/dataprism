@@ -9,7 +9,6 @@ import webbrowser
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from importlib import resources
 from pathlib import Path
-from typing import Union
 
 
 def _is_port_available(port: int) -> bool:
@@ -26,7 +25,7 @@ def _find_free_port() -> int:
     """Find an available port using the OS socket trick."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(("", 0))
-        return s.getsockname()[1]
+        return int(s.getsockname()[1])
 
 
 def _build_html(json_data: dict) -> str:
@@ -45,7 +44,7 @@ class _SinglePageHandler(SimpleHTTPRequestHandler):
 
     html_bytes: bytes = b""
 
-    def do_GET(self) -> None:
+    def do_GET(self) -> None:  # noqa: N802
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(self.html_bytes)))
@@ -64,7 +63,7 @@ class Explorer:
 
     @staticmethod
     def launch(
-        data: Union[str, Path, dict],
+        data: str | Path | dict,
         *,
         port: int = DEFAULT_PORT,
         open_browser: bool = True,

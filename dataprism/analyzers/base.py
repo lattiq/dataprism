@@ -3,7 +3,7 @@
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import pandas as pd
 
@@ -13,20 +13,21 @@ from dataprism.schema import ColumnConfig, ColumnType
 @dataclass
 class AnalysisResult:
     """Container for analysis results with metadata."""
+
     analyzer_name: str
     column_name: Optional[str]
-    data: Dict[str, Any]
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    data: dict[str, Any]
+    metadata: dict[str, Any] = field(default_factory=dict)
     execution_time: float = 0.0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "analyzer": self.analyzer_name,
             "column": self.column_name,
             "data": self.data,
             "metadata": self.metadata,
-            "execution_time": self.execution_time
+            "execution_time": self.execution_time,
         }
 
 
@@ -40,18 +41,18 @@ class BaseAnalyzer(ABC):
         pass
 
     @abstractmethod
-    def can_analyze(
-        self, series: pd.Series, column_config: Optional[ColumnConfig] = None
-    ) -> bool:
+    def can_analyze(self, series: pd.Series, column_config: Optional[ColumnConfig] = None) -> bool:
         """Check if this analyzer can process the given series."""
         pass
 
     @abstractmethod
-    def _analyze_impl(self, series: pd.Series) -> Dict[str, Any]:
+    def _analyze_impl(self, series: pd.Series) -> dict[str, Any]:
         """Core analysis implementation."""
         pass
 
-    def analyze(self, series: pd.Series, column_config: Optional[ColumnConfig] = None) -> AnalysisResult:
+    def analyze(
+        self, series: pd.Series, column_config: Optional[ColumnConfig] = None
+    ) -> AnalysisResult:
         """
         Main analysis method implementing the template pattern.
 
@@ -69,7 +70,6 @@ class BaseAnalyzer(ABC):
 
         results = self._analyze_impl(series)
 
-
         execution_time = time.perf_counter() - start_time
 
         return AnalysisResult(
@@ -86,8 +86,7 @@ class BaseAnalyzer(ABC):
 
     @staticmethod
     def determine_column_type(
-        series: pd.Series,
-        column_config: Optional[ColumnConfig] = None
+        series: pd.Series, column_config: Optional[ColumnConfig] = None
     ) -> ColumnType:
         """
         Determine column type from config or infer from data.

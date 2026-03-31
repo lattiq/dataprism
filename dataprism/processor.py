@@ -1,18 +1,18 @@
 """Feature analysis orchestration — routes each column to the right analyzer."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import pandas as pd
 
+from dataprism.analyzers.base import BaseAnalyzer
 from dataprism.analyzers.categorical import CategoricalAnalyzer
 from dataprism.analyzers.continuous import ContinuousAnalyzer
-from dataprism.analyzers.target_analysis import TargetAnalyzer
-from dataprism.analyzers.base import BaseAnalyzer
 from dataprism.analyzers.correlation import CorrelationEngine
-from dataprism.utils.logger import get_logger
-from dataprism.schema import ColumnConfig, ColumnType
+from dataprism.analyzers.target_analysis import TargetAnalyzer
 from dataprism.output.formatter import safe_round
 from dataprism.output.mapper import ResultMapper
+from dataprism.schema import ColumnConfig, ColumnType
+from dataprism.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -36,14 +36,14 @@ class FeatureProcessor:
     def analyze_features(
         self,
         df: pd.DataFrame,
-        col_configs: Dict[str, ColumnConfig],
+        col_configs: dict[str, ColumnConfig],
         target_variable: Optional[str] = None,
         correlation_matrix: Optional[pd.DataFrame] = None,
-        precomputed_correlations: Optional[Dict[str, Any]] = None,
-        columns_to_analyze: Optional[List[str]] = None,
+        precomputed_correlations: Optional[dict[str, Any]] = None,
+        columns_to_analyze: Optional[list[str]] = None,
         theils_u_matrix: Optional[pd.DataFrame] = None,
-        eta_matrix: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        eta_matrix: Optional[dict[str, Any]] = None,
+    ) -> dict[str, Any]:
         """
         Analyze features in the dataset.
 
@@ -63,7 +63,9 @@ class FeatureProcessor:
         features = {}
 
         # Determine which columns to analyze
-        cols_to_process = columns_to_analyze if columns_to_analyze is not None else df.columns.tolist()
+        cols_to_process = (
+            columns_to_analyze if columns_to_analyze is not None else df.columns.tolist()
+        )
 
         for col in cols_to_process:
             try:
@@ -75,7 +77,11 @@ class FeatureProcessor:
                 feature_data = self._analyze_single_feature(col, df, column_type, col_config)
 
                 if feature_data is None:
-                    logger.warning("Skipping feature '%s': analyzer returned no results (type=%s)", col, column_type)
+                    logger.warning(
+                        "Skipping feature '%s': analyzer returned no results (type=%s)",
+                        col,
+                        column_type,
+                    )
                     continue
 
                 # Set actual data type from the column
@@ -92,7 +98,10 @@ class FeatureProcessor:
                 # Add correlations / associations
                 if self.correlation_engine:
                     correlations_data = self.correlation_engine.get_feature_correlations(
-                        col, correlation_matrix, precomputed_correlations, target_variable,
+                        col,
+                        correlation_matrix,
+                        precomputed_correlations,
+                        target_variable,
                         theils_u_matrix=theils_u_matrix,
                         eta_matrix=eta_matrix,
                         column_type=column_type,
@@ -103,8 +112,10 @@ class FeatureProcessor:
                 if target_variable and target_variable in df.columns and col != target_variable:
                     try:
                         target_rel = self.target_analyzer.analyze_target_relationship(
-                            df[col], df[target_variable], column_type.value,
-                            distribution=feature_data.get("distribution")
+                            df[col],
+                            df[target_variable],
+                            column_type.value,
+                            distribution=feature_data.get("distribution"),
                         )
                         feature_data["target_relationship"] = target_rel
                     except Exception as e:
@@ -127,7 +138,7 @@ class FeatureProcessor:
         return features
 
     def _determine_column_type(
-        self, col: str, df: pd.DataFrame, col_configs: Dict[str, ColumnConfig]
+        self, col: str, df: pd.DataFrame, col_configs: dict[str, ColumnConfig]
     ) -> ColumnType:
         """Determine column type from config or infer from data."""
         col_config = col_configs.get(col) if col_configs else None
@@ -139,8 +150,9 @@ class FeatureProcessor:
         df: pd.DataFrame,
         column_type: ColumnType,
         column_config: Optional[ColumnConfig],
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """Analyze a single feature using appropriate analyzer."""
+        analyzer: BaseAnalyzer
         if column_type is ColumnType.CONTINUOUS:
             analyzer = self.continuous_analyzer
         elif column_type in (ColumnType.CATEGORICAL, ColumnType.ORDINAL, ColumnType.BINARY):
@@ -154,7 +166,7 @@ class FeatureProcessor:
 
         return None
 
-    def _add_column_metadata(self, feature_data: Dict[str, Any], config: ColumnConfig) -> None:
+    def _add_column_metadata(self, feature_data: dict[str, Any], config: ColumnConfig) -> None:
         """Add metadata fields to feature data from ColumnConfig."""
         feature_data["provider"] = config.provider
         feature_data["description"] = config.description
@@ -165,7 +177,7 @@ class FeatureProcessor:
             if config.sentinels.not_found is not None:
                 feature_data["not_found_sentinel"] = config.sentinels.not_found
 
-    def _assess_feature_quality(self, feature_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _assess_feature_quality(self, feature_data: dict[str, Any]) -> dict[str, Any]:
         """Assess quality flags for a feature."""
         missing_pct = feature_data.get("missing", {}).get("percent", 0)
         outlier_pct = feature_data.get("outliers", {}).get("percent", 0)
@@ -183,12 +195,7 @@ class FeatureProcessor:
 
         is_constant = unique_count == 1
 
-        recommended = not (
-            missing_pct > 30
-            or has_low_variance
-            or is_constant
-            or outlier_pct > 50
-        )
+        recommended = not (missing_pct > 30 or has_low_variance or is_constant or outlier_pct > 50)
 
         return {
             "has_high_missing": missing_pct > 30,

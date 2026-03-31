@@ -1,12 +1,12 @@
 """Basic statistics analyzer for dataset overview."""
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import pandas as pd
 
 from dataprism.analyzers.base import BaseAnalyzer
-from dataprism.schema import ColumnConfig, ColumnType
 from dataprism.analyzers.types import DatasetInfo
+from dataprism.schema import ColumnConfig, ColumnType
 
 
 class BasicStatsAnalyzer:
@@ -19,8 +19,8 @@ class BasicStatsAnalyzer:
     def analyze_dataframe(
         self,
         df: pd.DataFrame,
-        col_configs: Optional[Dict[str, ColumnConfig]] = None,
-    ) -> Dict[str, Any]:
+        col_configs: Optional[dict[str, ColumnConfig]] = None,
+    ) -> dict[str, Any]:
         """
         Analyze entire DataFrame for basic statistics.
 
@@ -40,7 +40,7 @@ class BasicStatsAnalyzer:
             memory_mb=df.memory_usage(deep=True).sum() / 1024 / 1024,
             missing_cells=missing_cells,
             missing_percentage=(missing_cells / total_cells * 100) if total_cells > 0 else 0,
-            duplicate_rows=df.duplicated().sum()
+            duplicate_rows=df.duplicated().sum(),
         )
 
         # Analyze column types — use config if available
@@ -53,7 +53,11 @@ class BasicStatsAnalyzer:
         # Count by type
         type_counts = {
             "continuous": sum(1 for t in column_types.values() if t is ColumnType.CONTINUOUS),
-            "categorical": sum(1 for t in column_types.values() if t in (ColumnType.CATEGORICAL, ColumnType.ORDINAL, ColumnType.BINARY)),
+            "categorical": sum(
+                1
+                for t in column_types.values()
+                if t in (ColumnType.CATEGORICAL, ColumnType.ORDINAL, ColumnType.BINARY)
+            ),
         }
 
         return {
@@ -63,8 +67,8 @@ class BasicStatsAnalyzer:
                 "memory_mb": round(dataset_info.memory_mb, 2),
                 "missing_cells": int(dataset_info.missing_cells),
                 "missing_percentage": round(dataset_info.missing_percentage, 2),
-                "duplicate_rows": int(dataset_info.duplicate_rows)
+                "duplicate_rows": int(dataset_info.duplicate_rows),
             },
             "feature_types": type_counts,
-            "data_types": {col: str(dtype) for col, dtype in df.dtypes.items()}
+            "data_types": {col: str(dtype) for col, dtype in df.dtypes.items()},
         }

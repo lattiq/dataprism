@@ -1,13 +1,13 @@
 """Stability analysis for features across cohorts and time periods."""
 
 from datetime import datetime
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Union
 
 import numpy as np
 import pandas as pd
 
-from dataprism.utils.logger import get_logger
 from dataprism.output.formatter import safe_round
+from dataprism.utils.logger import get_logger
 
 # Setup module logger
 logger = get_logger(__name__)
@@ -28,11 +28,8 @@ class StabilityAnalyzer:
         self.min_samples = min_samples
 
     def calculate_psi(
-        self,
-        baseline_series: pd.Series,
-        comparison_series: pd.Series,
-        feature_type: str
-    ) -> Dict[str, Any]:
+        self, baseline_series: pd.Series, comparison_series: pd.Series, feature_type: str
+    ) -> dict[str, Any]:
         """
         Calculate Population Stability Index (PSI).
 
@@ -61,11 +58,11 @@ class StabilityAnalyzer:
                 "psi": None,
                 "stability": None,
                 "interpretation": "insufficient_data",
-                "note": f"Requires at least {self.min_samples} samples in each cohort"
+                "note": f"Requires at least {self.min_samples} samples in each cohort",
             }
 
         try:
-            if feature_type == 'continuous':
+            if feature_type == "continuous":
                 psi, details = self._calculate_psi_continuous(baseline_clean, comparison_clean)
             else:  # categorical
                 psi, details = self._calculate_psi_categorical(baseline_clean, comparison_clean)
@@ -85,7 +82,7 @@ class StabilityAnalyzer:
                 "psi": safe_round(psi, 4),
                 "stability": stability,
                 "interpretation": interpretation,
-                "details": details
+                "details": details,
             }
 
         except (ValueError, TypeError, FloatingPointError, ZeroDivisionError) as e:
@@ -93,14 +90,10 @@ class StabilityAnalyzer:
                 "psi": None,
                 "stability": None,
                 "interpretation": "error",
-                "note": f"Error calculating PSI: {str(e)}"
+                "note": f"Error calculating PSI: {str(e)}",
             }
 
-    def _calculate_psi_continuous(
-        self,
-        baseline: pd.Series,
-        comparison: pd.Series
-    ) -> tuple:
+    def _calculate_psi_continuous(self, baseline: pd.Series, comparison: pd.Series) -> tuple:
         """Calculate PSI for continuous features."""
         # Handle constant-value features
         if baseline.nunique() <= 1:
@@ -133,11 +126,7 @@ class StabilityAnalyzer:
 
         return psi, details
 
-    def _calculate_psi_categorical(
-        self,
-        baseline: pd.Series,
-        comparison: pd.Series
-    ) -> tuple:
+    def _calculate_psi_categorical(self, baseline: pd.Series, comparison: pd.Series) -> tuple:
         """Calculate PSI for categorical features."""
         # Get all unique categories from both distributions
         all_categories = sorted(set(baseline.unique()) | set(comparison.unique()))
@@ -147,8 +136,12 @@ class StabilityAnalyzer:
         comparison_counts = comparison.value_counts()
 
         # Create aligned count arrays - explicitly convert to int to avoid dtype issues
-        baseline_array = np.array([baseline_counts.get(cat, 0) for cat in all_categories], dtype=np.int64)
-        comparison_array = np.array([comparison_counts.get(cat, 0) for cat in all_categories], dtype=np.int64)
+        baseline_array = np.array(
+            [baseline_counts.get(cat, 0) for cat in all_categories], dtype=np.int64
+        )
+        comparison_array = np.array(
+            [comparison_counts.get(cat, 0) for cat in all_categories], dtype=np.int64
+        )
 
         # Calculate PSI
         psi, details = self._calculate_psi_from_counts(
@@ -158,10 +151,7 @@ class StabilityAnalyzer:
         return psi, details
 
     def _calculate_psi_from_counts(
-        self,
-        baseline_counts: np.ndarray,
-        comparison_counts: np.ndarray,
-        labels: Any
+        self, baseline_counts: np.ndarray, comparison_counts: np.ndarray, labels: Any
     ) -> tuple:
         """Calculate PSI from count arrays."""
         # Ensure counts are numeric
@@ -188,7 +178,7 @@ class StabilityAnalyzer:
             "baseline_distribution": baseline_pct.tolist(),
             "comparison_distribution": comparison_pct.tolist(),
             "psi_components": [safe_round(x, 4) for x in psi_components],
-            "num_bins": len(baseline_counts)
+            "num_bins": len(baseline_counts),
         }
 
         return abs(psi), details
@@ -200,8 +190,8 @@ class StabilityAnalyzer:
         baseline_cohort: str,
         comparison_cohort: str,
         features_to_analyze: list,
-        feature_types: Dict[str, str]
-    ) -> Dict[str, Any]:
+        feature_types: dict[str, str],
+    ) -> dict[str, Any]:
         """
         Calculate stability for multiple features across cohorts.
 
@@ -232,22 +222,20 @@ class StabilityAnalyzer:
             if feature not in df.columns or feature == cohort_column:
                 continue
 
-            feature_type = feature_types.get(feature, 'continuous')
+            feature_type = feature_types.get(feature, "continuous")
 
             psi_result = self.calculate_psi(
-                baseline_df[feature],
-                comparison_df[feature],
-                feature_type
+                baseline_df[feature], comparison_df[feature], feature_type
             )
 
             results[feature] = psi_result
 
             # Count stability categories
-            if psi_result['stability'] == 'stable':
+            if psi_result["stability"] == "stable":
                 stable_count += 1
-            elif psi_result['stability'] == 'minor_shift':
+            elif psi_result["stability"] == "minor_shift":
                 minor_shift_count += 1
-            elif psi_result['stability'] == 'major_shift':
+            elif psi_result["stability"] == "major_shift":
                 major_shift_count += 1
 
         # Summary
@@ -259,29 +247,26 @@ class StabilityAnalyzer:
             "baseline_cohort": baseline_cohort,
             "comparison_cohort": comparison_cohort,
             "baseline_samples": len(baseline_df),
-            "comparison_samples": len(comparison_df)
+            "comparison_samples": len(comparison_df),
         }
 
         logger.info("  Stable features: %s", stable_count)
         logger.info("  Minor shift: %s", minor_shift_count)
         logger.info("  Major shift: %s", major_shift_count)
 
-        return {
-            "summary": summary,
-            "feature_stability": results
-        }
+        return {"summary": summary, "feature_stability": results}
 
     def calculate_stability_time_based(
         self,
         df: pd.DataFrame,
         time_column: str,
-        baseline_window: Union[str, Tuple[str, str]],
-        comparison_windows: Union[str, List[Tuple[str, str]]],
-        features_to_analyze: List[str],
-        feature_types: Dict[str, str],
-        window_strategy: str = 'monthly',
-        min_samples_per_period: int = 100
-    ) -> Dict[str, Any]:
+        baseline_window: Union[str, tuple[str, str]],
+        comparison_windows: Union[str, list[tuple[str, str]]],
+        features_to_analyze: list[str],
+        feature_types: dict[str, str],
+        window_strategy: str = "monthly",
+        min_samples_per_period: int = 100,
+    ) -> dict[str, Any]:
         """
         Calculate stability across time windows.
 
@@ -301,61 +286,86 @@ class StabilityAnalyzer:
         # Convert time column to datetime if needed
         if not pd.api.types.is_datetime64_any_dtype(df[time_column]):
             df = df.copy()
-            df[time_column] = pd.to_datetime(df[time_column], errors='coerce')
+            df[time_column] = pd.to_datetime(df[time_column], errors="coerce")
 
         # Auto-detect windows if needed
-        if isinstance(baseline_window, str) or comparison_windows == 'all' or comparison_windows == 'auto':
-            baseline_window, comparison_windows = self._auto_detect_time_windows(
-                df, time_column, window_strategy, baseline_window, comparison_windows, min_samples_per_period
+        resolved_baseline: Any
+        resolved_comparisons: Any
+        if isinstance(baseline_window, str) or isinstance(comparison_windows, str):
+            baseline_spec = baseline_window if isinstance(baseline_window, str) else "first"
+            comparison_spec = comparison_windows if isinstance(comparison_windows, str) else "all"
+            auto_baseline, auto_comparisons = self._auto_detect_time_windows(
+                df,
+                time_column,
+                window_strategy,
+                baseline_spec,
+                comparison_spec,
+                min_samples_per_period,
             )
+            resolved_baseline = baseline_window if not isinstance(baseline_window, str) else auto_baseline
+            resolved_comparisons = comparison_windows if not isinstance(comparison_windows, str) else auto_comparisons
+        else:
+            resolved_baseline = baseline_window
+            resolved_comparisons = comparison_windows
 
         # Get baseline data
-        baseline_df = self._filter_by_time_window(df, time_column, baseline_window)
+        baseline_df = self._filter_by_time_window(df, time_column, resolved_baseline)
 
         if len(baseline_df) < min_samples_per_period:
             return {
                 "error": "insufficient_baseline_data",
-                "note": f"Baseline period has {len(baseline_df)} samples, requires at least {min_samples_per_period}"
+                "note": f"Baseline period has {len(baseline_df)} samples, requires at least {min_samples_per_period}",
             }
 
         logger.info("\nCalculating time-based stability:")
-        logger.info("  Baseline period: %s to %s (%s samples)", baseline_window[0], baseline_window[1], len(baseline_df))
+        logger.info(
+            "  Baseline period: %s to %s (%s samples)",
+            resolved_baseline[0],
+            resolved_baseline[1],
+            len(baseline_df),
+        )
 
         # Calculate stability for each comparison window
         period_results = []
-        feature_stability_by_period = {feature: [] for feature in features_to_analyze}
+        feature_stability_by_period: dict[str, list[Any]] = {feature: [] for feature in features_to_analyze}
 
-        for i, comp_window in enumerate(comparison_windows, 1):
+        for i, comp_window in enumerate(resolved_comparisons, 1):
             comp_df = self._filter_by_time_window(df, time_column, comp_window)
 
             if len(comp_df) < min_samples_per_period:
                 logger.info("  Period %s: Skipping (only %s samples)", i, len(comp_df))
                 continue
 
-            logger.info("  Period %s: %s to %s (%s samples)", i, comp_window[0], comp_window[1], len(comp_df))
+            logger.info(
+                "  Period %s: %s to %s (%s samples)",
+                i,
+                comp_window[0],
+                comp_window[1],
+                len(comp_df),
+            )
 
             period_stability = {}
             for feature in features_to_analyze:
                 if feature not in df.columns or feature == time_column:
                     continue
 
-                feature_type = feature_types.get(feature, 'continuous')
+                feature_type = feature_types.get(feature, "continuous")
                 psi_result = self.calculate_psi(
-                    baseline_df[feature],
-                    comp_df[feature],
-                    feature_type
+                    baseline_df[feature], comp_df[feature], feature_type
                 )
 
                 period_stability[feature] = psi_result
-                feature_stability_by_period[feature].append(psi_result['psi'])
+                feature_stability_by_period[feature].append(psi_result["psi"])
 
-            period_results.append({
-                "period_id": i,
-                "start": str(comp_window[0]),
-                "end": str(comp_window[1]),
-                "sample_count": len(comp_df),
-                "stability": period_stability
-            })
+            period_results.append(
+                {
+                    "period_id": i,
+                    "start": str(comp_window[0]),
+                    "end": str(comp_window[1]),
+                    "sample_count": len(comp_df),
+                    "stability": period_stability,
+                }
+            )
 
         # Compute temporal trends for each feature
         feature_temporal_analysis = {}
@@ -374,21 +384,21 @@ class StabilityAnalyzer:
             "time_column": time_column,
             "window_strategy": window_strategy,
             "baseline_period": {
-                "start": str(baseline_window[0]),
-                "end": str(baseline_window[1]),
-                "sample_count": len(baseline_df)
+                "start": str(resolved_baseline[0]),
+                "end": str(resolved_baseline[1]),
+                "sample_count": len(baseline_df),
             },
             "comparison_periods": [
                 {
                     "period_id": p["period_id"],
                     "start": p["start"],
                     "end": p["end"],
-                    "sample_count": p["sample_count"]
+                    "sample_count": p["sample_count"],
                 }
                 for p in period_results
             ],
             "feature_stability": feature_temporal_analysis,
-            "summary": summary
+            "summary": summary,
         }
 
     def _auto_detect_time_windows(
@@ -398,24 +408,28 @@ class StabilityAnalyzer:
         strategy: str,
         baseline_spec: str,
         comparison_spec: str,
-        min_samples: int
-    ) -> Tuple[Tuple[datetime, datetime], List[Tuple[datetime, datetime]]]:
+        min_samples: int,
+    ) -> tuple[tuple[datetime, datetime], list[tuple[datetime, datetime]]]:
         """Auto-detect optimal time windows based on strategy."""
         time_series = df[time_column].dropna()
         min_date = time_series.min()
         max_date = time_series.max()
 
-        if strategy == 'monthly':
+        if strategy == "monthly":
             windows = self._create_monthly_windows(df, time_column, min_date, max_date, min_samples)
-        elif strategy == 'weekly':
+        elif strategy == "weekly":
             windows = self._create_weekly_windows(df, time_column, min_date, max_date, min_samples)
-        elif strategy == 'quartiles':
+        elif strategy == "quartiles":
             windows = self._create_quartile_windows(df, time_column, min_samples)
         else:  # custom - user should provide tuples
-            raise ValueError(f"Custom strategy requires explicit window tuples, not '{baseline_spec}' and '{comparison_spec}'")
+            raise ValueError(
+                f"Custom strategy requires explicit window tuples, not '{baseline_spec}' and '{comparison_spec}'"
+            )
 
         if len(windows) < 2:
-            raise ValueError(f"Insufficient time windows detected. Need at least 2, found {len(windows)}")
+            raise ValueError(
+                f"Insufficient time windows detected. Need at least 2, found {len(windows)}"
+            )
 
         # Baseline is first window
         baseline_window = windows[0]
@@ -431,8 +445,8 @@ class StabilityAnalyzer:
         time_column: str,
         min_date: datetime,
         max_date: datetime,
-        min_samples: int
-    ) -> List[Tuple[datetime, datetime]]:
+        min_samples: int,
+    ) -> list[tuple[datetime, datetime]]:
         """Create monthly time windows."""
         windows = []
         current_date = min_date.replace(day=1)
@@ -461,8 +475,8 @@ class StabilityAnalyzer:
         time_column: str,
         min_date: datetime,
         max_date: datetime,
-        min_samples: int
-    ) -> List[Tuple[datetime, datetime]]:
+        min_samples: int,
+    ) -> list[tuple[datetime, datetime]]:
         """Create weekly time windows."""
         windows = []
         current_date = min_date
@@ -482,11 +496,8 @@ class StabilityAnalyzer:
         return windows
 
     def _create_quartile_windows(
-        self,
-        df: pd.DataFrame,
-        time_column: str,
-        min_samples: int
-    ) -> List[Tuple[datetime, datetime]]:
+        self, df: pd.DataFrame, time_column: str, min_samples: int
+    ) -> list[tuple[datetime, datetime]]:
         """Create quartile-based time windows (equal sample sizes)."""
         time_series = df[time_column].dropna().sort_values()
 
@@ -516,7 +527,7 @@ class StabilityAnalyzer:
         self,
         df: pd.DataFrame,
         time_column: str,
-        window: Tuple[Union[str, datetime], Union[str, datetime]]
+        window: tuple[Union[str, datetime], Union[str, datetime]],
     ) -> pd.DataFrame:
         """Filter DataFrame by time window."""
         start, end = window
@@ -530,7 +541,7 @@ class StabilityAnalyzer:
         mask = (df[time_column] >= start) & (df[time_column] < end)
         return df[mask]
 
-    def _analyze_temporal_trend(self, psi_values: List) -> Dict[str, Any]:
+    def _analyze_temporal_trend(self, psi_values: list) -> dict[str, Any]:
         """Analyze temporal trend in PSI values.
 
         psi_values may contain None entries for periods where a feature
@@ -586,25 +597,30 @@ class StabilityAnalyzer:
             "trend": trend,
             "stable_periods": stable_periods,
             "minor_shift_periods": minor_shift_periods,
-            "major_shift_periods": major_shift_periods
+            "major_shift_periods": major_shift_periods,
         }
 
     def _compute_temporal_summary(
-        self,
-        period_results: List[Dict],
-        feature_analysis: Dict[str, Dict]
-    ) -> Dict[str, Any]:
+        self, period_results: list[dict], feature_analysis: dict[str, dict]
+    ) -> dict[str, Any]:
         """Compute summary statistics for temporal stability."""
         total_features = len(feature_analysis)
 
-        stable_features = sum(1 for f in feature_analysis.values() if f.get('stability') == 'stable')
-        minor_shift_features = sum(1 for f in feature_analysis.values() if f.get('stability') == 'minor_shift')
-        major_shift_features = sum(1 for f in feature_analysis.values() if f.get('stability') == 'major_shift')
+        stable_features = sum(
+            1 for f in feature_analysis.values() if f.get("stability") == "stable"
+        )
+        minor_shift_features = sum(
+            1 for f in feature_analysis.values() if f.get("stability") == "minor_shift"
+        )
+        major_shift_features = sum(
+            1 for f in feature_analysis.values() if f.get("stability") == "major_shift"
+        )
 
         # Find features with increasing drift
         increasing_drift = [
-            fname for fname, data in feature_analysis.items()
-            if data.get('trend') == 'increasing_drift'
+            fname
+            for fname, data in feature_analysis.items()
+            if data.get("trend") == "increasing_drift"
         ]
 
         # Find worst drift period (period with most major shifts)
@@ -612,12 +628,13 @@ class StabilityAnalyzer:
         max_major_shifts = 0
         for period in period_results:
             major_shifts_in_period = sum(
-                1 for f, psi in period.get('stability', {}).items()
-                if psi.get('psi') is not None and psi.get('psi') >= 0.2
+                1
+                for f, psi in period.get("stability", {}).items()
+                if psi.get("psi") is not None and psi.get("psi") >= 0.2
             )
             if major_shifts_in_period > max_major_shifts:
                 max_major_shifts = major_shifts_in_period
-                worst_period = period['period_id']
+                worst_period = period["period_id"]
 
         return {
             "total_features_analyzed": total_features,
@@ -626,5 +643,5 @@ class StabilityAnalyzer:
             "major_drift_features": major_shift_features,
             "features_with_increasing_drift": increasing_drift[:10],  # Top 10
             "worst_drift_period": worst_period,
-            "total_periods_analyzed": len(period_results)
+            "total_periods_analyzed": len(period_results),
         }

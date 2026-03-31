@@ -1,17 +1,16 @@
 """Target relationship analysis including IV and WoE calculation."""
 
-from typing import Any, Dict, Optional
-
 import warnings
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
 from scipy import stats
 
 from dataprism.analyzers.correlation import CorrelationEngine
-from dataprism.utils.logger import get_logger
-from dataprism.output.formatter import safe_round
 from dataprism.analyzers.woe import WoEAnalyzer
+from dataprism.output.formatter import safe_round
+from dataprism.utils.logger import get_logger
 
 # Setup module logger
 logger = get_logger(__name__)
@@ -34,8 +33,8 @@ class TargetAnalyzer:
         feature_series: pd.Series,
         target_series: pd.Series,
         feature_type: str,
-        distribution: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        distribution: Optional[dict[str, Any]] = None,
+    ) -> dict[str, Any]:
         """
         Analyze relationship between feature and target variable.
 
@@ -60,7 +59,7 @@ class TargetAnalyzer:
             "predictive_power": None,
             "woe_mapping": None,
             "iv_contribution": None,
-            "target_mean_per_bin": None
+            "target_mean_per_bin": None,
         }
 
         # Remove rows where either feature or target is missing
@@ -75,7 +74,9 @@ class TargetAnalyzer:
         unique_targets = target_clean.nunique()
         if unique_targets != 2:
             # IV only works for binary classification
-            result["note"] = f"Target has {unique_targets} unique values. IV requires binary target."
+            result["note"] = (
+                f"Target has {unique_targets} unique values. IV requires binary target."
+            )
 
         # Compute correlations based on feature type
         if feature_type == "continuous":
@@ -116,13 +117,9 @@ class TargetAnalyzer:
 
         return result
 
-    def _compute_correlations(
-        self,
-        feature: pd.Series,
-        target: pd.Series
-    ) -> Dict[str, Any]:
+    def _compute_correlations(self, feature: pd.Series, target: pd.Series) -> dict[str, Any]:
         """Compute Pearson and Spearman correlations with p-values."""
-        result = {}
+        result: dict[str, Any] = {}
 
         # Check if feature is constant (no variance)
         if feature.nunique() <= 1:
@@ -136,10 +133,13 @@ class TargetAnalyzer:
         try:
             # Pearson correlation - suppress ConstantInputWarning
             with warnings.catch_warnings(record=True) as w:
-                warnings.filterwarnings('ignore', category=RuntimeWarning)
+                warnings.filterwarnings("ignore", category=RuntimeWarning)
                 pearson_corr, pearson_pval = stats.pearsonr(feature, target)
                 if w:
-                    logger.debug("Suppressed ConstantInputWarning for Pearson correlation on feature: %s", feature.name)
+                    logger.debug(
+                        "Suppressed ConstantInputWarning for Pearson correlation on feature: %s",
+                        feature.name,
+                    )
             result["correlation_pearson"] = safe_round(pearson_corr, 4)
             result["correlation_pearson_pvalue"] = safe_round(pearson_pval, 4)
         except (ValueError, TypeError, FloatingPointError) as e:
@@ -150,10 +150,13 @@ class TargetAnalyzer:
         try:
             # Spearman correlation - suppress ConstantInputWarning
             with warnings.catch_warnings(record=True) as w:
-                warnings.filterwarnings('ignore', category=RuntimeWarning)
+                warnings.filterwarnings("ignore", category=RuntimeWarning)
                 spearman_corr, spearman_pval = stats.spearmanr(feature, target)
                 if w:
-                    logger.debug("Suppressed ConstantInputWarning for Spearman correlation on feature: %s", feature.name)
+                    logger.debug(
+                        "Suppressed ConstantInputWarning for Spearman correlation on feature: %s",
+                        feature.name,
+                    )
             result["correlation_spearman"] = safe_round(spearman_corr, 4)
             result["correlation_spearman_pvalue"] = safe_round(spearman_pval, 4)
         except (ValueError, TypeError, FloatingPointError) as e:
@@ -163,11 +166,7 @@ class TargetAnalyzer:
 
         return result
 
-    def _compute_iv_continuous(
-        self,
-        feature: pd.Series,
-        target: pd.Series
-    ) -> Dict[str, Any]:
+    def _compute_iv_continuous(self, feature: pd.Series, target: pd.Series) -> dict[str, Any]:
         """
         Compute Information Value for continuous features.
         Uses optimal binning based on quantiles.
@@ -178,35 +177,26 @@ class TargetAnalyzer:
             binned_feature, bin_edges = pd.qcut(
                 feature,
                 q=min(self.max_bins, len(feature.unique())),
-                duplicates='drop',
-                retbins=True
+                duplicates="drop",
+                retbins=True,
             )
         except (ValueError, TypeError) as e:
             # Fall back to equal-width binning if quantile fails
-            logger.debug("qcut failed for '%s': %s, falling back to equal-width bins", feature.name, e)
+            logger.debug(
+                "qcut failed for '%s': %s, falling back to equal-width bins", feature.name, e
+            )
             try:
                 binned_feature, bin_edges = pd.cut(
-                    feature,
-                    bins=self.max_bins,
-                    duplicates='drop',
-                    retbins=True
+                    feature, bins=self.max_bins, duplicates="drop", retbins=True
                 )
             except (ValueError, TypeError) as e:
                 logger.warning("IV binning failed for '%s': %s", feature.name, e)
-                return {
-                    "information_value": None,
-                    "woe_mapping": None,
-                    "iv_contribution": None
-                }
+                return {"information_value": None, "woe_mapping": None, "iv_contribution": None}
 
         # Compute IV for binned feature
         return self._compute_iv_categorical(binned_feature, target)
 
-    def _compute_iv_categorical(
-        self,
-        feature: pd.Series,
-        target: pd.Series
-    ) -> Dict[str, Any]:
+    def _compute_iv_categorical(self, feature: pd.Series, target: pd.Series) -> dict[str, Any]:
         """Compute Information Value and WoE for categorical features."""
         woe = WoEAnalyzer(smoothing=0.5)
         result = woe.compute(feature, target)
@@ -231,7 +221,7 @@ class TargetAnalyzer:
         feature: pd.Series,
         target: pd.Series,
         feature_type: str,
-        distribution: Optional[Dict[str, Any]] = None
+        distribution: Optional[dict[str, Any]] = None,
     ) -> Optional[list]:
         """
         Compute mean target value per distribution bin.
@@ -274,8 +264,7 @@ class TargetAnalyzer:
                 # Categorical: align with top value_counts (sorted desc by frequency)
                 if distribution and distribution.get("value_counts"):
                     categories = sorted(
-                        distribution["value_counts"].items(),
-                        key=lambda x: x[1], reverse=True
+                        distribution["value_counts"].items(), key=lambda x: x[1], reverse=True
                     )[:20]
                     cat_names = [c[0] for c in categories]
                 else:
@@ -332,15 +321,15 @@ class TargetAnalyzer:
                 return None
 
             # Prepare data
-            X = df[other_cols].fillna(df[other_cols].mean())
+            x_features = df[other_cols].fillna(df[other_cols].mean())
             y = df[feature_col].fillna(df[feature_col].mean())
 
             # Fit regression
             model = LinearRegression()
-            model.fit(X, y)
+            model.fit(x_features, y)
 
             # Calculate R²
-            r_squared = model.score(X, y)
+            r_squared = model.score(x_features, y)
 
             # Calculate VIF
             if r_squared >= 0.9999:  # Avoid division by near-zero

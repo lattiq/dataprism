@@ -1,14 +1,14 @@
 """Correlation analysis engine for EDA."""
 
 import math
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
 
+from dataprism.output.formatter import safe_round
 from dataprism.schema import ColumnConfig, ColumnType
 from dataprism.utils.logger import get_logger
-from dataprism.output.formatter import safe_round
 
 logger = get_logger(__name__)
 
@@ -31,7 +31,7 @@ class CorrelationEngine:
         self,
         df: pd.DataFrame,
         target_variable: Optional[str] = None,
-        column_configs: Optional[Dict[str, ColumnConfig]] = None,
+        column_configs: Optional[dict[str, ColumnConfig]] = None,
     ) -> Optional[pd.DataFrame]:
         """
         Compute correlation matrix for continuous features.
@@ -70,10 +70,10 @@ class CorrelationEngine:
     def _select_correlated_features(
         self,
         df: pd.DataFrame,
-        numeric_cols: List[str],
+        numeric_cols: list[str],
         target_variable: Optional[str],
         max_features: int,
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Select top features based on correlation with target.
 
@@ -111,14 +111,14 @@ class CorrelationEngine:
 
     def select_features_for_association(
         self,
-        feature_names: List[str],
-        features_data: Dict[str, Any],
+        feature_names: list[str],
+        features_data: dict[str, Any],
         target_variable: Optional[str],
         correlation_matrix: Optional[pd.DataFrame],
         theils_u_matrix: Optional[pd.DataFrame],
-        eta_matrix: Optional[Dict[str, Dict[str, float]]],
+        eta_matrix: Optional[dict[str, dict[str, float]]],
         max_features: int,
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Select the most informative features for the association matrix.
 
@@ -174,7 +174,7 @@ class CorrelationEngine:
 
         # Redundancy pruning: greedy forward selection
         budget = max_features - (1 if selected_target else 0)
-        selected = []
+        selected: list[str] = []
         for fname, _score in scored:
             if len(selected) >= budget:
                 break
@@ -196,12 +196,13 @@ class CorrelationEngine:
         result = ([selected_target] if selected_target else []) + selected
         logger.info(
             "Association matrix feature selection: %d/%d features selected",
-            len(result), len(feature_names),
+            len(result),
+            len(feature_names),
         )
         return result
 
     @staticmethod
-    def _score_with_target(fdata: Dict[str, Any]) -> float:
+    def _score_with_target(fdata: dict[str, Any]) -> float:
         """Score a feature by its relationship with the target variable.
 
         Priority: IV > |Pearson| > |Spearman| > Theil's U > Eta > 0.0
@@ -237,7 +238,7 @@ class CorrelationEngine:
         fname: str,
         correlation_matrix: Optional[pd.DataFrame],
         theils_u_matrix: Optional[pd.DataFrame],
-        eta_matrix: Optional[Dict[str, Dict[str, float]]],
+        eta_matrix: Optional[dict[str, dict[str, float]]],
     ) -> float:
         """Score a feature by average absolute association strength with all other features."""
         values = []
@@ -255,10 +256,10 @@ class CorrelationEngine:
 
         if not values:
             return 0.0
-        return sum(values) / len(values)
+        return float(sum(values) / len(values))
 
     @staticmethod
-    def _apply_cardinality_penalty(score: float, fdata: Dict[str, Any]) -> float:
+    def _apply_cardinality_penalty(score: float, fdata: dict[str, Any]) -> float:
         """Penalize high-cardinality categorical features.
 
         High cardinality (ratio > 0.5): score × 0.3
@@ -288,10 +289,10 @@ class CorrelationEngine:
     @staticmethod
     def _is_redundant(
         fname: str,
-        selected: List[str],
+        selected: list[str],
         correlation_matrix: Optional[pd.DataFrame],
         theils_u_matrix: Optional[pd.DataFrame],
-        eta_matrix: Optional[Dict[str, Dict[str, float]]],
+        eta_matrix: Optional[dict[str, dict[str, float]]],
         threshold: float = 0.9,
     ) -> bool:
         """Check if a feature is redundant with any already-selected feature.
@@ -301,8 +302,7 @@ class CorrelationEngine:
         """
         for sel in selected:
             # Pearson
-            if correlation_matrix is not None:
-                if fname in correlation_matrix.columns and sel in correlation_matrix.columns:
+            if correlation_matrix is not None and fname in correlation_matrix.columns and sel in correlation_matrix.columns:
                     val = correlation_matrix.loc[fname, sel]
                     if not (isinstance(val, float) and np.isnan(val)) and abs(val) > threshold:
                         return True
@@ -320,12 +320,10 @@ class CorrelationEngine:
 
             # Eta
             if eta_matrix:
-                if fname in eta_matrix and sel in eta_matrix[fname]:
-                    if abs(eta_matrix[fname][sel]) > threshold:
-                        return True
-                if sel in eta_matrix and fname in eta_matrix[sel]:
-                    if abs(eta_matrix[sel][fname]) > threshold:
-                        return True
+                if fname in eta_matrix and sel in eta_matrix[fname] and abs(eta_matrix[fname][sel]) > threshold:
+                    return True
+                if sel in eta_matrix and fname in eta_matrix[sel] and abs(eta_matrix[sel][fname]) > threshold:
+                    return True
 
         return False
 
@@ -416,8 +414,8 @@ class CorrelationEngine:
     def compute_association_matrices(
         self,
         df: pd.DataFrame,
-        col_configs: Optional[Dict[str, ColumnConfig]] = None,
-    ) -> Tuple[Optional[pd.DataFrame], Optional[Dict[str, Dict[str, float]]]]:
+        col_configs: Optional[dict[str, ColumnConfig]] = None,
+    ) -> tuple[Optional[pd.DataFrame], Optional[dict[str, dict[str, float]]]]:
         """
         Compute Theil's U matrix (cat↔cat) and Eta dict (cat↔cont).
 
@@ -431,8 +429,8 @@ class CorrelationEngine:
             - eta_matrix: nested dict {col: {other_col: eta}} for cat↔cont pairs, or None
         """
         # Classify columns
-        cat_cols: List[str] = []
-        cont_cols: List[str] = []
+        cat_cols: list[str] = []
+        cont_cols: list[str] = []
         for col in df.columns:
             config = col_configs.get(col) if col_configs else None
             if config is not None:
@@ -446,7 +444,7 @@ class CorrelationEngine:
                 cat_cols.append(col)
 
         theils_u_matrix = None
-        eta_matrix = None
+        eta_matrix: Optional[dict[str, dict[str, float]]] = None
 
         # Theil's U: categorical × categorical
         if len(cat_cols) >= 2:
@@ -468,7 +466,8 @@ class CorrelationEngine:
         if cat_cols and cont_cols:
             logger.info(
                 "Computing Correlation Ratio (Eta) for %s categorical × %s continuous features",
-                len(cat_cols), len(cont_cols),
+                len(cat_cols),
+                len(cont_cols),
             )
             eta_matrix = {}
             for cat in cat_cols:
@@ -481,11 +480,11 @@ class CorrelationEngine:
 
     @staticmethod
     def build_association_matrix(
-        feature_names: List[str],
+        feature_names: list[str],
         correlation_matrix: Optional[pd.DataFrame] = None,
         theils_u_matrix: Optional[pd.DataFrame] = None,
-        eta_matrix: Optional[Dict[str, Dict[str, float]]] = None,
-    ) -> Optional[Dict[str, Any]]:
+        eta_matrix: Optional[dict[str, dict[str, float]]] = None,
+    ) -> Optional[dict[str, Any]]:
         """
         Merge precomputed Pearson, Theil's U, and Eta into a single N×N
         structure suitable for JSON serialization and heatmap rendering.
@@ -504,8 +503,8 @@ class CorrelationEngine:
         if n == 0:
             return None
 
-        values: List[List[Optional[float]]] = [[None] * n for _ in range(n)]
-        methods: List[List[str]] = [[""] * n for _ in range(n)]
+        values: list[list[Optional[float]]] = [[None] * n for _ in range(n)]
+        methods: list[list[str]] = [[""] * n for _ in range(n)]
 
         idx = {name: i for i, name in enumerate(feature_names)}
 
@@ -570,12 +569,12 @@ class CorrelationEngine:
         self,
         feature_name: str,
         correlation_matrix: Optional[pd.DataFrame],
-        precomputed_correlations: Optional[Dict[str, Any]],
+        precomputed_correlations: Optional[dict[str, Any]],
         target_variable: Optional[str] = None,
         theils_u_matrix: Optional[pd.DataFrame] = None,
-        eta_matrix: Optional[Dict[str, Dict[str, float]]] = None,
+        eta_matrix: Optional[dict[str, dict[str, float]]] = None,
         column_type: Optional[ColumnType] = None,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """
         Get correlation information for a feature.
 
@@ -594,7 +593,7 @@ class CorrelationEngine:
         Returns:
             Dictionary with correlation data or None
         """
-        correlations: List[Dict[str, Any]] = []
+        correlations: list[dict[str, Any]] = []
         seen: set = set()
 
         # --- Pearson (precomputed or matrix) ---
@@ -624,11 +623,13 @@ class CorrelationEngine:
             row = theils_u_matrix.loc[feature_name].drop(feature_name, errors="ignore").dropna()
             for feat, val in row.items():
                 if feat not in seen and val > 0:
-                    correlations.append({
-                        "feature": feat,
-                        "correlation": safe_round(float(val), 4),
-                        "method": "theil_u",
-                    })
+                    correlations.append(
+                        {
+                            "feature": feat,
+                            "correlation": safe_round(float(val), 4),
+                            "method": "theil_u",
+                        }
+                    )
                     seen.add(feat)
 
         # Reverse: U(other → this_feature) — "these features give information on this feature"
@@ -636,21 +637,25 @@ class CorrelationEngine:
             col = theils_u_matrix[feature_name].drop(feature_name, errors="ignore").dropna()
             for feat, val in col.items():
                 if val > 0:
-                    correlations.append({
-                        "feature": feat,
-                        "correlation": safe_round(float(val), 4),
-                        "method": "theil_u_reverse",
-                    })
+                    correlations.append(
+                        {
+                            "feature": feat,
+                            "correlation": safe_round(float(val), 4),
+                            "method": "theil_u_reverse",
+                        }
+                    )
 
         # --- Eta (cat↔cont) ---
         if eta_matrix and feature_name in eta_matrix:
             for feat, val in eta_matrix[feature_name].items():
                 if feat not in seen and val > 0:
-                    correlations.append({
-                        "feature": feat,
-                        "correlation": safe_round(float(val), 4),
-                        "method": "eta",
-                    })
+                    correlations.append(
+                        {
+                            "feature": feat,
+                            "correlation": safe_round(float(val), 4),
+                            "method": "eta",
+                        }
+                    )
                     seen.add(feat)
 
         if not correlations:
@@ -665,9 +670,9 @@ class CorrelationEngine:
     def _get_precomputed_correlations(
         self,
         feature_name: str,
-        precomputed_correlations: Dict[str, Any],
+        precomputed_correlations: dict[str, Any],
         target_variable: Optional[str] = None,
-    ) -> Optional[List[Dict[str, Any]]]:
+    ) -> Optional[list[dict[str, Any]]]:
         """
         Get precomputed correlations from metadata.
 
@@ -708,16 +713,21 @@ class CorrelationEngine:
                 # Convert dict format to list format
                 for feat, corr_val in top_corr.items():
                     if feat != feature_name:  # Exclude self-correlation
-                        correlations.append({"feature": feat, "correlation": safe_round(corr_val, 4)})
+                        correlations.append(
+                            {"feature": feat, "correlation": safe_round(corr_val, 4)}
+                        )
 
         # Sort by absolute value of correlation (high to low), preserving the sign
-        correlations.sort(key=lambda x: abs(x["correlation"]), reverse=True)
+        correlations.sort(key=lambda x: abs(float(x["correlation"] or 0)), reverse=True)
 
         return correlations if correlations else None
 
     def _compute_feature_correlations(
-        self, feature_name: str, correlation_matrix: pd.DataFrame, target_variable: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+        self,
+        feature_name: str,
+        correlation_matrix: pd.DataFrame,
+        target_variable: Optional[str] = None,
+    ) -> list[dict[str, Any]]:
         """
         Compute correlations for a feature from correlation matrix.
 

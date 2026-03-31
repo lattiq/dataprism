@@ -2,7 +2,7 @@
 
 import hashlib
 import json
-import pickle
+import pickle  # nosec B403
 from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, Optional
@@ -50,7 +50,7 @@ class CacheManager:
             "kwargs": str(sorted(kwargs.items())),
         }
         key_str = json.dumps(key_data, sort_keys=True)
-        return hashlib.md5(key_str.encode()).hexdigest()
+        return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
 
     def get(self, key: str) -> Optional[Any]:
         """
@@ -70,7 +70,7 @@ class CacheManager:
             try:
                 with open(cache_file, "rb") as f:
                     logger.debug("Cache hit: %s", key)
-                    return pickle.load(f)
+                    return pickle.load(f)  # nosec B301
             except Exception as e:
                 logger.warning("Failed to load cache %s: %s", key, e)
                 return None

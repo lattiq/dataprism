@@ -5,7 +5,7 @@ used by both DataPrism EDA and the studio-processor pipeline.
 """
 
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -15,13 +15,13 @@ import pandas as pd
 class WoEResult:
     """Result of a WoE/IV computation for one feature."""
 
-    woe_mapping: Dict[str, float]
+    woe_mapping: dict[str, float]
     """Category (or bin label) → WoE value."""
 
     iv: float
     """Total Information Value."""
 
-    iv_contributions: Dict[str, float]
+    iv_contributions: dict[str, float]
     """Category → IV contribution."""
 
     predictive_power: str
@@ -68,7 +68,7 @@ class WoEAnalyzer:
         # Assume binary target: column 0 is good, column 1 is bad
         cols = sorted(crosstab.columns)
         goods_col = cols[0]  # Typically 0 or False (negative class)
-        bads_col = cols[1]   # Typically 1 or True (positive class)
+        bads_col = cols[1]  # Typically 1 or True (positive class)
 
         goods = crosstab[goods_col]
         bads = crosstab[bads_col]
@@ -80,8 +80,8 @@ class WoEAnalyzer:
             return None
 
         num_categories = len(crosstab.index)
-        woe_mapping: Dict[str, float] = {}
-        iv_contributions: Dict[str, float] = {}
+        woe_mapping: dict[str, float] = {}
+        iv_contributions: dict[str, float] = {}
         total_iv = 0.0
 
         for category in crosstab.index:

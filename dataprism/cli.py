@@ -16,7 +16,9 @@ def main(argv: list[str] | None = None) -> None:
     # view subcommand
     view_parser = subparsers.add_parser("view", help="Open EDA results in an interactive dashboard")
     view_parser.add_argument("file", help="Path to a JSON results file")
-    view_parser.add_argument("--port", type=int, default=5332, help="Port to serve on (default: 5332)")
+    view_parser.add_argument(
+        "--port", type=int, default=5332, help="Port to serve on (default: 5332)"
+    )
     view_parser.add_argument(
         "--no-browser", action="store_true", help="Don't open the browser automatically"
     )

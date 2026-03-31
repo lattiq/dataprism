@@ -18,6 +18,7 @@ class DataPrismError(Exception):
         ... except DataPrismError as e:
         ...     print(f"DataPrism error: {e}")
     """
+
     pass
 
 
@@ -29,6 +30,7 @@ class DataLoadError(DataPrismError):
     Example:
         >>> raise DataLoadError("Failed to load CSV: file not found")
     """
+
     pass
 
 
@@ -44,6 +46,7 @@ class DataValidationError(DataPrismError):
     Example:
         >>> raise DataValidationError("Target column 'target' not found in dataset")
     """
+
     pass
 
 
@@ -58,6 +61,7 @@ class AnalysisError(DataPrismError):
     Example:
         >>> raise AnalysisError("Cannot compute correlation: insufficient variance")
     """
+
     pass
 
 
@@ -72,6 +76,7 @@ class ConfigurationError(DataPrismError):
     Example:
         >>> raise ConfigurationError("max_categories must be positive integer")
     """
+
     pass
 
 
@@ -84,6 +89,7 @@ class FeatureTypeError(DataPrismError):
     Example:
         >>> raise FeatureTypeError("Cannot compute IV for datetime features")
     """
+
     pass
 
 
@@ -96,6 +102,7 @@ class MissingDataError(DataPrismError):
     Example:
         >>> raise MissingDataError("Cannot analyze: all values are missing")
     """
+
     pass
 
 
@@ -110,6 +117,7 @@ class StabilityAnalysisError(DataPrismError):
     Example:
         >>> raise StabilityAnalysisError("Baseline cohort has only 10 samples, requires at least 100")
     """
+
     pass
 
 
@@ -122,6 +130,7 @@ class OutputFormattingError(DataPrismError):
     Example:
         >>> raise OutputFormattingError("Cannot serialize NaN values without sanitization")
     """
+
     pass
 
 
@@ -136,4 +145,5 @@ class TargetAnalysisError(DataPrismError):
     Example:
         >>> raise TargetAnalysisError("IV calculation requires binary target, found 5 classes")
     """
+
     pass

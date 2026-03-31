@@ -1,7 +1,7 @@
 """Provider-level match rate analysis."""
 
 import re
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import pandas as pd
 
@@ -9,9 +9,8 @@ from dataprism.schema import ColumnConfig
 
 
 def compute_provider_match_rates(
-    df: pd.DataFrame,
-    col_configs: Optional[Dict[str, ColumnConfig]] = None
-) -> Dict[str, Dict[str, Any]]:
+    df: pd.DataFrame, col_configs: Optional[dict[str, ColumnConfig]] = None
+) -> dict[str, dict[str, Any]]:
     """
     Compute match rates by provider.
 
@@ -26,7 +25,7 @@ def compute_provider_match_rates(
         return _compute_provider_match_rates_from_columns(df)
 
     # Group features by provider
-    provider_features: Dict[str, list] = {}
+    provider_features: dict[str, list] = {}
     for feature_name, config in col_configs.items():
         provider = config.provider
 
@@ -59,7 +58,7 @@ def compute_provider_match_rates(
                 "total_records": total_records,
                 "matched_records": int(matched_records),
                 "computation_method": "record_not_found_column",
-                "feature_match_rate": round(feature_match_rate, 4)
+                "feature_match_rate": round(feature_match_rate, 4),
             }
 
         else:
@@ -88,13 +87,13 @@ def compute_provider_match_rates(
                 "total_records": total_records,
                 "matched_records": int(matched_records),
                 "computation_method": "feature_analysis",
-                "feature_match_rate": round(feature_match_rate, 4)
+                "feature_match_rate": round(feature_match_rate, 4),
             }
 
     return provider_stats
 
 
-def _compute_provider_match_rates_from_columns(df: pd.DataFrame) -> Dict[str, Dict[str, Any]]:
+def _compute_provider_match_rates_from_columns(df: pd.DataFrame) -> dict[str, dict[str, Any]]:
     """
     Detect and compute provider match rates from <provider>_record_not_found columns.
 
@@ -103,7 +102,7 @@ def _compute_provider_match_rates_from_columns(df: pd.DataFrame) -> Dict[str, Di
     provider_stats = {}
     total_records = len(df)
 
-    record_not_found_pattern = re.compile(r'^(.+)_record_not_found$')
+    record_not_found_pattern = re.compile(r"^(.+)_record_not_found$")
 
     for col in df.columns:
         match = record_not_found_pattern.match(col)
@@ -119,7 +118,7 @@ def _compute_provider_match_rates_from_columns(df: pd.DataFrame) -> Dict[str, Di
                 "total_records": total_records,
                 "matched_records": int(matched_records),
                 "computation_method": "record_not_found_column",
-                "feature_match_rate": 0.0
+                "feature_match_rate": 0.0,
             }
 
     return provider_stats

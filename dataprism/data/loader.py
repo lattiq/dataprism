@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Optional, Union
 
 import pandas as pd
 
@@ -22,7 +22,7 @@ class DataLoader:
         sample_size: Optional[int] = None,
         use_chunking: Optional[bool] = None,
         chunk_size: int = 50000,
-        **kwargs
+        **kwargs: Any,
     ) -> pd.DataFrame:
         """
         Load CSV file with optional sampling and chunking for large files.
@@ -74,8 +74,8 @@ class DataLoader:
     def load_parquet(
         filepath: Union[str, Path],
         sample_size: Optional[int] = None,
-        columns: Optional[list] = None,
-        **kwargs
+        columns: Optional[list[str]] = None,
+        **kwargs: Any,
     ) -> pd.DataFrame:
         """
         Load Parquet file with optional column selection and sampling.
@@ -147,7 +147,7 @@ class DataLoader:
         return DatasetSchema.from_dict(data)
 
     @staticmethod
-    def validate_dataframe(df: pd.DataFrame) -> Dict[str, any]:
+    def validate_dataframe(df: pd.DataFrame) -> dict[str, Any]:
         """
         Validate DataFrame and return basic information.
 

@@ -9,7 +9,7 @@ def setup_logger(
     name: str,
     level: int = logging.INFO,
     log_file: Optional[str] = None,
-    format_string: Optional[str] = None
+    format_string: Optional[str] = None,
 ) -> logging.Logger:
     """
     Setup standardized logger for DataPrism.
@@ -40,7 +40,7 @@ def setup_logger(
 
     # Default format
     if format_string is None:
-        format_string = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format_string = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
     formatter = logging.Formatter(format_string)
 

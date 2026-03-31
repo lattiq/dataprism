@@ -1,12 +1,13 @@
 """Result types used by analyzers."""
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 
 @dataclass
 class DatasetInfo:
     """Basic dataset information."""
+
     rows: int
     columns: int
     memory_mb: float
@@ -18,6 +19,7 @@ class DatasetInfo:
 @dataclass
 class MissingInfo:
     """Missing data information."""
+
     count: int
     percent: float
 
@@ -25,6 +27,7 @@ class MissingInfo:
 @dataclass
 class ContinuousStats:
     """Statistics for continuous features."""
+
     count: int
     mean: float
     std: float
@@ -40,9 +43,10 @@ class ContinuousStats:
 @dataclass
 class CategoricalStats:
     """Statistics for categorical features."""
+
     count: int
     unique: int
     mode: Any
     mode_count: int
-    value_counts: Dict[str, int]
-    value_percentages: Dict[str, float]
+    value_counts: dict[str, int]
+    value_percentages: dict[str, float]

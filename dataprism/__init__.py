@@ -1,20 +1,23 @@
 """DataPrism - Lightweight EDA library for data analysis."""
 
-from importlib.metadata import version, PackageNotFoundError
+from importlib.metadata import PackageNotFoundError, version
 
+from dataprism.analyzers.woe import WoEAnalyzer, WoEResult
+from dataprism.data.loader import DataLoader
+from dataprism.eda import DataPrism
 from dataprism.exceptions import (
     AnalysisError,
     ConfigurationError,
     DataLoadError,
-    DataValidationError,
     DataPrismError,
+    DataValidationError,
     FeatureTypeError,
     MissingDataError,
     OutputFormattingError,
     StabilityAnalysisError,
     TargetAnalysisError,
 )
-from dataprism.data.loader import DataLoader
+from dataprism.explorer import Explorer
 from dataprism.schema import (
     ColumnConfig,
     ColumnRole,
@@ -22,9 +25,6 @@ from dataprism.schema import (
     DatasetSchema,
     Sentinels,
 )
-from dataprism.analyzers.woe import WoEAnalyzer, WoEResult
-from dataprism.eda import DataPrism
-from dataprism.explorer import Explorer
 
 try:
     __version__ = version("dataprism")
