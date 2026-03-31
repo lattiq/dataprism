@@ -29,7 +29,7 @@ from dataprism.schema import (
 try:
     __version__ = version("dataprism")
 except PackageNotFoundError:
-    __version__ = "0.1.5"
+    __version__ = "0.1.6"
 
 __author__ = "LattIQ Development Team"
 __email__ = "dev@lattiq.com"
