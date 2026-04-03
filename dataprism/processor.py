@@ -129,7 +129,6 @@ class FeatureProcessor:
                 features[col] = ResultMapper.map_to_output_schema(
                     feature_data=feature_data,
                     feature_name=col,
-                    col_metadata=col_config,
                 )
             except Exception as e:
                 logger.error("Failed to analyze feature '%s': %s", col, e, exc_info=True)
@@ -169,6 +168,7 @@ class FeatureProcessor:
     def _add_column_metadata(self, feature_data: dict[str, Any], config: ColumnConfig) -> None:
         """Add metadata fields to feature data from ColumnConfig."""
         feature_data["provider"] = config.provider
+        feature_data["category"] = config.category
         feature_data["description"] = config.description
 
         if config.sentinels is not None:

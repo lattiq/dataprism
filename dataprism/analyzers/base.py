@@ -92,7 +92,8 @@ class BaseAnalyzer(ABC):
         Determine column type from config or infer from data.
 
         If config has a type, return it directly.
-        Otherwise fall through to infer_column_type().
+        Otherwise infer from data characteristics.  Type and role are
+        orthogonal — every column has a type regardless of its role.
         """
         if column_config is not None and column_config.type is not None:
             return column_config.type

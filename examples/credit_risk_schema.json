@@ -15,56 +15,64 @@
             "type": "continuous",
             "role": "feature",
             "description": "Age of the person in years",
-            "provider": "application"
+            "category": "demographics",
+            "provider": "onboarding_app"
         },
         {
             "name": "person_income",
             "type": "continuous",
             "role": "feature",
             "description": "Annual income of the person",
-            "provider": "application"
+            "category": "financials",
+            "provider": "onboarding_app"
         },
         {
             "name": "person_home_ownership",
             "type": "categorical",
             "role": "feature",
             "description": "Home ownership status (RENT, MORTGAGE, OWN, OTHER)",
-            "provider": "application"
+            "category": "demographics",
+            "provider": "onboarding_app"
         },
         {
             "name": "person_emp_length",
             "type": "continuous",
             "role": "feature",
             "description": "Employment length in years",
-            "provider": "application"
+            "category": "demographics",
+            "provider": "onboarding_app"
         },
         {
             "name": "loan_intent",
             "type": "categorical",
             "role": "feature",
             "description": "Purpose of the loan (EDUCATION, MEDICAL, VENTURE, PERSONAL, DEBTCONSOLIDATION, HOMEIMPROVEMENT)",
-            "provider": "application"
+            "category": "loan_attributes",
+            "provider": "onboarding_app"
         },
         {
             "name": "loan_grade",
             "type": "categorical",
             "role": "feature",
             "description": "Loan grade assigned (A through G, A being best)",
-            "provider": "application"
+            "category": "loan_attributes",
+            "provider": "underwriting_engine"
         },
         {
             "name": "loan_amnt",
             "type": "continuous",
             "role": "feature",
             "description": "Loan amount requested",
-            "provider": "application"
+            "category": "loan_attributes",
+            "provider": "onboarding_app"
         },
         {
             "name": "loan_int_rate",
             "type": "continuous",
             "role": "feature",
             "description": "Interest rate on the loan",
-            "provider": "application"
+            "category": "loan_attributes",
+            "provider": "underwriting_engine"
         },
         {
             "name": "loan_status",
@@ -76,21 +84,24 @@
             "type": "continuous",
             "role": "feature",
             "description": "Loan amount as a percentage of annual income",
-            "provider": "application"
+            "category": "financials",
+            "provider": "underwriting_engine"
         },
         {
             "name": "cb_person_default_on_file",
             "type": "categorical",
             "role": "feature",
             "description": "Historical default on file from credit bureau (Y/N)",
-            "provider": "bureau"
+            "category": "credit_history",
+            "provider": "credit_bureau"
         },
         {
             "name": "cb_person_cred_hist_length",
             "type": "continuous",
             "role": "feature",
             "description": "Length of credit history in years",
-            "provider": "bureau"
+            "category": "credit_history",
+            "provider": "credit_bureau"
         },
         {
             "name": "split",

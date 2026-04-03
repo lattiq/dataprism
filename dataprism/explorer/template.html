@@ -249,6 +249,7 @@ var S = {
   tab: 'summary',
   catalogSearch: '',
   catalogFilterType: '',
+  catalogFilterCategory: '',
   catalogFilterProvider: '',
   catalogSort: { key: 'feature_name', dir: 'asc' },
   catalogPage: 1,
@@ -290,6 +291,7 @@ function pct(v) {
 function getType(f) { return (f.type || f.variable_type || '').toLowerCase(); }
 function isContinuous(f) { return getType(f) === 'continuous'; }
 function getProvider(f) { return f.source?.provider || f.metadata?.provider || '\u2014'; }
+function getCategory(f) { return f.source?.category || f.metadata?.category || '\u2014'; }
 function getMissing(f) { return f.statistics?.missing_percentage ?? null; }
 function getCorrelation(f) {
   var tr = f.target_relationship;
@@ -586,26 +588,31 @@ function infoCell(l, v) {
 
 // ── Render: Catalog ──
 function renderCatalog() {
-  // Collect unique types and providers for filter dropdowns
-  var typeSet = {}, providerSet = {};
+  // Collect unique types, categories, and providers for filter dropdowns
+  var typeSet = {}, categorySet = {}, providerSet = {};
   for (var i = 0; i < features.length; i++) {
     var t = (features[i].type || features[i].variable_type || '').toLowerCase();
     if (t) typeSet[t] = true;
+    var cat = getCategory(features[i]);
+    if (cat && cat !== '\u2014') categorySet[cat] = true;
     var p = getProvider(features[i]);
     if (p && p !== '\u2014') providerSet[p] = true;
   }
   var types = Object.keys(typeSet).sort();
+  var categories = Object.keys(categorySet).sort();
   var providers = Object.keys(providerSet).sort();
 
   var search = S.catalogSearch.toLowerCase();
-  var ft = S.catalogFilterType, fp = S.catalogFilterProvider;
+  var ft = S.catalogFilterType, fc = S.catalogFilterCategory, fp = S.catalogFilterProvider;
   var filtered = features.filter(function(f) {
     if (f.is_target) return false;
     if (ft && getType(f) !== ft) return false;
+    if (fc && getCategory(f) !== fc) return false;
     if (fp && getProvider(f) !== fp) return false;
     return f.feature_name.toLowerCase().includes(search)
       || (f.description || '').toLowerCase().includes(search)
       || (f.display_name || '').toLowerCase().includes(search)
+      || getCategory(f).toLowerCase().includes(search)
       || getProvider(f).toLowerCase().includes(search)
       || getType(f).toLowerCase().includes(search);
   });
@@ -621,7 +628,7 @@ function renderCatalog() {
   var selCls = 'bg-srf border border-inp rounded-lg px-3 py-2.5 text-sm text-bd focus:border-accent focus:outline-none appearance-none cursor-pointer';
 
   var h = '<div class="mb-4 flex items-center gap-3">'
-    + '<input type="text" id="catalog-search" placeholder="Search features by name, type, or provider..."'
+    + '<input type="text" id="catalog-search" placeholder="Search features by name, type, category, or provider..."'
     + ' value="' + esc(S.catalogSearch) + '" class="flex-1 bg-srf border border-inp rounded-lg px-4 py-2.5 text-sm text-bd placeholder-sb focus:border-accent focus:outline-none">';
 
   // Type filter
@@ -631,6 +638,16 @@ function renderCatalog() {
     h += '<option value="' + esc(types[i]) + '"' + (ft === types[i] ? ' selected' : '') + '>' + esc(types[i].charAt(0).toUpperCase() + types[i].slice(1)) + '</option>';
   }
   h += '</select>';
+
+  // Category filter (only show if categories exist)
+  if (categories.length > 0) {
+    h += '<select id="catalog-filter-category" class="' + selCls + '">'
+      + '<option value="">All Categories</option>';
+    for (var i = 0; i < categories.length; i++) {
+      h += '<option value="' + esc(categories[i]) + '"' + (fc === categories[i] ? ' selected' : '') + '>' + esc(categories[i]) + '</option>';
+    }
+    h += '</select>';
+  }
 
   // Provider filter (only show if providers exist)
   if (providers.length > 0) {
@@ -649,8 +666,10 @@ function renderCatalog() {
 
   h += '<div class="bg-srf rounded-xl border border-bdr overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm">';
   h += '<thead><tr class="text-sb text-xs uppercase bg-srfl">';
+  var hasCategory = features.some(function(f) { var c = getCategory(f); return c && c !== '\u2014'; });
   var hasProvider = features.some(function(f) { var p = getProvider(f); return p && p !== '\u2014'; });
   var cols = [{k:'feature_name',l:'Name',a:'left'},{k:'type',l:'Type',a:'left'}];
+  if (hasCategory) cols.push({k:'category',l:'Category',a:'left'});
   if (hasProvider) cols.push({k:'provider',l:'Provider',a:'left'});
   cols.push({k:'missing',l:'Missing %',a:'right'},{k:'correlation',l:'Tgt Corr',a:'right'},{k:'iv',l:'IV',a:'right'},{k:'stability',l:'PSI',a:'right'});
   for (var i = 0; i < cols.length; i++) {
@@ -669,11 +688,12 @@ function renderCatalog() {
 
   for (var i = 0; i < pageItems.length; i++) {
     var f = pageItems[i], miss = getMissing(f), corr = getCorrelation(f), cm = getCorrMethod(f), iv = getIV(f), psi = getStability(f);
-    var type = f.type || f.variable_type || '\u2014', prov = getProvider(f);
+    var type = f.type || f.variable_type || '\u2014', catg = getCategory(f), prov = getProvider(f);
     var sel = S.selectedFeature === f.feature_name ? 'selected' : '';
     h += '<tr class="catalog-row border-t border-bdr cursor-pointer ' + sel + '" data-feature="' + esc(f.feature_name) + '">'
       + '<td class="py-2.5 px-4 text-bd" title="' + esc(f.description || '') + '">' + esc(f.feature_name) + '</td>'
       + '<td class="py-2.5 px-4"><span class="px-2 py-0.5 rounded-full text-xs ' + typeBadge(type) + '">' + esc(type) + '</span></td>'
+      + (hasCategory ? '<td class="py-2.5 px-4 text-mt">' + esc(catg) + '</td>' : '')
       + (hasProvider ? '<td class="py-2.5 px-4 text-mt">' + esc(prov) + '</td>' : '')
       + '<td class="py-2.5 px-4 text-right ' + (miss != null && miss > 30 ? 'text-bad' : miss != null && miss > 10 ? 'text-warn' : 'text-mt') + '">' + (miss != null ? pct(miss) : '\u2014') + '</td>'
       + '<td class="py-2.5 px-4 text-right">' + (corr != null ? '<div class="text-mt">' + fmt(corr, 4) + '</div><div class="text-xs text-sb">' + cm + '</div>' : '\u2014') + '</td>'
@@ -712,6 +732,7 @@ function getSortValue(f, k) {
   switch(k) {
     case 'feature_name': return f.feature_name.toLowerCase();
     case 'type': return (f.type || f.variable_type || '').toLowerCase();
+    case 'category': return getCategory(f).toLowerCase();
     case 'provider': return getProvider(f).toLowerCase();
     case 'missing': return getMissing(f);
     case 'correlation': return getCorrelation(f);
@@ -905,6 +926,7 @@ function renderFeatureDetail(f) {
     + '<div class="flex gap-3 mt-2 flex-wrap">'
     + '<span class="px-2.5 py-1 rounded-full text-xs font-medium ' + typeBadge(type) + '">' + esc(type) + '</span>'
     + '<span class="px-2.5 py-1 rounded-full text-xs badge-neutral">' + esc(f.data_type || '\u2014') + '</span>'
+    + (f.source?.category ? '<span class="px-2.5 py-1 rounded-full text-xs badge-neutral">' + esc(f.source.category) + '</span>' : '')
     + (f.source?.provider ? '<span class="px-2.5 py-1 rounded-full text-xs badge-neutral">' + esc(f.source.provider) + '</span>' : '')
     + (f.is_target ? '<span class="px-2.5 py-1 rounded-full text-xs badge-amber">Target</span>' : '')
     + (f.is_derived ? '<span class="px-2.5 py-1 rounded-full text-xs badge-teal">Derived</span>' : '')
@@ -1777,6 +1799,7 @@ document.addEventListener('input', function(e) {
 document.addEventListener('change', function(e) {
   if (e.target.id === 'catalog-page-size') { S.catalogPageSize = parseInt(e.target.value); S.catalogPage = 1; renderCatalog(); }
   if (e.target.id === 'catalog-filter-type') { S.catalogFilterType = e.target.value; S.catalogPage = 1; renderCatalog(); }
+  if (e.target.id === 'catalog-filter-category') { S.catalogFilterCategory = e.target.value; S.catalogPage = 1; renderCatalog(); }
   if (e.target.id === 'catalog-filter-provider') { S.catalogFilterProvider = e.target.value; S.catalogPage = 1; renderCatalog(); }
   if (e.target.id === 'deepdive-filter-type') { S.deepDiveFilterType = e.target.value; S.deepDivePage = 1; renderDeepDive(); }
   if (e.target.id === 'deepdive-filter-provider') { S.deepDiveFilterProvider = e.target.value; S.deepDivePage = 1; renderDeepDive(); }

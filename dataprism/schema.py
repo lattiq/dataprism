@@ -67,6 +67,8 @@ class ColumnConfig:
         type: Semantic type (continuous, categorical, ordinal, binary).
         role: Pipeline role (feature, target, identifier, split, observation_date).
         description: Human-readable description of this column.
+        category: Free-form label for grouping columns
+            (e.g. "demographics", "financial", "behavioral"). None when unset.
         provider: Data source / bureau that supplies this column
             (e.g. "experian", "equifax"). None for internal columns.
         sentinels: Provider-specific sentinel codes for no-hit and missing
@@ -77,15 +79,9 @@ class ColumnConfig:
     type: ColumnType | None = None
     role: ColumnRole = ColumnRole.FEATURE
     description: str | None = None
+    category: str | None = None
     provider: str | None = None
     sentinels: Sentinels | None = None
-
-    def __post_init__(self) -> None:
-        if self.role is ColumnRole.FEATURE and self.type is None:
-            raise ValueError(
-                f"Column '{self.name}' has role=feature but no type specified. "
-                "Feature columns require a type (continuous, categorical, ordinal, binary)."
-            )
 
     def is_type(self, *types: ColumnType) -> bool:
         """Check if this column matches any of the given types."""
@@ -100,6 +96,8 @@ class ColumnConfig:
             d["type"] = self.type.value
         if self.description is not None:
             d["description"] = self.description
+        if self.category is not None:
+            d["category"] = self.category
         if self.provider is not None:
             d["provider"] = self.provider
         if self.sentinels is not None:
@@ -132,6 +130,7 @@ class ColumnConfig:
             role=col_role,
             type=col_type,
             description=data.get("description"),
+            category=data.get("category"),
             provider=data.get("provider"),
             sentinels=Sentinels.from_dict(raw_sentinels) if raw_sentinels else None,
         )

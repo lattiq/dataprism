@@ -2,8 +2,6 @@
 
 from typing import Any
 
-from dataprism.schema import ColumnConfig
-
 
 class ResultMapper:
     """Maps analyzer output format to final output schema format."""
@@ -12,15 +10,14 @@ class ResultMapper:
     def map_to_output_schema(
         feature_data: dict[str, Any],
         feature_name: str,
-        col_metadata: ColumnConfig | None = None,
     ) -> dict[str, Any]:
         """
         Transform analyzer output to final schema in a single pass.
 
         Args:
-            feature_data: Raw output from analyzer
+            feature_data: Raw output from analyzer (includes metadata
+                merged by the processor from ColumnConfig).
             feature_name: Name of the feature
-            col_metadata: Optional feature metadata
 
         Returns:
             Feature data in final output schema format
@@ -45,6 +42,7 @@ class ResultMapper:
         output["source"] = {
             "type": "provider",
             "provider": feature_data.get("provider"),
+            "category": feature_data.get("category"),
         }
 
         # Add config section
