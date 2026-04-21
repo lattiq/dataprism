@@ -17,7 +17,7 @@ dependencies = [
     "pandas>=2.0,<4",
     "numpy>=1.24,<3",
     "scipy>=1.10,<2",
-    "pyarrow>=11.0,<24",
+    "pyarrow>=11.0,<25",
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
